@@ -1,6 +1,6 @@
 import { Admin } from 'pocketbase';
 import { ChangeEvent, useEffect, useState } from 'react';
-import pb from '../lib/pocketbase';
+import pb from '../../lib/pocketbase';
 
 const AuthenticationTest = () => {
   const [username, setUsername] = useState('');

@@ -1,0 +1,25 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="32" height="32" fill="#1E1E1E"/>
+<g id="Reports" clip-path="url(#clip0_0_1)">
+<rect width="1920" height="1243" transform="translate(-248 -188)" fill="#CACDD6"/>
+<g id="Navigation Panel">
+<rect width="354" height="1243" transform="translate(-248 -188)" fill="white"/>
+<g id="Logo 2">
+<g id="Label">
+<g id="fluent-mdl2:product-variant" clip-path="url(#clip1_0_1)">
+<path id="Vector" d="M21 0.03125L32 5.53125V17.7969L30 16.7969V7.76562L22 11.7656V15.7969L20 16.7969V11.7656L12 7.76562V11.3125L10 10.3125V5.53125L21 0.03125ZM21 10.0312L23.7656 8.64062L16.5312 4.5L13.2344 6.15625L21 10.0312ZM25.9219 7.57812L28.7656 6.15625L21 2.26562L18.6719 3.4375L25.9219 7.57812ZM18 17.7969L16 18.7969V18.7812L10 21.7812V28.8906L16 25.875V28.125L9 31.625L0 27.1094V16.5469L9 12.0469L18 16.5469V17.7969ZM8 28.8906V21.7812L2 18.7812V25.875L8 28.8906ZM9 20.0469L14.7656 17.1719L9 14.2812L3.23438 17.1719L9 20.0469ZM18 20.0312L25 16.5312L32 20.0312V28.2656L25 31.7656L18 28.2656V20.0312ZM24 29.0312V24.2656L20 22.2656V27.0312L24 29.0312ZM30 27.0312V22.2656L26 24.2656V29.0312L30 27.0312ZM25 22.5312L28.7656 20.6406L25 18.7656L21.2344 20.6406L25 22.5312Z" fill="#00104A"/>
+</g>
+<path d="M-174 -7H32V-9H-174V-7ZM32 39H-174V41H32V39Z" fill="#00104A" mask="url(#path-1-inside-1_0_1)"/>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_0_1">
+<rect width="1920" height="1243" fill="white" transform="translate(-248 -188)"/>
+</clipPath>
+<clipPath id="clip1_0_1">
+<rect width="32" height="32" fill="white"/>
+</clipPath>
+</defs>
+</svg>
