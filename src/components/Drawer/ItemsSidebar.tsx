@@ -4,6 +4,8 @@ import TextInputField from '../Field/TextInputField';
 import SelectField from '../Field/SelectField';
 import ToggleField from '../Field/ToggleField';
 import Carousel from './Carousel';
+import QrCodeModal from '../Modal/QrCodeModal';
+import qrCodeSample from '../../assets/qr.png';
 
 const ItemsSidebar = () => {
   const [isUpdate, setIsUpdate] = useState(true);
@@ -12,18 +14,13 @@ const ItemsSidebar = () => {
     <div className="drawer-side z-[9999]">
       <label htmlFor="my-drawer" className="drawer-overlay"></label>
       <div className="px-[32px] w-[723px] pt-0 h-full bg-secondary text-secondary-content font-khula flex flex-col gap-[8px] overflow-y-scroll">
-        <div className="flex justify-between pt-[32px] pb-[16px]  items-center">
+        <div className="flex justify-start pt-[32px] pb-[16px]  items-center">
           <span className="font-semibold h-[21px] text-[32px] leading-none">
             Item Details
           </span>
-          <div className="flex gap-[8px] ">
-            <button className="btn btn-primary ">add</button>
-            <button className="btn btn-success ">qr</button>
-            <button className="btn btn-error ">delete</button>
-          </div>
         </div>
 
-        <Carousel />
+        <Carousel isUpdate={isUpdate} />
 
         <ul>
           <TextInputField
@@ -96,6 +93,30 @@ const ItemsSidebar = () => {
         </ul>
 
         <div className="h-full"></div>
+
+        {/* <QrCodeModal /> */}
+
+        {!isUpdate && (
+          <div className="flex flex-col gap-[8px]">
+            <div className="flex justify-between items-center">
+              <span className=" h-[16px] text-primary/50 text-[24px] -translate-y-[6px]">
+                QR Code:
+              </span>
+
+              <label
+                htmlFor="QrCodeModal"
+                className="btn btn-outline px-[16px] hover:btn-primary text-[20px]  font-semibold"
+              >
+                <span className="h-[13px] ">Print</span>
+              </label>
+            </div>
+
+            <div className="bg-primary/5 py-[16px] flex justify-center rounded-[5px] ">
+              <img src={qrCodeSample} className="w-[300px] h-[300px]" />
+            </div>
+          </div>
+        )}
+
         <div className="flex justify-end items-center gap-[16px] py-[32px]">
           <button
             onClick={() => setIsUpdate(!isUpdate)}

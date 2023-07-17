@@ -109,7 +109,7 @@ const Items = () => {
 
   return (
     <div className="flex flex-col gap-[16px] pb-[28px] px-[36px] h-full  ">
-      <div className="flex justify-between grow-0 shrink-0">
+      <div className="flex justify-between ">
         <div className="flex gap-[16px]">
           <Dropdown
             label={<Button label="Export" icon={importCsv} />}
