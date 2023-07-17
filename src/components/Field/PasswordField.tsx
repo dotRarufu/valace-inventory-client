@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import Eye from '../Icons/Eye';
 
 type Props = {
   label: string;
@@ -7,7 +8,7 @@ type Props = {
   isUpdate?: boolean;
 };
 
-const TextInputField = ({
+const PasswordField = ({
   label,
   stringContent,
   elementContent,
@@ -31,14 +32,22 @@ const TextInputField = ({
             {label}:
           </span>
 
-          <input
-            className="input input-bordered max-w-[445px] w-full bg-primary/10 rounded-[5px] pt-[6px] text-primary text-[24px] [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
-            placeholder=""
-          />
+          <div className=" max-w-[445px] w-full flex relative">
+            <input
+              className="input input-bordered  w-full bg-primary/10 rounded-[5px] pt-[6px] text-primary text-[24px] [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
+              placeholder=""
+              type="password"
+            />
+            <label className=" font-semibold absolute right-0 h-full  flex items-center px-[8px]">
+              <span className="btn btn-ghost hover:btn-primary btn-sm px-[16px]  ">
+                <Eye />
+              </span>
+            </label>
+          </div>
         </div>
       )}
     </li>
   );
 };
 
-export default TextInputField;
+export default PasswordField;

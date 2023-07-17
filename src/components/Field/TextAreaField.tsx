@@ -33,7 +33,7 @@ const TextAreaField = ({
 
           <textarea
             className="textarea textarea-bordered max-w-[445px] w-full bg-primary/10 rounded-[5px] leading-[36px] text-primary text-[24px] [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
-            placeholder="Bio"
+            placeholder=""
           ></textarea>
         </div>
       )}

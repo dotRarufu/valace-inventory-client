@@ -4,7 +4,6 @@ import TextInputField from '../Field/TextInputField';
 import SelectField from '../Field/SelectField';
 import ToggleField from '../Field/ToggleField';
 import Carousel from './Carousel';
-import QrCodeModal from '../Modal/QrCodeModal';
 import qrCodeSample from '../../assets/qr.png';
 
 const ItemsSidebar = () => {
@@ -15,7 +14,7 @@ const ItemsSidebar = () => {
       <label htmlFor="my-drawer" className="drawer-overlay"></label>
       <div className="px-[32px] w-[723px] pt-0 h-full bg-secondary text-secondary-content font-khula flex flex-col gap-[8px] overflow-y-scroll">
         <div className="flex justify-start pt-[32px] pb-[16px]  items-center">
-          <span className="font-semibold h-[21px] text-[32px] leading-none">
+          <span className="font-semibold h-[21px] text-[32px] leading-none text-primary">
             Item Details
           </span>
         </div>
