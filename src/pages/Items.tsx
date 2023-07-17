@@ -3,8 +3,6 @@ import sort from '../assets/sort.svg';
 import Button from '../components/Button';
 import Dropdown from '../components/Dropdown';
 import Fab from '../components/Fab';
-import ActionDropdown from '../components/Table/ActionDropdown';
-import Header from '../components/Table/Header';
 import Row from '../components/Table/Row';
 import Table from '../components/Table/Table';
 import csvIcon from '../assets/csv.svg';
@@ -15,6 +13,7 @@ import ArrowDown from '../components/Icons/ArrowDown';
 import SearchBar from '../components/SearchBar';
 import NewDropdown from '../components/Table/NewDropdown';
 import Add from '../components/Icons/Add';
+import Header from '../components/Table/Header';
 
 type Filters = {
   [key: string]: 'Ascending' | 'Descending' | 'Disabled';
@@ -84,7 +83,7 @@ const Items = () => {
       },
     ];
 
-    return [1, 2].map(() => <Row contents={sampleRow} />);
+    return [1, 2].map((n, index) => <Row key={index} contents={sampleRow} />);
   };
 
   const moveFilter = (key: string) => {
@@ -145,6 +144,7 @@ const Items = () => {
               <ul className="menu w-56 bg-secondary rounded-[5px] shadow text-[24px] font-khula px-0 gap-[8px] ">
                 {Object.keys(filters).map(key => (
                   <li
+                    key={key}
                     onClick={() => moveFilter(key)}
                     // className="border border-red-500 "
                   >

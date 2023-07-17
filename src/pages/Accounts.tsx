@@ -1,9 +1,5 @@
-import importCsv from '../assets/import-csv.svg';
-import sort from '../assets/sort.svg';
-import Button from '../components/Button';
 import Fab from '../components/Fab';
 import Add from '../components/Icons/Add';
-import Pagination from '../components/Pagination';
 import SearchBar from '../components/SearchBar';
 import ActionDropdown from '../components/Table/ActionDropdown';
 import Header from '../components/Table/Header';
@@ -57,7 +53,9 @@ const Accounts = () => {
       },
     ];
 
-    return [1, 2, 3, 4].map(() => <Row contents={sampleRow} />);
+    return [1, 2, 3, 4].map((a, index) => (
+      <Row key={index} contents={sampleRow} />
+    ));
   };
 
   return (

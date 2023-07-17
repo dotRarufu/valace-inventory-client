@@ -1,16 +1,16 @@
 import { ReactNode } from 'react';
-import Sidebar from './Sidebar';
 
 type Props = {
   children: ReactNode;
+  sidebar: ReactNode;
 };
 
-const DrawerLayout = ({ children }: Props) => {
+const DrawerLayout = ({ children, sidebar }: Props) => {
   return (
     <div className="drawer drawer-end">
       <input id="my-drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content">{children}</div>
-      <Sidebar />
+      {sidebar}
     </div>
   );
 };
