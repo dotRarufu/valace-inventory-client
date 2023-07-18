@@ -14,6 +14,9 @@ import SearchBar from '../components/SearchBar';
 import NewDropdown from '../components/Table/NewDropdown';
 import Add from '../components/Icons/Add';
 import Header from '../components/Table/Header';
+import ImportCsv from '../components/Icons/ImportCsv';
+import TableExport from '../components/Icons/TableExport';
+import Sort from '../components/Icons/Sort';
 
 type Filters = {
   [key: string]: 'Ascending' | 'Descending' | 'Disabled';
@@ -112,7 +115,7 @@ const Items = () => {
       <div className="flex justify-between ">
         <div className="flex gap-[16px]">
           <Dropdown
-            label={<Button label="Export" icon={importCsv} />}
+            label={<Button label="Export" icon={<TableExport />} />}
             content={{
               type: 'List',
               body: [
@@ -127,7 +130,7 @@ const Items = () => {
               ],
             }}
           />
-          <Button label="Import CSV" icon={importCsv} />
+          <Button label="Import CSV" icon={<ImportCsv />} />
         </div>
 
         <div className="flex gap-[16px]">
@@ -135,7 +138,7 @@ const Items = () => {
 
           <div className="dropdown dropdown-end">
             <label tabIndex={0}>
-              <Button label="Sort" icon={sort} />
+              <Button label="Sort" icon={<Sort />} />
             </label>
             <div
               tabIndex={0}
@@ -143,11 +146,7 @@ const Items = () => {
             >
               <ul className="menu w-56 bg-secondary rounded-[5px] shadow text-[24px] font-khula px-0 gap-[8px] ">
                 {Object.keys(filters).map(key => (
-                  <li
-                    key={key}
-                    onClick={() => moveFilter(key)}
-                    // className="border border-red-500 "
-                  >
+                  <li key={key} onClick={() => moveFilter(key)}>
                     <a className="justify-between rounded-none px-[24px]  py-[4px]">
                       <span className="h-[16px] ">{key}</span>
 

@@ -7,7 +7,7 @@ import trashIcon from '../../assets/trash.svg';
 
 const NewDropdown = () => {
   return (
-    <div className="dropdown dropdown-left dropdown-end">
+    <div className="dropdown dropdown-left dropdown-end ">
       <label
         tabIndex={0}
         className="btn btn-outline btn-ghost w-[48px] h-[48px] p-[12px] hover:bg-primary/80"
@@ -16,7 +16,7 @@ const NewDropdown = () => {
       </label>
       <ul
         tabIndex={0}
-        className="dropdown-content z-[1] menu menu-horizontal p-2 drop-shadow-md bg-secondary rounded-[5px] w-[535px] "
+        className="dropdown-content z-[1] menu menu-horizontal p-2 drop-shadow-md bg-secondary rounded-[5px] w-[535px]"
       >
         <li>
           <label

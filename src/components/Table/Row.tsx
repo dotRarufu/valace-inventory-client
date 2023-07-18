@@ -25,6 +25,7 @@ const Row = ({ contents }: Props) => {
         <ActionDropdown />
       </td> */}
 
+      {/* why is the contents prop mapped? */}
       {contents.map((t, index) => {
         return (
           <td

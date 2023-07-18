@@ -47,21 +47,21 @@ const Accounts = () => {
           <span className="badge text-base badge-success pt-[2px]">Active</span>
         ),
       },
-
-      {
-        body: <ActionDropdown />,
-      },
     ];
 
-    return [1, 2, 3, 4].map((a, index) => (
-      <Row key={index} contents={sampleRow} />
-    ));
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9].map((a, index) => {
+      const contents = [...sampleRow];
+      const position = index > 4 ? 'top' : 'bottom';
+      contents.push({ body: <ActionDropdown position={position} /> });
+
+      return <Row key={index} contents={contents} />;
+    });
   };
 
   return (
     <div className="flex flex-col gap-[16px] pb-[28px] px-[36px] h-full  ">
       <SearchBar />
-      <div className="bg-secondary rounded-[5px] h-[752px] overflow-y-scroll">
+      <div className="bg-secondary rounded-[5px] h-[752px]  ">
         <Table
           header={<Header contents={getHeaderContents()} />}
           rows={getRows()}

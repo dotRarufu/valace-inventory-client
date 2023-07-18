@@ -7,7 +7,11 @@ import { useDrawer } from '../../hooks/useDrawer';
 import Sidebar2 from '../Drawer/Sidebar2';
 import ItemsSidebar from '../Drawer/ItemsSidebar';
 
-const ActionDropdown = () => {
+type Props = {
+  position?: 'top' | 'bottom';
+};
+
+const ActionDropdown = ({ position }: Props) => {
   const { setActiveDrawer } = useDrawer();
 
   const handleClick1 = () => {
@@ -20,7 +24,11 @@ const ActionDropdown = () => {
   };
 
   return (
-    <div className="dropdown dropdown-end">
+    <div
+      className={`dropdown dropdown-end ${
+        position === 'top' ? 'dropdown-top' : 'dropdown-bottom'
+      }`}
+    >
       <label
         tabIndex={0}
         className="btn btn-outline btn-ghost w-[48px] h-[48px] p-[12px] hover:bg-primary/80"
