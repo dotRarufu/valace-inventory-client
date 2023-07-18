@@ -45,6 +45,7 @@ const DateDropdown = () => {
   const getDateLabel = () => {
     if (dateRange instanceof Array) {
       // todo: remove non different dates
+      // to remove 2 span item of same date
       //   const unique = [...new Set(dateRange)];
       const nonNullDateRange = dateRange.filter(d => d instanceof Date);
       const milliseconds = nonNullDateRange.map(d => d!.getTime());
@@ -68,22 +69,17 @@ const DateDropdown = () => {
   };
 
   const clearCalendar = () => {
-    // if (calendarDateRange === undefined) return;
-
-    // if (!(calendarDateRange instanceof Array)) return;
-
-    // if (calendarDateRange.includes(null)) {
-    //   setCalendarDateRange([new Date(), new Date()]);
-
-    //   return;
-    // }
-
     setCalendarDateRange([null, null]);
   };
 
-  useEffect(() => {
-    console.log('calendar date range:', calendarDateRange);
-  }, [calendarDateRange]);
+  const shouldDisplayClearButton = () => {
+    if (calendarDateRange instanceof Array) {
+      const nonNull = calendarDateRange.filter(i => i !== null);
+
+      return nonNull.length === 2;
+    }
+    return false;
+  };
 
   return (
     <details ref={detailsRef} className="dropdown">
@@ -100,28 +96,32 @@ const DateDropdown = () => {
         tabIndex={0}
         className="dropdown-content z-[1] rounded-[5px]  overflow-clip w-fit shadow "
       >
-        <div className="bg-secondary flex flex-col border border-red  p-[8px]">
+        <div className="bg-secondary flex flex-col border border-red  p-[8px] pb-[16px]">
           <Calendar
             onChange={setCalendarDateRange}
             value={calendarDateRange}
             allowPartialRange={true}
             goToRangeStartOnSelect={true}
             selectRange={true}
-            className="p-4 !border-none"
+            className="p-[8px]  !border-none"
           />
           <div className="flex gap-[16px] ">
-            <button
-              onClick={clearCalendar}
-              className="btn btn-ghost w-full flex-1 hover:btn-error"
-            >
-              Clear
-            </button>
-            <button
-              onClick={handleApplyClick}
-              className="btn btn-primary w-full flex-1  "
-            >
-              Apply
-            </button>
+            {shouldDisplayClearButton() && (
+              <>
+                <button
+                  onClick={clearCalendar}
+                  className="btn btn-ghost w-full flex-1 hover:btn-error"
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={handleApplyClick}
+                  className="btn btn-primary w-full flex-1  "
+                >
+                  Apply
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
