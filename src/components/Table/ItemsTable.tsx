@@ -5,26 +5,50 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import Pagination from '../Pagination';
-import { ReactNode, useMemo, useState } from 'react';
-import { ItemData } from '../../types/ItemData';
-import { itemRows } from '../../sampleData';
+import { useMemo } from 'react';
 import { typeIdToText } from '../../utils/typeIdToText';
 import ActionDropdown from './ActionDropdown';
-
-interface ItemDataRow extends ItemData {
-  selected: boolean;
-  actions?: ReactNode;
-}
+import { ItemDataRow } from '../../pages/Items';
 
 const columnHelper = createColumnHelper<ItemDataRow>();
 
-const ItemsTable = () => {
-  const [data, setData] = useState<ItemDataRow[]>(
-    itemRows.map(d => ({ selected: false, ...d }))
-  );
+type Props = {
+  setData: React.Dispatch<React.SetStateAction<ItemDataRow[]>>;
+  data: ItemDataRow[];
+};
 
-  const columns = useMemo(
-    () => [
+const ItemsTable = ({ setData, data }: Props) => {
+  // const [data, setData] = useState<ItemDataRow[]>(
+  //   itemRows.map(d => ({ selected: false, ...d }))
+  // );
+
+  // useEffect(() => {
+  //   const ids = data.filter(d => d.selected).map(d => d.id);
+  //   setSelectedRowsId(ids);
+  // }, [data, setSelectedRowsId]);
+
+  console.log('re renders');
+
+  const columns = useMemo(() => {
+    const handleHeaderCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newData = [...data].map(d => ({
+        ...d,
+        selected: e.target.checked,
+      }));
+      setData(newData);
+    };
+
+    const handleRowCheckbox = (
+      e: React.ChangeEvent<HTMLInputElement>,
+      rowIndex: number
+    ) => {
+      const newData = data.map((d, index) =>
+        rowIndex === index ? { ...d, selected: e.target.checked } : { ...d }
+      );
+      setData(newData);
+    };
+
+    return [
       // @ts-ignore
       columnHelper.accessor('selected', {
         header: () => (
@@ -32,13 +56,7 @@ const ItemsTable = () => {
             type="checkbox"
             className="checkbox bg-secondary w-[20px] h-[20px]"
             checked={data.every(d => d.selected)}
-            onChange={e => {
-              const newData = [...data].map(d => ({
-                ...d,
-                selected: e.target.checked,
-              }));
-              setData(newData);
-            }}
+            onChange={handleHeaderCheckbox}
           />
         ),
         cell: info => (
@@ -46,14 +64,7 @@ const ItemsTable = () => {
             type="checkbox"
             className="checkbox bg-secondary w-[20px] h-[20px]"
             checked={info.renderValue() || false}
-            onChange={e => {
-              const newData = data.map((d, index) =>
-                info.row.index === index
-                  ? { ...d, selected: e.target.checked }
-                  : { ...d }
-              );
-              setData(newData);
-            }}
+            onChange={e => handleRowCheckbox(e, info.row.index)}
           />
         ),
         footer: info => info.column.id,
@@ -114,9 +125,8 @@ const ItemsTable = () => {
         ),
         footer: info => info.column.id,
       }),
-    ],
-    [data]
-  );
+    ];
+  }, [data]);
 
   const table = useReactTable({
     data,
