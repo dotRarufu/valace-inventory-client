@@ -7,6 +7,6 @@ export const typeIdToText = (id: number) => {
     case 2:
       return 'WIP';
     default:
-      throw new Error('unknown type id');
+      return 'Error';
   }
 };

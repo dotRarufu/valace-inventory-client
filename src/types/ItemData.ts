@@ -1,11 +1,11 @@
-export type ItemData = {
+export interface ItemData {
   id: string;
   name: string;
-  typeId: number;
+  type: number;
   quantity: number;
   location: string;
   supplier: string;
   status: boolean;
   remarks: string;
   images: string[];
-};
+}
