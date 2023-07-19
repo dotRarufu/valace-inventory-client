@@ -7,7 +7,7 @@ import Row from '../components/Table/Row';
 import Table from '../components/Table/Table';
 import csvIcon from '../assets/csv.svg';
 import pdfIcon from '../assets/pdf.svg';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ArrowUp from '../components/Icons/ArrowUp';
 import ArrowDown from '../components/Icons/ArrowDown';
 import SearchBar from '../components/SearchBar';
@@ -17,12 +17,17 @@ import Header from '../components/Table/Header';
 import ImportCsv from '../components/Icons/ImportCsv';
 import TableExport from '../components/Icons/TableExport';
 import Sort from '../components/Icons/Sort';
+import { itemRows as sampleItemRows } from '../sampleData';
+import { typeIdToText } from '../utils/typeIdToText';
 
 type Filters = {
   [key: string]: 'Ascending' | 'Descending' | 'Disabled';
 };
 
 const Items = () => {
+  const [rows, setRows] = useState<
+    { selected: boolean; rowElement: JSX.Element }[]
+  >([]);
   const [filters, setFilters] = useState<Filters>({
     ID: 'Disabled',
     Name: 'Disabled',
@@ -48,46 +53,77 @@ const Items = () => {
     ];
   };
 
-  const getRows = () => {
-    const sampleRow = [
-      {
-        body: <input type="checkbox" className="checkbox bg-secondary " />,
-      },
-      {
-        body: '5530E841',
-      },
-      {
-        body: 'Wooden Table',
-      },
-      {
-        body: (
-          <span className="badge text-base badge-primary pt-[2px]">
-            Furniture
-          </span>
-        ),
-      },
-      {
-        body: '1',
-      },
-      {
-        body: '3F',
-      },
-      {
-        body: 'Ralph Coleco',
-      },
-      {
-        body: <span className="text-error">UNAVAILABLE</span>,
-      },
-      {
-        body: 'YES',
-      },
-      {
-        body: <NewDropdown />,
-      },
-    ];
+  useEffect(() => {
+    const getRows = () => {
+      const newRows = sampleItemRows.map((data, index) => {
+        const contents = [
+          {
+            body: (
+              <input
+                type="checkbox"
+                className="checkbox bg-secondary"
+                checked={rows[index]?.selected || false}
+                onClick={() => {
+                  setRows(r =>
+                    r.map((d, i) =>
+                      i === index
+                        ? { selected: true, rowElement: d.rowElement }
+                        : d
+                    )
+                  );
+                  console.log('clicked:', rows[index].selected);
+                }}
+              />
+            ),
+          },
+          {
+            body: data.id,
+          },
+          {
+            body: data.name,
+          },
+          {
+            body: (
+              <span className="badge text-base badge-primary pt-[2px]">
+                {typeIdToText(data.typeId)}
+              </span>
+            ),
+          },
+          {
+            body: data.quantity.toString(),
+          },
+          {
+            body: data.location,
+          },
+          {
+            body: data.supplier,
+          },
+          {
+            body: (
+              <span className="text-error">
+                {data.status ? 'AVAILABLE' : 'UNAVAILABLE'}
+              </span>
+            ),
+          },
+          {
+            body: data.remarks ? 'YES' : 'NO',
+          },
+          {
+            body: <NewDropdown />,
+          },
+        ];
 
-    return [1, 2].map((n, index) => <Row key={index} contents={sampleRow} />);
-  };
+        return {
+          selected: rows[index]?.selected || false,
+          rowElement: <Row key={data.id} contents={contents} />,
+        };
+      });
+
+      return newRows;
+    };
+    const newRows = getRows();
+    setRows(newRows);
+  }, [rows]);
 
   const moveFilter = (key: string) => {
     const newFilters = { ...filters };
@@ -109,6 +145,8 @@ const Items = () => {
 
     setFilters(newFilters);
   };
+
+  console.log("renders")
 
   return (
     <div className="flex flex-col gap-[16px] pb-[28px] px-[36px] h-full  ">
@@ -171,7 +209,7 @@ const Items = () => {
       <div className="bg-secondary rounded-[5px] h-[752px] overflow-y-scroll">
         <Table
           header={<Header contents={getHeaderContents()} />}
-          rows={getRows()}
+          rows={rows.map(r => r.rowElement)}
         />
       </div>
       <Fab label={<Add />} tooltip="Item" />

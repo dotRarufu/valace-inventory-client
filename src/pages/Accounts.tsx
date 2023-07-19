@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Fab from '../components/Fab';
 import Add from '../components/Icons/Add';
 import SearchBar from '../components/SearchBar';
@@ -5,8 +6,13 @@ import ActionDropdown from '../components/Table/ActionDropdown';
 import Header from '../components/Table/Header';
 import Row from '../components/Table/Row';
 import Table from '../components/Table/Table';
+import { ItemData } from '../types/ItemData';
 
 const Accounts = () => {
+  const [rowData, setRowData] = useState<
+    { selected: boolean; item: ItemData }[]
+  >([]);
+
   const getHeaderContents = () => {
     return [
       <input type="checkbox" className="checkbox bg-secondary " />,
