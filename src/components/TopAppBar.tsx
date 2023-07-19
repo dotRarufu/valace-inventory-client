@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import adminIcon from '../assets/admin.svg';
 import epochToTime from '../utils/epochToTime';
 import epochToDate from '../utils/epochToDate';
+import { UserContext } from '../App';
 
 const TopAppBar = () => {
   const [date, setDate] = useState<number>(Date.now());
+  const { user } = useContext(UserContext)!;
 
   useEffect(() => {
     setInterval(() => {
@@ -17,7 +19,8 @@ const TopAppBar = () => {
     <div className="font-khula font-semibold text-[24px] bg-secondary w-full px-[16px] py-[16px] justify-between flex gap-[36px] items-center rounded-[5px]">
       <div className=" flex gap-[8px] items-center">
         <img src={adminIcon} alt="Admin Icon" />
-        <span className="leading-none h-[16px]">Admin01</span>
+        {/* improve type on user */}
+        <span className="leading-none h-[16px]">{user?.['username']}</span>
       </div>
       <div className="flex gap-[16px]">
         <span className="leading-none h-[16px]">{epochToTime(date)}</span>

@@ -1,18 +1,22 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import NavBar from './NavBar/NavBar';
 import TopAppBar from './TopAppBar';
 import DrawerLayout from './Drawer/DrawerLayout';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useContext, useEffect, useState } from 'react';
 import ItemsSidebar from './Drawer/ItemsSidebar';
+import { UserContext } from '../App';
 
 export type DrawerContext = {
   setActiveDrawer: React.Dispatch<React.SetStateAction<ReactNode>>;
 };
 
-const Root = () => {
+const AdminLayout = () => {
   // use context hook and pass setState to outlet 'instances'
   // get data in drawer by using useContext
   const [activeDrawer, setActiveDrawer] = useState<ReactNode>(<ItemsSidebar />);
+  const user = useContext(UserContext);
+
+  // if (user === null) return <></>;
 
   return (
     <DrawerLayout sidebar={activeDrawer}>
@@ -30,4 +34,4 @@ const Root = () => {
   );
 };
 
-export default Root;
+export default AdminLayout;

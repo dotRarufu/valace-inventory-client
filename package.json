@@ -7,12 +7,14 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-types": "npx pocketbase-typegen --db ../pocketbase/pb_data/data.db --out pocketbase-types.ts"
   },
   "dependencies": {
     "@tanstack/react-table": "^8.9.3",
     "docx": "^8.2.0",
     "pocketbase": "^0.15.2",
+    "pocketbase-typegen": "^1.1.11",
     "qr-code-styling": "^1.6.0-rc.1",
     "react": "^18.2.0",
     "react-calendar": "^4.3.0",

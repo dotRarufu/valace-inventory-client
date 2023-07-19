@@ -6,8 +6,21 @@ import activityLogIcon from '../../assets/time.svg';
 import accountsIcon from '../../assets/users.svg';
 import logoutIcon from '../../assets/logout.svg';
 import Modal from '../Modal/Modal';
+import pb from '../../lib/pocketbase';
+import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../App';
+import { useContext } from 'react';
 
 const NavBar = () => {
+  const navigate = useNavigate();
+  const { setUser } = useContext(UserContext)!;
+
+  const handleLogout = () => {
+    setUser(null);
+    pb.authStore.clear();
+    navigate('/login');
+  };
+
   return (
     <div className=" h-full  flex bg-secondary flex-col pb-[32px] grow-0 shrink-0 basis-[354px]">
       <Logo />
@@ -48,7 +61,10 @@ const NavBar = () => {
               >
                 <span className="h-[13px]">Cancel</span>
               </label>
-              <button className="btn btn-primary flex-1 font-khula text-[20px]">
+              <button
+                onClick={handleLogout}
+                className="btn btn-primary flex-1 font-khula text-[20px]"
+              >
                 <span className="h-[13px]">Confirm</span>
               </button>
             </div>

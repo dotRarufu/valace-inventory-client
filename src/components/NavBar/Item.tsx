@@ -15,7 +15,7 @@ const Item = ({ icon, label, id, callback }: Props) => {
   const handleClick = () => {
     callback && callback();
 
-    if (id !== undefined) navigate('/' + id);
+    if (id !== undefined) navigate('/admin/' + id);
   };
 
   const isActive = () => location.pathname.slice(1) === id;
