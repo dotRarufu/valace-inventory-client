@@ -8,28 +8,14 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { createContext, useEffect, useState } from 'react';
 import pb from './lib/pocketbase';
 import { UserResponse } from '../pocketbase-types';
-import { getUserPath } from './utils/getUserPath';
-import { Admin } from 'pocketbase';
 
 type UserState = {
-  user: { role: string; user: UserResponse | Admin } | null;
-  setUser: React.Dispatch<
-    React.SetStateAction<{ role: string; user: UserResponse | Admin } | null>
-  >;
+  user: UserResponse | null;
+
   setShouldGetUser: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const UserContext = createContext<UserState | null>(null);
-
-const checkIsAdmin = async (id: string) => {
-  try {
-    const res = await pb.admins.getOne<Admin>(id);
-
-    return res;
-  } catch (err) {
-    return null;
-  }
-};
 
 type PocketbaseError = {
   code: number;
@@ -37,36 +23,8 @@ type PocketbaseError = {
   data: unknown;
 };
 
-const checkIsStaff = async (id: string) => {
-  try {
-    const res = await pb.collection('user').getOne<UserResponse>(id);
-
-    return res;
-  } catch (err) {
-    return null;
-  }
-};
-
-// todo: unduplicate fn name
-const getUser = async (id: string) => {
-  const staffRes = await checkIsStaff(id);
-  const isStaff = staffRes !== null;
-
-  if (isStaff) return { role: 'user', user: staffRes };
-
-  const adminRes = await checkIsAdmin(id);
-  const isAdmin = adminRes !== null;
-
-  if (isAdmin) return { role: 'admin', user: adminRes };
-
-  throw new Error('unknown user, no role assigned');
-};
-
 const App = () => {
-  const [user, setUser] = useState<{
-    role: string;
-    user: UserResponse | Admin;
-  } | null>(null);
+  const [user, setUser] = useState<UserResponse | null>(null);
   // sets the initial user
   const [shouldGetUser, setShouldGetUser] = useState(true);
   const navigate = useNavigate();
@@ -82,11 +40,23 @@ const App = () => {
         return;
       }
 
-      const user = await getUser(authenticated.id);
+      const user = await pb
+        .collection('user')
+        .getOne<UserResponse>(authenticated.id);
+
+      console.log('got user:', user);
+
+      if (!user.is_active) {
+        setShouldGetUser(false);
+        pb.authStore.clear();
+        // user has false is_active because auth returns Admin, which does not have is_active
+        console.info('user is inactive:', user.is_active);
+        return;
+      }
 
       setUser(user);
       setShouldGetUser(false);
-      navigate('/' + user.role);
+      navigate(user.is_admin ? '/admin' : '/staff');
     };
 
     void setNewUser();
@@ -104,16 +74,19 @@ const App = () => {
     return pb.authStore.onChange((token, model) => {
       const authenticated = model;
       console.log('auth state changed:', authenticated);
-      if (authenticated === null) return;
+      if (authenticated === null) {
+        setUser(null);
+        navigate('/login');
+        return;
+      }
 
-      setUser(user);
       setShouldGetUser(true);
     });
-  }, [user]);
+  }, [navigate, user]);
 
   // add uef that watches authStore, then set user
   return (
-    <UserContext.Provider value={{ user, setUser, setShouldGetUser }}>
+    <UserContext.Provider value={{ user, setShouldGetUser }}>
       <Routes>
         <Route index element={<div>Landing</div>} />
         <Route path="login" element={<Login />} />
@@ -121,8 +94,10 @@ const App = () => {
           path="admin"
           element={
             <ProtectedRoute
-              redirectPath={user?.role || '/login'}
-              isAllowed={!!user && user.role === 'admin'}
+              redirectPath={
+                user === null ? '/login' : user.is_admin ? '/admin' : '/staff'
+              }
+              isAllowed={!!user && user.is_admin}
             >
               {/* {(() => {
                 console.log('user role:', user?.role);
@@ -145,8 +120,10 @@ const App = () => {
           path="staff"
           element={
             <ProtectedRoute
-              redirectPath={user?.role || '/login'}
-              isAllowed={!!user && user.role === 'user'}
+              redirectPath={
+                user === null ? '/login' : !user.is_admin ? '/staff' : '/admin'
+              }
+              isAllowed={!!user && !user.is_admin}
             >
               <AdminLayout />
             </ProtectedRoute>

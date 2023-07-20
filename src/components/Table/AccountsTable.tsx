@@ -28,28 +28,26 @@ const AccountsTable = ({ setData, data }: Props) => {
       }),
       columnHelper.accessor('username', {
         header: () => 'Username',
-        cell: info =>
-          info.row.getValue<boolean>('is_admin') ? 'N/A' : info.renderValue(),
+        cell: info => info.renderValue(),
         footer: info => info.column.id,
       }),
-      columnHelper.accessor('email', {
-        header: () => 'Email',
-        cell: info =>
-          info.row.getValue<boolean>('is_admin') ? info.renderValue() : 'N/A',
-        footer: info => info.column.id,
-      }),
+      // columnHelper.accessor('email', {
+      //   header: () => 'Email',
+      //   cell: info => info.renderValue(),
+      //   footer: info => info.column.id,
+      // }),
       columnHelper.accessor('is_admin', {
         header: () => 'Role',
         cell: info => {
-          const roleName = info.renderValue() ? 'admin' : 'user';
+          const roleName = info.renderValue() ? 'admin' : 'staff';
           const backgroundColor =
-            roleName === 'user' ? 'badge-primary' : 'bg-[#4A000D]';
+            roleName === 'staff' ? 'badge-primary' : 'badge-accent';
 
           return (
             <span
               className={`badge text-base ${backgroundColor} pt-[2px] capitalize`}
             >
-              {roleName}
+              <span className="h-[14px] leading-none">{roleName}</span>
             </span>
           );
         },

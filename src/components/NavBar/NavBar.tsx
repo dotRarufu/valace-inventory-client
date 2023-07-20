@@ -16,9 +16,9 @@ const NavBar = () => {
   const { setUser } = useContext(UserContext)!;
 
   const handleLogout = () => {
-    setUser(null);
+    // setUser(null);
     pb.authStore.clear();
-    navigate('/login');
+    // navigate('/login');
   };
 
   return (
