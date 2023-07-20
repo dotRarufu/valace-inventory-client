@@ -1,77 +1,37 @@
-import { useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Fab from '../components/Fab';
 import Add from '../components/Icons/Add';
 import SearchBar from '../components/SearchBar';
-import ActionDropdown from '../components/Table/ActionDropdown';
-import Header from '../components/Table/Header';
-import Row from '../components/Table/Row';
-import Table from '../components/Table/Table';
-import { ItemData } from '../types/ItemData';
+
+import { UserResponse } from '../../pocketbase-types';
+import AccountsTable from '../components/Table/AccountsTable';
+import pb from '../lib/pocketbase';
+
+export interface AccountDataRow extends UserResponse {
+  actions?: ReactNode;
+}
 
 const Accounts = () => {
-  const [rowData, setRowData] = useState<
-    { selected: boolean; item: ItemData }[]
-  >([]);
+  const [rowData, setRowData] = useState<AccountDataRow[]>([]);
 
-  const getHeaderContents = () => {
-    return [
-      <input type="checkbox" className="checkbox bg-secondary " />,
-      'UID',
-      'Username',
-      'Role',
-      'Date Created',
-      'Password',
-      'Status',
-      'Actions',
-    ];
-  };
+  useEffect(() => {
+    const getAccounts = async () => {
+      // admins are stored in user collection to store the the plain password
+      const staffResult = await pb
+        .collection('user')
+        .getList<UserResponse>(1, 5);
 
-  const getRows = () => {
-    const sampleRow = [
-      {
-        body: <input type="checkbox" className="checkbox bg-secondary " />,
-      },
-      {
-        body: '5530E841',
-      },
-      {
-        body: 'staff01',
-      },
-      {
-        body: (
-          <span className="badge text-base badge-primary pt-[2px]">Staff</span>
-        ),
-      },
-      {
-        body: '7/3/2023',
-      },
-      {
-        body: '*******',
-      },
-      {
-        body: (
-          <span className="badge text-base badge-success pt-[2px]">Active</span>
-        ),
-      },
-    ];
+      setRowData(staffResult.items);
+    };
 
-    return [1, 2, 3, 4, 5, 6, 7, 8, 9].map((a, index) => {
-      const contents = [...sampleRow];
-      const position = index > 4 ? 'top' : 'bottom';
-      contents.push({ body: <ActionDropdown position={position} /> });
-
-      return <Row key={index} contents={contents} />;
-    });
-  };
+    void getAccounts();
+  }, []);
 
   return (
     <div className="flex flex-col gap-[16px] pb-[28px] px-[36px] h-full  ">
       <SearchBar />
       <div className="bg-secondary rounded-[5px] h-[752px]  ">
-        <Table
-          header={<Header contents={getHeaderContents()} />}
-          rows={getRows()}
-        />
+        <AccountsTable data={rowData} setData={setRowData} />
         {/* <Pagination /> */}
       </div>
       <Fab label={<Add />} tooltip="Account" />

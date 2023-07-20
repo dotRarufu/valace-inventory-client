@@ -4,7 +4,7 @@ export const getUserPath = (id?: number) => {
       return 'admin';
 
     case 1:
-      return 'staff';
+      return 'user';
 
     default:
       return 'unauthorized';

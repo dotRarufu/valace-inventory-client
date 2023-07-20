@@ -31,7 +31,7 @@ const Sidebar2 = () => {
                 <span className="h-[13px] leading-none uppercase">Admin</span>
               </span>
             }
-            dropdown={[{ label: 'Admin' }, { label: 'Staff' }]}
+            dropdown={[{ label: 'Admin' }, { label: 'user' }]}
             isUpdate={isUpdate}
           />
           {!isUpdate && (

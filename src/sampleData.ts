@@ -1,3 +1,4 @@
+import { UserResponse } from '../pocketbase-types';
 import { ItemData } from './types/ItemData';
 
 export const itemRows: ItemData[] = [

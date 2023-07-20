@@ -77,7 +77,7 @@ const AuthenticationTest = () => {
     if (shouldLoginUser) {
       const loginUser = async () => {
         const authData = await pb
-          .collection('users')
+          .collection('user')
           .authWithPassword(username, password);
 
         console.log('user login successful:', authData.record);

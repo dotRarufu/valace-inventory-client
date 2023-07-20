@@ -1,42 +1,49 @@
 import { useContext, useEffect, useState } from 'react';
 import pb from '../lib/pocketbase';
-
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../App';
-import { getUser } from '../utils/getUser';
-import { getUserPath } from '../utils/getUserPath';
-import { UsersResponse } from '../../pocketbase-types';
+import { Collections, UserResponse } from '../../pocketbase-types';
+import { Collection } from 'pocketbase';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [shouldLogin, setShouldLogin] = useState(false);
   const navigate = useNavigate();
-  const { user, setUser } = useContext(UserContext)!;
+  const { user, setUser, setShouldGetUser } = useContext(UserContext)!;
+  // para mas dumali, hindi kaylangan iduplicate yung acounts ng admins sa staff collection
+  const [role, setRole] = useState<'user' | 'admin'>('user');
 
   useEffect(() => {
     if (user !== null) {
-      navigate('/' + getUserPath(user.role));
+      navigate('/' + user?.role || 'unauthorized');
     }
   }, [navigate, user]);
 
   useEffect(() => {
     if (shouldLogin) {
       const loginUser = async () => {
-        const user = await pb
-          .collection('users')
-          .authWithPassword<UsersResponse>(username, password);
+        try {
+          if (role === 'user') {
+            await pb
+              .collection('user')
+              .authWithPassword<UserResponse>(username, password);
+          }
 
-        console.log('user login successful:');
+          await pb.admins.authWithPassword(username, password);
 
-        setUser(user.record);
-        setShouldLogin(false);
-        navigate('/admin');
+          console.log('login successful:');
+        } catch (err) {
+          console.log('show toast, error occured');
+        } finally {
+          setShouldGetUser(true);
+          setShouldLogin(false);
+        }
       };
 
       void loginUser();
     }
-  }, [navigate, password, setUser, shouldLogin, username]);
+  }, [password, role, setShouldGetUser, shouldLogin, username]);
 
   const handleLogin = () => {
     setShouldLogin(true);
@@ -55,11 +62,20 @@ const Login = () => {
         className="input input-bordered"
         placeholder="Password"
       />
+      <div className="gap-[16px] flex items-center">
+        <input
+          type="checkbox"
+          className="toggle toggle-primary"
+          checked={role === 'admin'}
+          onChange={e => setRole(e.target.checked ? 'admin' : 'user')}
+        />
+        <span className="font-khula text-[20px] capitalize h-[13px] font-semibold leading-none">
+          {role}
+        </span>
+      </div>
+
       <button onClick={handleLogin} className="btn btn-primary">
         Login
-      </button>
-      <button onClick={() => pb.authStore.clear()} className="btn btn-primary">
-        Logout
       </button>
     </div>
   );
