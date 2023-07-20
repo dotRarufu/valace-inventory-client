@@ -20,7 +20,9 @@ const TopAppBar = () => {
       <div className=" flex gap-[8px] items-center">
         <img src={adminIcon} alt="Admin Icon" />
         {/* improve type on user */}
-        <span className="leading-none h-[16px]">{user?.['username']}</span>
+        <span className="leading-none h-[16px]">
+          {user?.username} | {user?.role}
+        </span>
       </div>
       <div className="flex gap-[16px]">
         <span className="leading-none h-[16px]">{epochToTime(date)}</span>

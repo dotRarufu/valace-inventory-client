@@ -60,28 +60,16 @@ const AuthenticationTest = () => {
 
   // Sign up user
   useEffect(() => {
-    if (shouldSignUpUser) {
-      const signUp = async () => {
-        const data = {
-          username: username,
-          password: password,
-          passwordConfirm: password,
-        };
-        const a = pb
-          .collection('users')
-          .create(data)
-          .catch(err => {
-            console.log('error in promise:', err);
-          });
-        const record = await a;
-        console.log('sign up successful:', record);
-        setShouldSignUpUser(false);
-      };
+    const fetchData = async () => {
+      try {
+        // Replace 'https://api.example.com/data' with your actual API endpoint
+        const response = await fetch('https://api.example.com/data');
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-      signUp().catch(err => {
-        console.log('err:', err);
-      });
-    }
+    void fetchData();
   }, [password, shouldSignUpUser, username]);
 
   // Log in user

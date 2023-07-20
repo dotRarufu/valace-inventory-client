@@ -45,7 +45,7 @@ const Items = () => {
   );
 
   useEffect(() => {
-    console.log('selected rows:', data);
+    // console.log('selected rows:', data);
   }, [data]);
 
   const moveFilter = (key: string) => {

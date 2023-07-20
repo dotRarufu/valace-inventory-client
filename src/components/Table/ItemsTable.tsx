@@ -27,8 +27,6 @@ const ItemsTable = ({ setData, data }: Props) => {
   //   setSelectedRowsId(ids);
   // }, [data, setSelectedRowsId]);
 
-  console.log('re renders');
-
   const columns = useMemo(() => {
     const handleHeaderCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newData = [...data].map(d => ({

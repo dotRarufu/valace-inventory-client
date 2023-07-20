@@ -3,6 +3,9 @@ import pb from '../lib/pocketbase';
 
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../App';
+import { getUser } from '../utils/getUser';
+import { getUserPath } from '../utils/getUserPath';
+import { UsersResponse } from '../../pocketbase-types';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -12,30 +15,26 @@ const Login = () => {
   const { user, setUser } = useContext(UserContext)!;
 
   useEffect(() => {
-    console.log('user:', user);
     if (user !== null) {
-      console.log('has user, navigate to admin:', user);
-      navigate('/admin');
+      navigate('/' + getUserPath(user.role));
     }
   }, [navigate, user]);
 
   useEffect(() => {
-    console.log('shouldLogin:', shouldLogin);
     if (shouldLogin) {
       const loginUser = async () => {
-        const authData = await pb
+        const user = await pb
           .collection('users')
-          .authWithPassword(username, password);
+          .authWithPassword<UsersResponse>(username, password);
 
         console.log('user login successful:');
-        setUser(authData.record);
+
+        setUser(user.record);
         setShouldLogin(false);
         navigate('/admin');
       };
 
-      loginUser().catch(err => {
-        console.log('err:', err);
-      });
+      void loginUser();
     }
   }, [navigate, password, setUser, shouldLogin, username]);
 

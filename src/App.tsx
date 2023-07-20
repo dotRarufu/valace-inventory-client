@@ -5,64 +5,24 @@ import ActivityLog from './pages/ActivityLog';
 import Accounts from './pages/Accounts';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import pb from './lib/pocketbase';
-import { Admin, Record } from 'pocketbase';
-
-// const router = createBrowserRouter([
-//   {
-//     path: '/',
-//     element: <Root />,
-//     children: [
-//       {
-//         path: 'login',
-//         element: <Login />,
-//       },
-//     ],
-//   },
-//   {
-//     path: 'app',
-//     element: <ProtectedRoute />
-//     children: [
-//       {
-//         path: 'admin',
-//         element: <Admin />,
-//         children: [
-//           {
-//             path: '',
-//             element: <Navigate to={'/app/items'} />,
-//           },
-//           {
-//             path: 'reports',
-//             element: <div>reports</div>,
-//           },
-//           {
-//             path: 'items',
-//             element: <Items />,
-//           },
-//           {
-//             path: 'activity-log',
-//             element: <ActivityLog />,
-//           },
-//           {
-//             path: 'accounts',
-//             element: <Accounts />,
-//           },
-//         ],
-//       },
-//     ],
-//   },
-// ]);
+import { UsersResponse } from '../pocketbase-types';
+import { getUser } from './utils/getUser';
+import { getUserPath } from './utils/getUserPath';
 
 type UserState = {
-  user: Record | Admin | null;
-  setUser: React.Dispatch<React.SetStateAction<Record | Admin | null>>;
+  user: UsersResponse | null;
+  setUser: React.Dispatch<React.SetStateAction<UsersResponse | null>>;
 };
 
 export const UserContext = createContext<UserState | null>(null);
 
 const App = () => {
-  const [user, setUser] = useState(pb.authStore.model);
+  const [user, setUser] = useState<UsersResponse | null>(
+    // assumes that no pocketbase admin account log in
+    pb.authStore.model as unknown as UsersResponse
+  );
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
@@ -72,7 +32,15 @@ const App = () => {
         <Route
           path="admin"
           element={
-            <ProtectedRoute redirectPath="/login" isAllowed={!!user}>
+            <ProtectedRoute
+              redirectPath={`/${getUserPath(user?.role)}`}
+              isAllowed={!!user && user.role === 0}
+            >
+              {/* {(() => {
+                console.log('user role:', user?.role);
+                console.log('condition:', !!user && user.role === 0);
+                return '';
+              })()} */}
               <AdminLayout />
             </ProtectedRoute>
           }
@@ -83,6 +51,19 @@ const App = () => {
           <Route path="activity-log" element={<ActivityLog />} />
           <Route path="accounts" element={<Accounts />} />
         </Route>
+        <Route path="unauthorized" element={<div>Unauthorized</div>} />
+
+        <Route
+          path="staff"
+          element={
+            <ProtectedRoute
+              redirectPath={`/${getUserPath(user?.role)}`}
+              isAllowed={!!user && user.role === 1}
+            >
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        ></Route>
       </Routes>
     </UserContext.Provider>
   );
