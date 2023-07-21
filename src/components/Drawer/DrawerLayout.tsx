@@ -7,6 +7,8 @@ type Props = {
   activeTable: 'accounts' | 'items' | null;
   isDrawerInEdit: boolean;
   setIsDrawerInEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  activeRowId: string;
+  setShouldUpdateTable: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const DrawerLayout = ({
@@ -14,6 +16,8 @@ const DrawerLayout = ({
   activeTable,
   isDrawerInEdit,
   setIsDrawerInEdit,
+  activeRowId,
+  setShouldUpdateTable,
 }: Props) => {
   return (
     <div className="drawer drawer-end">
@@ -23,11 +27,15 @@ const DrawerLayout = ({
         <AccountsSidebar
           isDrawerInEdit={isDrawerInEdit}
           setIsDrawerInEdit={setIsDrawerInEdit}
+          activeRowId={activeRowId}
+          setShouldUpdateTable={setShouldUpdateTable}
         />
       ) : (
         <ItemsSidebar
           isDrawerInEdit={isDrawerInEdit}
           setIsDrawerInEdit={setIsDrawerInEdit}
+          activeRowId={activeRowId}
+          setShouldUpdateTable={setShouldUpdateTable}
         />
       )}
     </div>

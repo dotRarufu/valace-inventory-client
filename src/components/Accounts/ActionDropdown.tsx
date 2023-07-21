@@ -7,16 +7,18 @@ import { useDrawer } from '../../hooks/useDrawer';
 
 type Props = {
   position?: 'top' | 'bottom';
+  id: string;
 };
 
-const ActionDropdown = ({ position }: Props) => {
-  const { setIsDrawerInEdit } = useDrawer();
+const ActionDropdown = ({ position, id }: Props) => {
+  const { setIsDrawerInEdit, setActiveRowId } = useDrawer();
 
   const handleViewClick = () => {
+    setActiveRowId(id);
     setIsDrawerInEdit(false);
   };
   const handleEditClick = () => {
-    console.log('edit click');
+    setActiveRowId(id);
     setIsDrawerInEdit(true);
   };
 

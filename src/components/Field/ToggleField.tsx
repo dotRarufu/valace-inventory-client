@@ -1,28 +1,22 @@
-import { ReactNode, useState } from 'react';
-
 type Props = {
   label: string;
-  initialIsChecked: boolean;
-  stringContent?: string;
-  elementContent?: ReactNode;
+  stringContent: boolean;
   isUpdate?: boolean;
   values: {
     checkedLabel: string;
     uncheckedLabel: string;
     callback?: (isChecked: boolean) => void;
   };
+  handleChange: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ToggleField = ({
   label,
-  initialIsChecked,
   stringContent,
-  elementContent,
   isUpdate,
   values,
+  handleChange,
 }: Props) => {
-  const [isChecked, setIsChecked] = useState(initialIsChecked);
-
   return (
     <li className="flex flex-col leading-none py-[8px]">
       {!isUpdate ? (
@@ -30,7 +24,13 @@ const ToggleField = ({
           <span className=" h-[16px] text-primary/50 text-[24px]">{label}</span>
           :
           <div className="h-[16px] max-w-[445px] w-full text-[24px] text-primary font-semibold ">
-            {stringContent || elementContent}
+            <a
+              className={`${
+                stringContent ? 'text-success' : 'text-error'
+              } text-[24px] font-semibold uppercase h-[16px] leading-none`}
+            >
+              {stringContent ? values.checkedLabel : values.uncheckedLabel}
+            </a>
           </div>
         </div>
       ) : (
@@ -43,11 +43,11 @@ const ToggleField = ({
             <input
               type="checkbox"
               className="toggle toggle-success"
-              checked={isChecked}
-              onChange={e => setIsChecked(e.target.checked)}
+              checked={stringContent}
+              onChange={e => handleChange(e.target.checked)}
             />
             <span className="uppercase text-[24px] text-primary font-semibold h-[16px]">
-              {isChecked ? values.checkedLabel : values.uncheckedLabel}
+              {stringContent ? values.checkedLabel : values.uncheckedLabel}
             </span>
           </div>
         </div>

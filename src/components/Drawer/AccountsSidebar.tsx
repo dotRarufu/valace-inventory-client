@@ -2,15 +2,78 @@ import SelectField from '../Field/SelectField';
 import TextInputField from '../Field/TextInputField';
 import PasswordField from '../Field/PasswordField';
 import ToggleField from '../Field/ToggleField';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import pb from '../../lib/pocketbase';
+import {
+  Collections,
+  UserRecord,
+  UserResponse,
+} from '../../../pocketbase-types';
 
 type Props = {
   isDrawerInEdit: boolean;
   setIsDrawerInEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  activeRowId: string;
+  setShouldUpdateTable: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const AccountsSidebar = ({ isDrawerInEdit, setIsDrawerInEdit }: Props) => {
+const AccountsSidebar = ({
+  isDrawerInEdit,
+  setIsDrawerInEdit,
+  activeRowId,
+  setShouldUpdateTable,
+}: Props) => {
   const labelRef = useRef<HTMLLabelElement>(null);
+  const [username, setUsername] = useState('test');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [password, setPassword] = useState('mypassword');
+  const [isActive, setIsActive] = useState(false);
+
+  const [shouldUpdate, setShouldUpdate] = useState(false);
+
+  useEffect(() => {
+    if (!shouldUpdate) return;
+
+    const updateAccount = async () => {
+      const data = {
+        username,
+        is_admin: isAdmin,
+        plain_password: password,
+        is_active: isActive,
+      };
+      const res = await pb
+        .collection(Collections.User)
+        .update(activeRowId, data);
+
+      setShouldUpdateTable(true);
+      setShouldUpdate(false);
+    };
+
+    void updateAccount();
+  }, [
+    activeRowId,
+    isActive,
+    isAdmin,
+    password,
+    setShouldUpdateTable,
+    shouldUpdate,
+    username,
+  ]);
+
+  useEffect(() => {
+    const getAccountRow = async () => {
+      const res = await pb
+        .collection(Collections.User)
+        .getOne<UserResponse>(activeRowId);
+
+      setUsername(res.username);
+      setIsAdmin(res.is_admin);
+      setPassword(res.plain_password);
+      setIsActive(res.is_active);
+    };
+
+    void getAccountRow();
+  }, [activeRowId]);
 
   return (
     <div className="drawer-side z-[9999]">
@@ -25,30 +88,25 @@ const AccountsSidebar = ({ isDrawerInEdit, setIsDrawerInEdit }: Props) => {
         <ul>
           <TextInputField
             label="Username"
-            stringContent="admin01"
+            stringContent={username}
             isUpdate={isDrawerInEdit}
+            handleChange={setUsername}
           />
           <SelectField
             label="Role"
-            elementContent={
-              <span className="badge h-fit text-[20px] bg-[#4A000D] text-secondary py-[4px] px-[24px] -translate-y-[12.5%] ">
-                <span className="h-[13px] leading-none uppercase">Admin</span>
-              </span>
-            }
-            dropdown={[{ label: 'Admin' }, { label: 'user' }]}
+            stringContent={isAdmin ? 'Admin' : 'Staff'}
+            handleChange={setIsAdmin}
+            dropdown={[{ label: 'Admin' }, { label: 'Staff' }]}
             isUpdate={isDrawerInEdit}
           />
           {!isDrawerInEdit && (
-            <TextInputField
-              label="Created At"
-              stringContent="07/23/2023"
-              isUpdate={isDrawerInEdit}
-            />
+            <TextInputField label="Created At" stringContent="07/23/2023" />
           )}
           <PasswordField
             label="Password"
-            stringContent="•••••••••••"
+            stringContent={password}
             isUpdate={isDrawerInEdit}
+            handleChange={setPassword}
           />
 
           {!isDrawerInEdit && (
@@ -61,17 +119,13 @@ const AccountsSidebar = ({ isDrawerInEdit, setIsDrawerInEdit }: Props) => {
 
           <ToggleField
             label="Status"
-            elementContent={
-              <a className="text-success text-[24px] font-semibold uppercase h-[16px] leading-none">
-                ACTIVE
-              </a>
-            }
+            stringContent={isActive}
             values={{
               checkedLabel: 'ACTIVE',
               uncheckedLabel: 'INACTIVE',
             }}
-            initialIsChecked={true}
             isUpdate={isDrawerInEdit}
+            handleChange={setIsActive}
           />
         </ul>
 
@@ -85,7 +139,12 @@ const AccountsSidebar = ({ isDrawerInEdit, setIsDrawerInEdit }: Props) => {
               if (isDrawerInEdit) {
                 labelRef?.current?.click();
               }
+
               setIsDrawerInEdit(!isDrawerInEdit);
+
+              if (isDrawerInEdit) {
+                setShouldUpdate(true);
+              }
             }}
             className="btn btn-primary px-[16px] text-[20px]  font-semibold"
           >

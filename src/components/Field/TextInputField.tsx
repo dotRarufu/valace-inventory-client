@@ -1,18 +1,26 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 type Props = {
   label: string;
-  stringContent?: string;
-  elementContent?: ReactNode;
+  stringContent: string;
   isUpdate?: boolean;
+  handleChange?: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const TextInputField = ({
   label,
   stringContent,
-  elementContent,
+
   isUpdate,
+  handleChange,
 }: Props) => {
+  useEffect(() => {
+    // todo: causes error, fix this
+    if (stringContent !== undefined) return;
+    console.log('label:', label);
+    console.log('text input field stringContent:', stringContent);
+  }, [label, stringContent]);
+
   return (
     <li className="flex flex-col leading-none py-[8px]">
       {!isUpdate ? (
@@ -22,7 +30,7 @@ const TextInputField = ({
           </span>
 
           <div className="h-[16px] max-w-[445px] w-full text-[24px] text-primary font-semibold ">
-            {stringContent || elementContent}
+            {stringContent}
           </div>
         </div>
       ) : (
@@ -34,6 +42,8 @@ const TextInputField = ({
           <input
             className="input input-bordered max-w-[445px] w-full bg-primary/10 rounded-[5px] pt-[6px] text-primary text-[24px] [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
             placeholder=""
+            onChange={e => handleChange && handleChange(e.target.value)}
+            value={stringContent}
           />
         </div>
       )}

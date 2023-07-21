@@ -14,7 +14,8 @@ export interface AccountDataRow extends UserResponse {
 
 const Accounts = () => {
   const [rowData, setRowData] = useState<AccountDataRow[]>([]);
-  const { setActiveTable } = useDrawer();
+  const { setActiveTable, shouldUpdateTable, setShouldUpdateTable } =
+    useDrawer();
   const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
@@ -33,6 +34,23 @@ const Accounts = () => {
 
     void getAccounts();
   }, []);
+
+  // todo; refactor this
+  useEffect(() => {
+    if (!shouldUpdateTable) return;
+
+    const getAccounts = async () => {
+      // admins are stored in user collection to store the the plain password
+      const staffResult = await pb
+        .collection('user')
+        .getList<UserResponse>(1, 5);
+
+      setRowData(staffResult.items);
+      setShouldUpdateTable(false);
+    };
+
+    void getAccounts();
+  }, [setShouldUpdateTable, shouldUpdateTable]);
 
   return (
     <div className="flex flex-col gap-[16px] pb-[28px] px-[36px] h-full  ">

@@ -13,23 +13,28 @@ export type DrawerContext = {
   >;
   isDrawerInEdit: boolean;
   setIsDrawerInEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  setActiveRowId: React.Dispatch<React.SetStateAction<string>>;
+  shouldUpdateTable: boolean;
+  setShouldUpdateTable: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const AdminLayout = () => {
-  // use context hook and pass setState to outlet 'instances'
-  // get data in drawer by using useContext
-  // const [activeDrawer, setActiveDrawer] = useState<ReactNode>(<ItemsSidebar />);
   const user = useContext(UserContext);
   const [isDrawerInEdit, setIsDrawerInEdit] = useState(false);
   const [activeTable, setActiveTable] = useState<'accounts' | 'items' | null>(
     null
   );
+  const [activeRowId, setActiveRowId] = useState('');
+  const [shouldUpdateTable, setShouldUpdateTable] = useState(false);
 
   return (
     <DrawerLayout
+      // todo: move in context
       activeTable={activeTable}
       isDrawerInEdit={isDrawerInEdit}
       setIsDrawerInEdit={setIsDrawerInEdit}
+      activeRowId={activeRowId}
+      setShouldUpdateTable={setShouldUpdateTable}
     >
       <div className="h-screen w-screen flex overflow-y-clip">
         <NavBar />
@@ -44,6 +49,9 @@ const AdminLayout = () => {
               setActiveTable,
               isDrawerInEdit,
               setIsDrawerInEdit,
+              setActiveRowId,
+              shouldUpdateTable,
+              setShouldUpdateTable,
             }}
           />
         </div>

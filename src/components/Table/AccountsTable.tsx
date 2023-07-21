@@ -80,12 +80,16 @@ const AccountsTable = ({ setData, data }: Props) => {
         header: () => 'Actions',
         // pass the item's id? para wala ng context sa parent
         cell: info => (
-          <ActionDropdown position={info.row.index > 4 ? 'top' : 'bottom'} />
+          <ActionDropdown
+            position={info.row.index > 4 ? 'top' : 'bottom'}
+            // improve this, get the id from info param instead
+            id={data[info.row.index].id}
+          />
         ),
         footer: info => info.column.id,
       }),
     ];
-  }, []);
+  }, [data]);
 
   const table = useReactTable({
     data,

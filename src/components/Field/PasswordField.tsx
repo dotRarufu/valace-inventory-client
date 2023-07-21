@@ -5,15 +5,15 @@ import NoEye from '../Icons/NoEye';
 type Props = {
   label: string;
   stringContent?: string;
-  elementContent?: ReactNode;
   isUpdate?: boolean;
+  handleChange: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const PasswordField = ({
   label,
   stringContent,
-  elementContent,
   isUpdate,
+  handleChange,
 }: Props) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -26,7 +26,7 @@ const PasswordField = ({
           </span>
 
           <div className="h-[16px] max-w-[445px] w-full text-[24px] text-primary font-semibold ">
-            {stringContent || elementContent}
+            {stringContent}
           </div>
         </div>
       ) : (
@@ -40,6 +40,8 @@ const PasswordField = ({
               className="input input-bordered  w-full bg-primary/10 rounded-[5px] pt-[6px] text-primary text-[24px] [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
               placeholder=""
               type={isVisible ? 'text' : 'password'}
+              value={stringContent}
+              onChange={e => handleChange(e.target.value)}
             />
             <label
               onClick={() => setIsVisible(!isVisible)}

@@ -8,9 +8,16 @@ import qrCodeSample from '../../assets/qr.png';
 type Props = {
   isDrawerInEdit: boolean;
   setIsDrawerInEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  activeRowId: string;
+  setShouldUpdateTable: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const ItemsSidebar = ({ isDrawerInEdit, setIsDrawerInEdit }: Props) => {
+const ItemsSidebar = ({
+  isDrawerInEdit,
+  setIsDrawerInEdit,
+  activeRowId,
+  setShouldUpdateTable,
+}: Props) => {
   return (
     <div className="drawer-side z-[9999]">
       <label htmlFor="my-drawer" className="drawer-overlay"></label>
@@ -53,17 +60,12 @@ const ItemsSidebar = ({ isDrawerInEdit, setIsDrawerInEdit }: Props) => {
           />
           <ToggleField
             label="Status"
-            elementContent={
-              <a className="text-success text-[24px] font-semibold uppercase h-[16px] leading-none">
-                Available
-              </a>
-            }
             values={{
               checkedLabel: 'AVAILABLE',
               uncheckedLabel: 'UNAVAILABLE',
             }}
-            initialIsChecked={true}
             isUpdate={isDrawerInEdit}
+            stringContent={true}
           />
           <TextInputField
             label="Location"
