@@ -1,6 +1,6 @@
-import { useOutletContext } from 'react-router-dom';
 import { DrawerContext } from '../components/AdminLayout';
+import { useContext } from 'react';
 
 export const useDrawer = () => {
-  return useOutletContext<DrawerContext>();
+  return useContext(DrawerContext);
 };

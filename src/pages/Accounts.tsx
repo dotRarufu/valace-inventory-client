@@ -1,8 +1,6 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Fab from '../components/Fab';
 import Add from '../components/Icons/Add';
-import SearchBar from '../components/SearchBar';
-
 import { UserResponse } from '../../pocketbase-types';
 import AccountsTable from '../components/Table/AccountsTable';
 import pb from '../lib/pocketbase';
@@ -15,8 +13,7 @@ export interface AccountDataRow extends UserResponse {
 const Accounts = () => {
   const [rowData, setRowData] = useState<AccountDataRow[]>([]);
   const { setActiveTable, shouldUpdateTable, setShouldUpdateTable } =
-    useDrawer();
-  const [isEdit, setIsEdit] = useState(false);
+    useDrawer()!;
 
   useEffect(() => {
     setActiveTable('accounts');
@@ -35,7 +32,7 @@ const Accounts = () => {
     void getAccounts();
   }, []);
 
-  // todo; refactor this
+  // separated for readability
   useEffect(() => {
     if (!shouldUpdateTable) return;
 

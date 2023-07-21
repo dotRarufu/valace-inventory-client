@@ -1,20 +1,19 @@
 type Props = {
   label: string;
-  stringContent: boolean;
+  value: boolean;
   isUpdate?: boolean;
-  values: {
-    checkedLabel: string;
-    uncheckedLabel: string;
-    callback?: (isChecked: boolean) => void;
+  labelValues: {
+    checked: string;
+    unchecked: string;
   };
   handleChange: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ToggleField = ({
   label,
-  stringContent,
+  value,
   isUpdate,
-  values,
+  labelValues,
   handleChange,
 }: Props) => {
   return (
@@ -26,10 +25,10 @@ const ToggleField = ({
           <div className="h-[16px] max-w-[445px] w-full text-[24px] text-primary font-semibold ">
             <a
               className={`${
-                stringContent ? 'text-success' : 'text-error'
+                value ? 'text-success' : 'text-error'
               } text-[24px] font-semibold uppercase h-[16px] leading-none`}
             >
-              {stringContent ? values.checkedLabel : values.uncheckedLabel}
+              {value ? labelValues.checked : labelValues.unchecked}
             </a>
           </div>
         </div>
@@ -43,11 +42,11 @@ const ToggleField = ({
             <input
               type="checkbox"
               className="toggle toggle-success"
-              checked={stringContent}
+              checked={value}
               onChange={e => handleChange(e.target.checked)}
             />
             <span className="uppercase text-[24px] text-primary font-semibold h-[16px]">
-              {stringContent ? values.checkedLabel : values.uncheckedLabel}
+              {value ? labelValues.checked : labelValues.unchecked}
             </span>
           </div>
         </div>

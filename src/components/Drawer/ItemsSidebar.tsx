@@ -30,31 +30,25 @@ const ItemsSidebar = ({
 
         <Carousel isUpdate={isDrawerInEdit} />
 
-        <ul>
+        {/* <ul>
           <TextInputField
             label="Property Number"
-            stringContent="ABC"
+            value="ABC"
             isUpdate={isDrawerInEdit}
           />
           <TextInputField
             label="Name"
-            stringContent="Table"
+            value="Table"
             isUpdate={isDrawerInEdit}
           />
           <TextInputField
             label="Quantity"
-            stringContent="24"
+            value="24"
             isUpdate={isDrawerInEdit}
           />
           <SelectField
             label="Type"
-            elementContent={
-              <span className="badge h-fit text-[20px] badge-primary py-[4px] px-[24px] -translate-y-[12.5%] ">
-                <span className="h-[13px] leading-none uppercase">
-                  Furniture
-                </span>
-              </span>
-            }
+           
             dropdown={[{ label: 'Furniture' }, { label: 'Office' }]}
             isUpdate={isDrawerInEdit}
           />
@@ -93,7 +87,7 @@ const ItemsSidebar = ({
             }
             isUpdate={isDrawerInEdit}
           />
-        </ul>
+        </ul> */}
 
         <div className="h-full"></div>
 
