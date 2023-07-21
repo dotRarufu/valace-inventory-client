@@ -8,32 +8,19 @@ type Props = {
 };
 
 const DrawerLayout = ({ children }: Props) => {
-  const {
-    activeTable,
-    isDrawerInEdit,
-    setIsDrawerInEdit,
-    activeRowId,
-    setShouldUpdateTable,
-  } = useDrawer()!;
+  const { activeTable } = useDrawer()!;
 
   return (
     <div className="drawer drawer-end">
       <input id="my-drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content">{children}</div>
       {activeTable === 'accounts' ? (
-        <AccountsSidebar
-          isDrawerInEdit={isDrawerInEdit}
-          setIsDrawerInEdit={setIsDrawerInEdit}
-          activeRowId={activeRowId}
-          setShouldUpdateTable={setShouldUpdateTable}
-        />
+        <AccountsSidebar />
       ) : (
-        <ItemsSidebar
-          isDrawerInEdit={isDrawerInEdit}
-          setIsDrawerInEdit={setIsDrawerInEdit}
-          activeRowId={activeRowId}
-          setShouldUpdateTable={setShouldUpdateTable}
-        />
+        ''
+        // <ItemsSidebar
+
+        // />
       )}
     </div>
   );

@@ -16,11 +16,14 @@ export const DrawerContext = createContext<{
   setActiveRowId: React.Dispatch<React.SetStateAction<string>>;
   shouldUpdateTable: boolean;
   setShouldUpdateTable: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsDrawerInAdd: React.Dispatch<React.SetStateAction<boolean>>;
+  isDrawerInAdd: boolean;
 } | null>(null);
 
 const AdminLayout = () => {
   const user = useContext(UserContext);
   const [isDrawerInEdit, setIsDrawerInEdit] = useState(false);
+  const [isDrawerInAdd, setIsDrawerInAdd] = useState(false);
   const [activeTable, setActiveTable] = useState<'accounts' | 'items' | null>(
     null
   );
@@ -38,6 +41,8 @@ const AdminLayout = () => {
         setActiveRowId,
         shouldUpdateTable,
         setShouldUpdateTable,
+        isDrawerInAdd,
+        setIsDrawerInAdd,
       }}
     >
       <DrawerLayout

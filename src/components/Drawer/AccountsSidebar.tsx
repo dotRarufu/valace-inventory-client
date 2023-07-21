@@ -5,27 +5,28 @@ import ToggleField from '../Field/ToggleField';
 import { useEffect, useRef, useState } from 'react';
 import pb from '../../lib/pocketbase';
 import { Collections, UserResponse } from '../../../pocketbase-types';
+import { useDrawer } from '../../hooks/useDrawer';
 
-type Props = {
-  isDrawerInEdit: boolean;
-  setIsDrawerInEdit: React.Dispatch<React.SetStateAction<boolean>>;
-  activeRowId: string;
-  setShouldUpdateTable: React.Dispatch<React.SetStateAction<boolean>>;
-};
+const AccountsSidebar = () => {
+  const {
+    activeTable,
+    isDrawerInEdit,
+    setIsDrawerInEdit,
+    activeRowId,
+    setShouldUpdateTable,
+    isDrawerInAdd,
+    setIsDrawerInAdd,
+  } = useDrawer()!;
 
-const AccountsSidebar = ({
-  isDrawerInEdit,
-  setIsDrawerInEdit,
-  activeRowId,
-  setShouldUpdateTable,
-}: Props) => {
-  const labelRef = useRef<HTMLLabelElement>(null);
+  // const cancelLabelRef = useRef<HTMLLabelElement>(null);
+  const confirmLabelRef = useRef<HTMLLabelElement>(null);
   const [username, setUsername] = useState('test');
   const [isAdmin, setIsAdmin] = useState(false);
   const [password, setPassword] = useState('mypassword');
   const [isActive, setIsActive] = useState(false);
   const [id, setId] = useState('');
 
+  const [shouldAddAccount, setShouldAddAccount] = useState(false);
   const [shouldUpdate, setShouldUpdate] = useState(false);
 
   useEffect(() => {
@@ -71,6 +72,36 @@ const AccountsSidebar = ({
     void getAccountRow();
   }, [activeRowId]);
 
+  useEffect(() => {
+    if (!shouldAddAccount) return;
+
+    const addAccount = async () => {
+      const data = {
+        username,
+        is_admin: isAdmin,
+        is_active: isActive,
+        plain_password: password,
+        password,
+        passwordConfirm: password,
+      };
+      await pb.collection(Collections.User).create(data);
+
+      setIsDrawerInAdd(false);
+      setShouldUpdateTable(true);
+      setShouldAddAccount(false);
+    };
+
+    void addAccount();
+  }, [
+    isActive,
+    isAdmin,
+    password,
+    setIsDrawerInAdd,
+    setShouldUpdateTable,
+    shouldAddAccount,
+    username,
+  ]);
+
   return (
     <div className="drawer-side z-[9999]">
       <label htmlFor="my-drawer" className="drawer-overlay"></label>
@@ -85,7 +116,8 @@ const AccountsSidebar = ({
           <TextInputField
             label="Username"
             value={username}
-            isUpdate={isDrawerInEdit}
+            // todo: update the prop name
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
             handleChange={setUsername}
           />
           <SelectField
@@ -95,20 +127,20 @@ const AccountsSidebar = ({
               { label: 'Admin', callback: () => setIsAdmin(true) },
               { label: 'Staff', callback: () => setIsAdmin(false) },
             ]}
-            isUpdate={isDrawerInEdit}
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
           />
-          {!isDrawerInEdit && (
+          {!isDrawerInEdit && !isDrawerInAdd && (
             <TextInputField label="Created At" value="07/23/2023" />
           )}
           <PasswordField
             label="Password"
             value={password}
-            isUpdate={isDrawerInEdit}
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
             handleChange={setPassword}
           />
 
-          {!isDrawerInEdit && (
-            <TextInputField label="UID" value={id} isUpdate={isDrawerInEdit} />
+          {!isDrawerInEdit && !isDrawerInAdd && (
+            <TextInputField label="UID" value={id} />
           )}
 
           <ToggleField
@@ -118,7 +150,7 @@ const AccountsSidebar = ({
               checked: 'ACTIVE',
               unchecked: 'INACTIVE',
             }}
-            isUpdate={isDrawerInEdit}
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
             handleChange={setIsActive}
           />
         </ul>
@@ -128,24 +160,38 @@ const AccountsSidebar = ({
         {/* <QrCodeModal /> */}
 
         <div className="flex justify-end items-center gap-[16px] py-[32px]">
-          <button
+          <label
+            ref={confirmLabelRef}
+
+            htmlFor="my-drawer"
             onClick={() => {
               if (isDrawerInEdit) {
-                labelRef?.current?.click();
+                confirmLabelRef?.current?.click();
+
                 setShouldUpdate(true);
               }
 
+              if (isDrawerInAdd) {
+                confirmLabelRef?.current?.click();
+
+                setShouldAddAccount(true);
+              }
+
               setIsDrawerInEdit(!isDrawerInEdit);
+              setIsDrawerInAdd(!isDrawerInAdd);
             }}
             className="btn btn-primary px-[16px] text-[20px]  font-semibold"
           >
             <span className="h-[13px] ">
-              {!isDrawerInEdit ? 'Update' : 'Save Changes'}
+              {isDrawerInEdit
+                ? 'Save Changes'
+                : isDrawerInAdd
+                ? 'Add Account'
+                : 'Update'}
             </span>
-          </button>
+          </label>
           <label
             htmlFor="my-drawer"
-            ref={labelRef}
             className="btn btn-outline px-[16px] hover:btn-error text-[20px]  font-semibold"
             onClick={() => setIsDrawerInEdit(false)}
           >

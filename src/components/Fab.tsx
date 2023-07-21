@@ -5,9 +5,10 @@ type Props = {
   content?: ReactNode;
   label?: ReactNode;
   tooltip?: string;
+  handleClick: () => void;
 };
 
-const Fab = ({ content, label, tooltip }: Props) => {
+const Fab = ({ content, label, tooltip, handleClick }: Props) => {
   return (
     <div className="dropdown dropdown-top dropdown-end  absolute bottom-[16px] right-[16px] z-[1]">
       <div
@@ -17,6 +18,8 @@ const Fab = ({ content, label, tooltip }: Props) => {
         data-tip={tooltip}
       >
         <label
+          onClick={handleClick}
+          htmlFor="my-drawer"
           tabIndex={0}
           className="btn btn-circle btn-lg btn-primary px-[16px]"
         >

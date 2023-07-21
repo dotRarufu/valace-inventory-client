@@ -12,8 +12,13 @@ export interface AccountDataRow extends UserResponse {
 
 const Accounts = () => {
   const [rowData, setRowData] = useState<AccountDataRow[]>([]);
-  const { setActiveTable, shouldUpdateTable, setShouldUpdateTable } =
-    useDrawer()!;
+  const {
+    setActiveTable,
+    shouldUpdateTable,
+    setShouldUpdateTable,
+    setIsDrawerInAdd,
+    isDrawerInAdd,
+  } = useDrawer()!;
 
   useEffect(() => {
     setActiveTable('accounts');
@@ -55,7 +60,15 @@ const Accounts = () => {
         <AccountsTable data={rowData} setData={setRowData} />
         {/* <Pagination /> */}
       </div>
-      <Fab label={<Add />} tooltip="Account" />
+      {/* onClick set add account sidebar active */}
+      <Fab
+        handleClick={() => {
+          console.log('runsss');
+          setIsDrawerInAdd(!isDrawerInAdd);
+        }}
+        label={<Add />}
+        tooltip="Account"
+      />
     </div>
   );
 };
