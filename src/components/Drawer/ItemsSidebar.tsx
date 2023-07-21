@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import TextAreaField from '../Field/TextAreaField';
 import TextInputField from '../Field/TextInputField';
 import SelectField from '../Field/SelectField';
@@ -6,9 +5,12 @@ import ToggleField from '../Field/ToggleField';
 import Carousel from './Carousel';
 import qrCodeSample from '../../assets/qr.png';
 
-const ItemsSidebar = () => {
-  const [isUpdate, setIsUpdate] = useState(true);
+type Props = {
+  isDrawerInEdit: boolean;
+  setIsDrawerInEdit: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
+const ItemsSidebar = ({ isDrawerInEdit, setIsDrawerInEdit }: Props) => {
   return (
     <div className="drawer-side z-[9999]">
       <label htmlFor="my-drawer" className="drawer-overlay"></label>
@@ -19,23 +21,23 @@ const ItemsSidebar = () => {
           </span>
         </div>
 
-        <Carousel isUpdate={isUpdate} />
+        <Carousel isUpdate={isDrawerInEdit} />
 
         <ul>
           <TextInputField
             label="Property Number"
             stringContent="ABC"
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
           <TextInputField
             label="Name"
             stringContent="Table"
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
           <TextInputField
             label="Quantity"
             stringContent="24"
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
           <SelectField
             label="Type"
@@ -47,7 +49,7 @@ const ItemsSidebar = () => {
               </span>
             }
             dropdown={[{ label: 'Furniture' }, { label: 'Office' }]}
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
           <ToggleField
             label="Status"
@@ -61,19 +63,19 @@ const ItemsSidebar = () => {
               uncheckedLabel: 'UNAVAILABLE',
             }}
             initialIsChecked={true}
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
           <TextInputField
             label="Location"
             stringContent="3F"
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
           <TextInputField
             label="Supplier"
             stringContent="ValACE"
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
-          {!isUpdate && (
+          {!isDrawerInEdit && (
             <>
               <TextInputField label="Date Added" stringContent="07/03/2023" />
               <TextInputField label="Serial Number" stringContent="2023-0234" />
@@ -87,7 +89,7 @@ const ItemsSidebar = () => {
                 Lorem ipsum is a dummy text...
               </span>
             }
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
         </ul>
 
@@ -95,7 +97,7 @@ const ItemsSidebar = () => {
 
         {/* <QrCodeModal /> */}
 
-        {!isUpdate && (
+        {!isDrawerInEdit && (
           <div className="flex flex-col gap-[8px]">
             <div className="flex justify-between items-center">
               <span className=" h-[16px] text-primary/50 text-[24px] -translate-y-[6px]">
@@ -118,19 +120,22 @@ const ItemsSidebar = () => {
 
         <div className="flex justify-end items-center gap-[16px] py-[32px]">
           <button
-            onClick={() => setIsUpdate(!isUpdate)}
+            onClick={() => setIsDrawerInEdit(!isDrawerInEdit)}
             className="btn btn-primary px-[16px] text-[20px]  font-semibold"
           >
             <span className="h-[13px] ">
-              {!isUpdate ? 'Update' : 'Save Changes'}
+              {!isDrawerInEdit ? 'Update' : 'Save Changes'}
             </span>
           </button>
           <label
             htmlFor="my-drawer"
             className="btn btn-outline px-[16px] hover:btn-error text-[20px]  font-semibold"
-            onClick={() => setIsUpdate(false)}
+            onClick={() => setIsDrawerInEdit(false)}
           >
-            <span className="h-[13px] "> {!isUpdate ? 'Close' : 'Cancel'}</span>
+            <span className="h-[13px] ">
+              {' '}
+              {!isDrawerInEdit ? 'Close' : 'Cancel'}
+            </span>
           </label>
         </div>
       </div>

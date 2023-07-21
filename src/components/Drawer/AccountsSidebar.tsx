@@ -1,12 +1,16 @@
-import { useState } from 'react';
 import SelectField from '../Field/SelectField';
-import TextAreaField from '../Field/TextAreaField';
 import TextInputField from '../Field/TextInputField';
-import ToggleField from '../Field/ToggleField';
 import PasswordField from '../Field/PasswordField';
+import ToggleField from '../Field/ToggleField';
+import { useRef } from 'react';
 
-const Sidebar2 = () => {
-  const [isUpdate, setIsUpdate] = useState(false);
+type Props = {
+  isDrawerInEdit: boolean;
+  setIsDrawerInEdit: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const AccountsSidebar = ({ isDrawerInEdit, setIsDrawerInEdit }: Props) => {
+  const labelRef = useRef<HTMLLabelElement>(null);
 
   return (
     <div className="drawer-side z-[9999]">
@@ -22,7 +26,7 @@ const Sidebar2 = () => {
           <TextInputField
             label="Username"
             stringContent="admin01"
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
           <SelectField
             label="Role"
@@ -32,26 +36,26 @@ const Sidebar2 = () => {
               </span>
             }
             dropdown={[{ label: 'Admin' }, { label: 'user' }]}
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
-          {!isUpdate && (
+          {!isDrawerInEdit && (
             <TextInputField
               label="Created At"
               stringContent="07/23/2023"
-              isUpdate={isUpdate}
+              isUpdate={isDrawerInEdit}
             />
           )}
           <PasswordField
             label="Password"
             stringContent="•••••••••••"
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
 
-          {!isUpdate && (
+          {!isDrawerInEdit && (
             <TextInputField
               label="UID"
               stringContent="550e8400-e29b-41d4-a716-446655440000"
-              isUpdate={isUpdate}
+              isUpdate={isDrawerInEdit}
             />
           )}
 
@@ -67,7 +71,7 @@ const Sidebar2 = () => {
               uncheckedLabel: 'INACTIVE',
             }}
             initialIsChecked={true}
-            isUpdate={isUpdate}
+            isUpdate={isDrawerInEdit}
           />
         </ul>
 
@@ -77,19 +81,27 @@ const Sidebar2 = () => {
 
         <div className="flex justify-end items-center gap-[16px] py-[32px]">
           <button
-            onClick={() => setIsUpdate(!isUpdate)}
+            onClick={() => {
+              if (isDrawerInEdit) {
+                labelRef?.current?.click();
+              }
+              setIsDrawerInEdit(!isDrawerInEdit);
+            }}
             className="btn btn-primary px-[16px] text-[20px]  font-semibold"
           >
             <span className="h-[13px] ">
-              {!isUpdate ? 'Update' : 'Save Changes'}
+              {!isDrawerInEdit ? 'Update' : 'Save Changes'}
             </span>
           </button>
           <label
             htmlFor="my-drawer"
+            ref={labelRef}
             className="btn btn-outline px-[16px] hover:btn-error text-[20px]  font-semibold"
-            onClick={() => setIsUpdate(false)}
+            onClick={() => setIsDrawerInEdit(false)}
           >
-            <span className="h-[13px] "> {!isUpdate ? 'Close' : 'Cancel'}</span>
+            <span className="h-[13px] ">
+              {!isDrawerInEdit ? 'Close' : 'Cancel'}
+            </span>
           </label>
         </div>
       </div>
@@ -97,4 +109,4 @@ const Sidebar2 = () => {
   );
 };
 
-export default Sidebar2;
+export default AccountsSidebar;

@@ -5,15 +5,17 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import Pagination from '../Pagination';
-import { useMemo } from 'react';
-import ActionDropdown from './ActionDropdown';
+import { ReactNode, useMemo } from 'react';
+import ActionDropdown from '../Accounts/ActionDropdown';
 import { AccountDataRow } from '../../pages/Accounts';
+import { useDrawer } from '../../hooks/useDrawer';
 
 const columnHelper = createColumnHelper<AccountDataRow>();
 
 type Props = {
   setData: React.Dispatch<React.SetStateAction<AccountDataRow[]>>;
   data: AccountDataRow[];
+  // renderActionDropdown: (position: 'top' | 'bottom') => ReactNode;
 };
 
 const AccountsTable = ({ setData, data }: Props) => {
@@ -92,9 +94,13 @@ const AccountsTable = ({ setData, data }: Props) => {
   });
 
   return (
-    <div className=" h-full  flex flex-col justify-between  pb-[40px] relative ">
-      <table className=" table table-zebra bg-secondary rounded-[5px]  overflow-y-clip ">
-        <thead className="bg-primary text-secondary text-base font-khula ">
+    <div className=" h-full  flex flex-col justify-between  pb-[40px] relative  first-line:">
+      <table
+        className=" table table-zebra bg-secondary  rounded-[5px]
+      overflow-x-clip 
+        "
+      >
+        <thead className="bg-primary text-secondary text-base font-khula rounded-[5px]  ">
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
