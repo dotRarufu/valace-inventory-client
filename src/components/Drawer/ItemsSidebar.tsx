@@ -4,20 +4,52 @@ import SelectField from '../Field/SelectField';
 import ToggleField from '../Field/ToggleField';
 import Carousel from './Carousel';
 import qrCodeSample from '../../assets/qr.png';
+import { useDrawer } from '../../hooks/useDrawer';
+import { useEffect, useState } from 'react';
+import pb from '../../lib/pocketbase';
+import { Collections, ItemResponse } from '../../../pocketbase-types';
 
-type Props = {
-  isDrawerInEdit: boolean;
-  setIsDrawerInEdit: React.Dispatch<React.SetStateAction<boolean>>;
-  activeRowId: string;
-  setShouldUpdateTable: React.Dispatch<React.SetStateAction<boolean>>;
-};
+const ItemsSidebar = () => {
+  const { isDrawerInEdit, setIsDrawerInEdit, activeRowId } = useDrawer()!;
 
-const ItemsSidebar = ({
-  isDrawerInEdit,
-  setIsDrawerInEdit,
-  activeRowId,
-  setShouldUpdateTable,
-}: Props) => {
+  const [type, setType] = useState<'Furniture' | 'Office' | 'IT'>('Furniture');
+  const [isAvailable] = useState(false);
+  const [propertyNumber, setPropertyNumber] = useState('');
+  const [name, setName] = useState('');
+  const [quantity, setQuantity] = useState(0);
+  const [location, setLocation] = useState('');
+  const [supplier, setSupplier] = useState('');
+  const [dateAdded, setDateAdded] = useState('');
+  const [serialNumber, setSerialNumber] = useState('');
+  const [remarks, setRemarks] = useState('');
+  // const [images, setImages] = useState();
+
+  useEffect(() => {
+    const getAccountRow = async () => {
+      // fixes the bug, try removing this when accounts is all done
+      // like in accounts sidebar
+      if (activeRowId === '') return;
+
+      const res = await pb
+        .collection(Collections.Item)
+        .getOne<ItemResponse>(activeRowId);
+      console.log('res:', res);
+      console.log('activeRowId:', activeRowId);
+
+      setPropertyNumber(res.property_number);
+      setName(res.name);
+      setQuantity(res.quantity);
+      setLocation(res.location);
+      setSupplier(res.supplier);
+      setDateAdded(res.created);
+      setSerialNumber(res.serial_number);
+      setRemarks(res.remarks);
+      // setImages()
+    };
+
+    void getAccountRow();
+  }, [activeRowId]);
+
   return (
     <div className="drawer-side z-[9999]">
       <label htmlFor="my-drawer" className="drawer-overlay"></label>
@@ -30,51 +62,54 @@ const ItemsSidebar = ({
 
         <Carousel isUpdate={isDrawerInEdit} />
 
-        {/* <ul>
+        <ul>
           <TextInputField
             label="Property Number"
-            value="ABC"
+            value={propertyNumber}
             isUpdate={isDrawerInEdit}
           />
-          <TextInputField
-            label="Name"
-            value="Table"
-            isUpdate={isDrawerInEdit}
-          />
+          <TextInputField label="Name" value={name} isUpdate={isDrawerInEdit} />
           <TextInputField
             label="Quantity"
-            value="24"
+            value={quantity.toString()}
             isUpdate={isDrawerInEdit}
           />
           <SelectField
             label="Type"
-           
-            dropdown={[{ label: 'Furniture' }, { label: 'Office' }]}
+            value={type}
+            dropdown={[
+              { label: 'Furniture', callback: () => setType('Furniture') },
+              { label: 'Office', callback: () => setType('Office') },
+              { label: 'IT', callback: () => setType('IT') },
+            ]}
             isUpdate={isDrawerInEdit}
           />
           <ToggleField
             label="Status"
-            values={{
-              checkedLabel: 'AVAILABLE',
-              uncheckedLabel: 'UNAVAILABLE',
+            value={isAvailable}
+            labelValues={{
+              checked: 'AVAILABLE',
+              unchecked: 'UNAVAILABLE',
             }}
             isUpdate={isDrawerInEdit}
-            stringContent={true}
+            handleChange={() => {
+              //
+            }}
           />
           <TextInputField
             label="Location"
-            stringContent="3F"
+            value={location}
             isUpdate={isDrawerInEdit}
           />
           <TextInputField
             label="Supplier"
-            stringContent="ValACE"
+            value={supplier}
             isUpdate={isDrawerInEdit}
           />
           {!isDrawerInEdit && (
             <>
-              <TextInputField label="Date Added" stringContent="07/03/2023" />
-              <TextInputField label="Serial Number" stringContent="2023-0234" />
+              <TextInputField label="Date Added" value={dateAdded} />
+              <TextInputField label="Serial Number" value={serialNumber} />
             </>
           )}
 
@@ -82,12 +117,12 @@ const ItemsSidebar = ({
             label="Remarks"
             elementContent={
               <span className="truncate font-normal h-fit [leading-trim:both] [text-edge:cap] leading-none ">
-                Lorem ipsum is a dummy text...
+                {remarks}
               </span>
             }
             isUpdate={isDrawerInEdit}
           />
-        </ul> */}
+        </ul>
 
         <div className="h-full"></div>
 

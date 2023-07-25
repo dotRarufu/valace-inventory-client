@@ -1,14 +1,57 @@
 import Kebab from '../Icons/Kebab';
 import fullscreenIcon from '../../assets/fullscreen.svg';
-import qrIcon from '../../assets/qr.svg';
+import qrCodeIcon from '../../assets/qr.svg';
 import editIcon from '../../assets/edit.svg';
 import trashIcon from '../../assets/trash.svg';
+import { useDrawer } from '../../hooks/useDrawer';
+import { useEffect, useState } from 'react';
+import pb from '../../lib/pocketbase';
+import { Collections } from '../../../pocketbase-types';
 
 type Props = {
   position?: 'top' | 'bottom';
+  id: string;
 };
 
-const ActionDropdown = ({ position }: Props) => {
+const ItemsDropdown = ({ position, id }: Props) => {
+  const {
+    setIsDrawerInEdit,
+    setActiveRowId,
+    activeRowId,
+    setShouldUpdateTable,
+  } = useDrawer()!;
+  const [shouldDeleteRow, setShouldDeleteRow] = useState(false);
+
+  const handleViewClick = () => {
+    setActiveRowId(id);
+    setIsDrawerInEdit(false);
+  };
+
+  const handleEditClick = () => {
+    setActiveRowId(id);
+    setIsDrawerInEdit(true);
+  };
+
+  const handleDeleteClick = () => {
+    setShouldDeleteRow(true);
+  };
+
+  const handlePrintClick = () => {
+    console.log('handle print click');
+  };
+
+  useEffect(() => {
+    if (!shouldDeleteRow) return;
+
+    const deleteRow = async () => {
+      await pb.collection(Collections.User).delete(id);
+      setShouldUpdateTable(true);
+      setShouldDeleteRow(false);
+    };
+
+    void deleteRow();
+  }, [activeRowId, id, setShouldUpdateTable, shouldDeleteRow]);
+
   return (
     <div
       className={`dropdown dropdown-end ${
@@ -27,6 +70,7 @@ const ActionDropdown = ({ position }: Props) => {
       >
         <li>
           <label
+            onClick={handleViewClick}
             htmlFor="my-drawer"
             className="drawer-overlay btn btn-ghost justify-between font-khula text-[20px] rounded-[5px]"
           >
@@ -36,6 +80,7 @@ const ActionDropdown = ({ position }: Props) => {
         </li>
         <li>
           <label
+            onClick={handleEditClick}
             htmlFor="my-drawer"
             className="drawer-overlay btn btn-ghost justify-between font-khula text-[20px] rounded-[5px]"
           >
@@ -45,7 +90,7 @@ const ActionDropdown = ({ position }: Props) => {
         </li>
         <li>
           <label
-            htmlFor="my-drawer"
+            onClick={handleDeleteClick}
             className="drawer-overlay btn btn-ghost justify-between font-khula text-[20px] rounded-[5px]"
           >
             <div className=" h-[13px]">Delete</div>
@@ -54,11 +99,11 @@ const ActionDropdown = ({ position }: Props) => {
         </li>
         <li>
           <label
-            htmlFor="my-drawer"
+            onClick={handlePrintClick}
             className="drawer-overlay btn btn-ghost justify-between font-khula text-[20px] rounded-[5px]"
           >
-            <div className=" h-[13px]">Print QR</div>
-            <img src={qrIcon} />
+            <div className=" h-[13px]">Print</div>
+            <img src={qrCodeIcon} />
           </label>
         </li>
       </ul>
@@ -66,4 +111,4 @@ const ActionDropdown = ({ position }: Props) => {
   );
 };
 
-export default ActionDropdown;
+export default ItemsDropdown;

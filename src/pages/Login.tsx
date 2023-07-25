@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 import pb from '../lib/pocketbase';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../App';
 import { Collections, UserResponse } from '../../pocketbase-types';
+import { UserContext } from '../contexts/userContext';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -59,6 +59,9 @@ const Login = () => {
 
       <button onClick={handleLogin} className="btn btn-primary">
         Login
+      </button>
+      <button onClick={() => pb.authStore.clear()} className="btn btn-primary">
+        Logout
       </button>
     </div>
   );

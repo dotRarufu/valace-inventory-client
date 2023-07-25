@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import ActionDropdown from './ActionDropdown';
 
 type Props = {
   contents: Array<{ isBold?: boolean; body: string | ReactNode }>;

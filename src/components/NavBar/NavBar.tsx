@@ -7,14 +7,8 @@ import accountsIcon from '../../assets/users.svg';
 import logoutIcon from '../../assets/logout.svg';
 import Modal from '../Modal/Modal';
 import pb from '../../lib/pocketbase';
-import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../App';
-import { useContext } from 'react';
 
 const NavBar = () => {
-  const navigate = useNavigate();
-  const { setUser } = useContext(UserContext)!;
-
   const handleLogout = () => {
     // setUser(null);
     pb.authStore.clear();

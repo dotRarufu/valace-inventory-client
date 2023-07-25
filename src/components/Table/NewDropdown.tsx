@@ -1,4 +1,3 @@
-import kebabIcon from '../../assets/kebab-horizontal.svg';
 import Kebab from '../Icons/Kebab';
 import fullscreenIcon from '../../assets/fullscreen.svg';
 import qrIcon from '../../assets/qr.svg';

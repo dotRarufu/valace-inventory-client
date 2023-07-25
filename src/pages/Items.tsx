@@ -1,5 +1,3 @@
-import importCsv from '../assets/import-csv.svg';
-import sort from '../assets/sort.svg';
 import Button from '../components/Button';
 import Dropdown from '../components/Dropdown';
 import Fab from '../components/Fab';
@@ -17,14 +15,15 @@ import Add from '../components/Icons/Add';
 import XIcon from '../components/Icons/X';
 import Trash from '../components/Icons/Trash';
 import QrCode from '../components/Icons/QrCode';
-import { ItemData } from '../types/ItemData';
-import { itemRows } from '../sampleData';
+import { Collections, ItemResponse } from '../../pocketbase-types';
+import pb from '../lib/pocketbase';
+import { useDrawer } from '../hooks/useDrawer';
 
 type Filters = {
   [key: string]: 'Ascending' | 'Descending' | 'Disabled';
 };
 
-export interface ItemDataRow extends ItemData {
+export interface ItemDataRow extends ItemResponse {
   selected: boolean;
   actions?: ReactNode;
 }
@@ -39,14 +38,27 @@ const Items = () => {
     Supplier: 'Disabled',
     'Date Added': 'Disabled',
   });
-
-  const [data, setData] = useState<ItemDataRow[]>(
-    itemRows.map(d => ({ selected: false, ...d }))
-  );
+  const { setActiveTable } = useDrawer()!;
 
   useEffect(() => {
-    // console.log('selected rows:', data);
-  }, [data]);
+    setActiveTable('items');
+  }, [setActiveTable]);
+
+  const [data, setData] = useState<ItemDataRow[]>([]);
+  // itemRows.map(d => ({ selected: false, ...d }))
+
+  useEffect(() => {
+    const getItems = async () => {
+      // admins are stored in user collection to store the the plain password
+      const itemsRes = await pb
+        .collection(Collections.Item)
+        .getList<ItemResponse>(1, 8);
+
+      setData(itemsRes.items.map(d => ({ selected: false, ...d })));
+    };
+
+    void getItems();
+  }, []);
 
   const moveFilter = (key: string) => {
     const newFilters = { ...filters };
@@ -154,7 +166,14 @@ const Items = () => {
       <div className="bg-secondary rounded-[5px] h-[752px] overflow-y-scroll">
         <ItemsTable data={data} setData={setData} />
       </div>
-      <Fab label={<Add />} tooltip="Item" />
+      <Fab
+        handleClick={() => {
+          console.log('runsss');
+          // setIsDrawerInAdd(!isDrawerInAdd);
+        }}
+        label={<Add />}
+        tooltip="Item"
+      />
     </div>
   );
 };

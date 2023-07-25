@@ -3,6 +3,7 @@
 */
 
 export enum Collections {
+	Item = "item",
 	Test = "test",
 	User = "user",
 }
@@ -31,6 +32,24 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
+export enum ItemTypeOptions {
+	"Furniture" = "Furniture",
+	"IT" = "IT",
+	"Office" = "Office",
+}
+export type ItemRecord = {
+	name: string
+	quantity?: number
+	location: string
+	supplier?: string
+	is_available?: boolean
+	remarks?: string
+	type: ItemTypeOptions
+	images?: string[]
+	property_number: string
+	serial_number: string
+}
+
 export type TestRecord = {
 	field1?: string
 }
@@ -44,17 +63,20 @@ export type UserRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type ItemResponse<Texpand = unknown> = Required<ItemRecord> & BaseSystemFields<Texpand>
 export type TestResponse<Texpand = unknown> = Required<TestRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+	item: ItemRecord
 	test: TestRecord
 	user: UserRecord
 }
 
 export type CollectionResponses = {
+	item: ItemResponse
 	test: TestResponse
 	user: UserResponse
 }

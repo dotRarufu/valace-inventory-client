@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import adminIcon from '../assets/admin.svg';
 import epochToTime from '../utils/epochToTime';
 import epochToDate from '../utils/epochToDate';
-import { UserContext } from '../App';
+import { UserContext } from '../contexts/userContext';
 
 const TopAppBar = () => {
   const [date, setDate] = useState<number>(Date.now());

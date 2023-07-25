@@ -6,9 +6,8 @@ import {
 } from '@tanstack/react-table';
 import Pagination from '../Pagination';
 import { useMemo } from 'react';
-import { typeIdToText } from '../../utils/typeIdToText';
-import ActionDropdown from './ActionDropdown';
 import { ItemDataRow } from '../../pages/Items';
+import ItemsDropdown from '../Items/ItemsDropdown';
 
 const columnHelper = createColumnHelper<ItemDataRow>();
 
@@ -82,7 +81,7 @@ const ItemsTable = ({ setData, data }: Props) => {
         header: () => 'Type',
         cell: info => (
           <span className="badge text-base badge-primary pt-[2px]">
-            {typeIdToText(info.renderValue() ?? -1)}
+            {info.renderValue()}
           </span>
         ),
         footer: info => info.column.id,
@@ -99,7 +98,7 @@ const ItemsTable = ({ setData, data }: Props) => {
         header: 'Supplier',
         footer: info => info.column.id,
       }),
-      columnHelper.accessor('status', {
+      columnHelper.accessor('is_available', {
         header: () => 'Status',
         cell: info => (
           <span
@@ -119,12 +118,15 @@ const ItemsTable = ({ setData, data }: Props) => {
         header: () => 'Actions',
         // pass the item's id? para wala ng context sa parent
         cell: info => (
-          <ActionDropdown position={info.row.index > 4 ? 'top' : 'bottom'} />
+          <ItemsDropdown
+            id={data[info.row.index].id}
+            position={info.row.index > 4 ? 'top' : 'bottom'}
+          />
         ),
         footer: info => info.column.id,
       }),
     ];
-  }, [data]);
+  }, [data, setData]);
 
   const table = useReactTable({
     data,
@@ -134,7 +136,7 @@ const ItemsTable = ({ setData, data }: Props) => {
 
   return (
     <div className=" h-full  flex flex-col justify-between  pb-[40px] relative ">
-      <table className=" table table-zebra bg-secondary rounded-[5px]  overflow-y-clip ">
+      <table className=" table table-zebra bg-secondary rounded-[5px]  overflow-x-clip ">
         <thead className="bg-primary text-secondary text-base font-khula ">
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>

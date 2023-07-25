@@ -9,7 +9,6 @@ import { useDrawer } from '../../hooks/useDrawer';
 
 const AccountsSidebar = () => {
   const {
-    activeTable,
     isDrawerInEdit,
     setIsDrawerInEdit,
     activeRowId,
@@ -61,6 +60,9 @@ const AccountsSidebar = () => {
       const res = await pb
         .collection(Collections.User)
         .getOne<UserResponse>(activeRowId);
+
+      console.log('res:', res);
+      console.log('activeRowId:', activeRowId);
 
       setUsername(res.username);
       setIsAdmin(res.is_admin);
@@ -162,7 +164,6 @@ const AccountsSidebar = () => {
         <div className="flex justify-end items-center gap-[16px] py-[32px]">
           <label
             ref={confirmLabelRef}
-
             htmlFor="my-drawer"
             onClick={() => {
               if (isDrawerInEdit) {

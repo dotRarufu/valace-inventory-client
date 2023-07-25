@@ -2,8 +2,7 @@ import { Outlet } from 'react-router-dom';
 import NavBar from './NavBar/NavBar';
 import TopAppBar from './TopAppBar';
 import DrawerLayout from './Drawer/DrawerLayout';
-import { createContext, useContext, useState } from 'react';
-import { UserContext } from '../App';
+import { createContext, useState } from 'react';
 
 export const DrawerContext = createContext<{
   activeTable: 'accounts' | 'items' | null;
@@ -21,7 +20,6 @@ export const DrawerContext = createContext<{
 } | null>(null);
 
 const AdminLayout = () => {
-  const user = useContext(UserContext);
   const [isDrawerInEdit, setIsDrawerInEdit] = useState(false);
   const [isDrawerInAdd, setIsDrawerInAdd] = useState(false);
   const [activeTable, setActiveTable] = useState<'accounts' | 'items' | null>(

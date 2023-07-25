@@ -5,10 +5,9 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import Pagination from '../Pagination';
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 import ActionDropdown from '../Accounts/ActionDropdown';
 import { AccountDataRow } from '../../pages/Accounts';
-import { useDrawer } from '../../hooks/useDrawer';
 
 const columnHelper = createColumnHelper<AccountDataRow>();
 
@@ -18,7 +17,7 @@ type Props = {
   // renderActionDropdown: (position: 'top' | 'bottom') => ReactNode;
 };
 
-const AccountsTable = ({ setData, data }: Props) => {
+const AccountsTable = ({ data }: Props) => {
   const columns = useMemo(() => {
     return [
       // @ts-ignore

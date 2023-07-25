@@ -10,18 +10,23 @@ type Props = {
 const DrawerLayout = ({ children }: Props) => {
   const { activeTable } = useDrawer()!;
 
+  const renderSidebar = () => {
+    switch (activeTable) {
+      case 'accounts':
+        return <AccountsSidebar />;
+      case 'items':
+        return <ItemsSidebar />;
+
+      default:
+        return '';
+    }
+  };
+
   return (
     <div className="drawer drawer-end">
       <input id="my-drawer" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content">{children}</div>
-      {activeTable === 'accounts' ? (
-        <AccountsSidebar />
-      ) : (
-        ''
-        // <ItemsSidebar
-
-        // />
-      )}
+      {renderSidebar()}
     </div>
   );
 };
