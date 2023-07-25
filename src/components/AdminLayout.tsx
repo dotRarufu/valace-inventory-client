@@ -5,6 +5,10 @@ import DrawerLayout from './Drawer/DrawerLayout';
 import { createContext, useState } from 'react';
 
 export const DrawerContext = createContext<{
+  drawerRef: React.RefObject<HTMLInputElement> | null;
+  setDrawerRef: React.Dispatch<
+    React.SetStateAction<React.RefObject<HTMLInputElement> | null>
+  >;
   activeTable: 'accounts' | 'items' | null;
   setActiveTable: React.Dispatch<
     React.SetStateAction<'accounts' | 'items' | null>
@@ -27,10 +31,14 @@ const AdminLayout = () => {
   );
   const [activeRowId, setActiveRowId] = useState('');
   const [shouldUpdateTable, setShouldUpdateTable] = useState(false);
+  const [drawerRef, setDrawerRef] =
+    useState<React.RefObject<HTMLInputElement> | null>(null);
 
   return (
     <DrawerContext.Provider
       value={{
+        drawerRef,
+        setDrawerRef,
         activeTable,
         setActiveTable,
         isDrawerInEdit,

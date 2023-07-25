@@ -38,7 +38,13 @@ const Items = () => {
     Supplier: 'Disabled',
     'Date Added': 'Disabled',
   });
-  const { setActiveTable } = useDrawer()!;
+  const {
+    setActiveTable,
+    shouldUpdateTable,
+    setShouldUpdateTable,
+    isDrawerInAdd,
+    setIsDrawerInAdd,
+  } = useDrawer()!;
 
   useEffect(() => {
     setActiveTable('items');
@@ -59,6 +65,23 @@ const Items = () => {
 
     void getItems();
   }, []);
+
+  // separated for readability
+  useEffect(() => {
+    if (!shouldUpdateTable) return;
+
+    const getItems = async () => {
+      // admins are stored in user collection to store the the plain password
+      const itemsRes = await pb
+        .collection(Collections.Item)
+        .getList<ItemResponse>(1, 8);
+
+      setData(itemsRes.items.map(d => ({ selected: false, ...d })));
+      setShouldUpdateTable(false);
+    };
+
+    void getItems();
+  }, [setShouldUpdateTable, shouldUpdateTable]);
 
   const moveFilter = (key: string) => {
     const newFilters = { ...filters };
@@ -168,8 +191,7 @@ const Items = () => {
       </div>
       <Fab
         handleClick={() => {
-          console.log('runsss');
-          // setIsDrawerInAdd(!isDrawerInAdd);
+          setIsDrawerInAdd(true);
         }}
         label={<Add />}
         tooltip="Item"

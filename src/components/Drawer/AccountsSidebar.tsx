@@ -15,6 +15,7 @@ const AccountsSidebar = () => {
     setShouldUpdateTable,
     isDrawerInAdd,
     setIsDrawerInAdd,
+    drawerRef,
   } = useDrawer()!;
 
   // const cancelLabelRef = useRef<HTMLLabelElement>(null);
@@ -162,24 +163,28 @@ const AccountsSidebar = () => {
         {/* <QrCodeModal /> */}
 
         <div className="flex justify-end items-center gap-[16px] py-[32px]">
-          <label
-            ref={confirmLabelRef}
-            htmlFor="my-drawer"
+          <button
             onClick={() => {
-              if (isDrawerInEdit) {
-                confirmLabelRef?.current?.click();
+              if (!isDrawerInEdit) {
+                setIsDrawerInEdit(true);
+              }
 
+              if (isDrawerInEdit) {
+                if (drawerRef && drawerRef.current) {
+                  drawerRef.current.checked = false;
+                }
+
+                setIsDrawerInAdd(false);
                 setShouldUpdate(true);
               }
 
               if (isDrawerInAdd) {
-                confirmLabelRef?.current?.click();
-
+                if (drawerRef && drawerRef.current) {
+                  drawerRef.current.checked = false;
+                }
+                setIsDrawerInAdd(false);
                 setShouldAddAccount(true);
               }
-
-              setIsDrawerInEdit(!isDrawerInEdit);
-              setIsDrawerInAdd(!isDrawerInAdd);
             }}
             className="btn btn-primary px-[16px] text-[20px]  font-semibold"
           >
@@ -190,11 +195,14 @@ const AccountsSidebar = () => {
                 ? 'Add Account'
                 : 'Update'}
             </span>
-          </label>
+          </button>
           <label
             htmlFor="my-drawer"
             className="btn btn-outline px-[16px] hover:btn-error text-[20px]  font-semibold"
-            onClick={() => setIsDrawerInEdit(false)}
+            onClick={() => {
+              setIsDrawerInEdit(false);
+              setIsDrawerInAdd(false);
+            }}
           >
             <span className="h-[13px] ">
               {!isDrawerInEdit ? 'Close' : 'Cancel'}

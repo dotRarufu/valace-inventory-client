@@ -7,7 +7,7 @@ import {
 import Pagination from '../Pagination';
 import { useMemo } from 'react';
 import { ItemDataRow } from '../../pages/Items';
-import ItemsDropdown from '../Items/ItemsDropdown';
+import ActionDropdown from '../Items/ActionDropdown';
 
 const columnHelper = createColumnHelper<ItemDataRow>();
 
@@ -118,7 +118,7 @@ const ItemsTable = ({ setData, data }: Props) => {
         header: () => 'Actions',
         // pass the item's id? para wala ng context sa parent
         cell: info => (
-          <ItemsDropdown
+          <ActionDropdown
             id={data[info.row.index].id}
             position={info.row.index > 4 ? 'top' : 'bottom'}
           />

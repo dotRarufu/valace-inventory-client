@@ -63,7 +63,6 @@ const Accounts = () => {
       {/* onClick set add account sidebar active */}
       <Fab
         handleClick={() => {
-          console.log('runsss');
           setIsDrawerInAdd(!isDrawerInAdd);
         }}
         label={<Add />}

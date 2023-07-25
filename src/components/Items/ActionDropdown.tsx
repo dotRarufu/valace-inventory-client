@@ -13,7 +13,7 @@ type Props = {
   id: string;
 };
 
-const ItemsDropdown = ({ position, id }: Props) => {
+const ActionDropdown = ({ position, id }: Props) => {
   const {
     setIsDrawerInEdit,
     setActiveRowId,
@@ -44,7 +44,7 @@ const ItemsDropdown = ({ position, id }: Props) => {
     if (!shouldDeleteRow) return;
 
     const deleteRow = async () => {
-      await pb.collection(Collections.User).delete(id);
+      await pb.collection(Collections.Item).delete(id);
       setShouldUpdateTable(true);
       setShouldDeleteRow(false);
     };
@@ -111,4 +111,4 @@ const ItemsDropdown = ({ position, id }: Props) => {
   );
 };
 
-export default ItemsDropdown;
+export default ActionDropdown;

@@ -21,7 +21,7 @@ const Fab = ({ content, label, tooltip, handleClick }: Props) => {
           onClick={handleClick}
           htmlFor="my-drawer"
           tabIndex={0}
-          className="btn btn-circle btn-lg btn-primary px-[16px]"
+          className="btn btn-circle btn-lg btn-primary px-[16px] border border-red-500"
         >
           {label}
         </label>

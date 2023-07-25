@@ -8,12 +8,20 @@ import { useDrawer } from '../../hooks/useDrawer';
 import { useEffect, useState } from 'react';
 import pb from '../../lib/pocketbase';
 import { Collections, ItemResponse } from '../../../pocketbase-types';
+import NumberInputField from '../Field/NumberInputField';
 
 const ItemsSidebar = () => {
-  const { isDrawerInEdit, setIsDrawerInEdit, activeRowId } = useDrawer()!;
-
+  const {
+    isDrawerInEdit,
+    setIsDrawerInEdit,
+    activeRowId,
+    setShouldUpdateTable,
+    isDrawerInAdd,
+    setIsDrawerInAdd,
+    drawerRef,
+  } = useDrawer()!;
   const [type, setType] = useState<'Furniture' | 'Office' | 'IT'>('Furniture');
-  const [isAvailable] = useState(false);
+  const [isAvailable, setIsAvailable] = useState(false);
   const [propertyNumber, setPropertyNumber] = useState('');
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState(0);
@@ -23,6 +31,8 @@ const ItemsSidebar = () => {
   const [serialNumber, setSerialNumber] = useState('');
   const [remarks, setRemarks] = useState('');
   // const [images, setImages] = useState();
+  const [shouldUpdate, setShouldUpdate] = useState(false);
+  const [shouldAddItem, setShouldAddItem] = useState(false);
 
   useEffect(() => {
     const getAccountRow = async () => {
@@ -50,6 +60,85 @@ const ItemsSidebar = () => {
     void getAccountRow();
   }, [activeRowId]);
 
+  useEffect(() => {
+    if (!shouldUpdate) return;
+
+    const updateItem = async () => {
+      console.log('update item runs');
+      const data = {
+        property_number: propertyNumber,
+        name,
+        quantity,
+        type,
+        is_available: isAvailable,
+        location,
+        supplier,
+        remarks,
+      };
+      await pb.collection(Collections.Item).update(activeRowId, data);
+
+      setShouldUpdateTable(true);
+      setShouldUpdate(false);
+    };
+
+    void updateItem();
+  }, [
+    activeRowId,
+    isAvailable,
+    location,
+    name,
+    propertyNumber,
+    quantity,
+    remarks,
+    setShouldUpdateTable,
+    shouldUpdate,
+    supplier,
+    type,
+  ]);
+
+  useEffect(() => {
+    if (!shouldAddItem) return;
+    console.log('runs shouldadditem');
+
+    const addItem = async () => {
+      const data = {
+        property_number: propertyNumber,
+        name,
+        quantity,
+        type,
+        is_available: isAvailable,
+        location,
+        supplier,
+        remarks,
+        serial_number: '2023-1111',
+      };
+
+      await pb.collection(Collections.Item).create(data);
+
+      setShouldUpdateTable(true);
+      setShouldAddItem(false);
+    };
+
+    void addItem();
+  }, [
+    activeRowId,
+    isAvailable,
+    location,
+    name,
+    propertyNumber,
+    quantity,
+    remarks,
+    setShouldUpdateTable,
+    shouldAddItem,
+    shouldUpdate,
+    supplier,
+    type,
+  ]);
+
+  console.log('======items sidebar======');
+  console.log('isDrawerInAdd: ', isDrawerInAdd);
+  console.log('isDrawerInEdit: ', isDrawerInEdit);
+
   return (
     <div className="drawer-side z-[9999]">
       <label htmlFor="my-drawer" className="drawer-overlay"></label>
@@ -66,13 +155,20 @@ const ItemsSidebar = () => {
           <TextInputField
             label="Property Number"
             value={propertyNumber}
-            isUpdate={isDrawerInEdit}
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
+            handleChange={setPropertyNumber}
           />
-          <TextInputField label="Name" value={name} isUpdate={isDrawerInEdit} />
           <TextInputField
+            label="Name"
+            value={name}
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
+            handleChange={setName}
+          />
+          <NumberInputField
             label="Quantity"
-            value={quantity.toString()}
-            isUpdate={isDrawerInEdit}
+            value={quantity}
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
+            handleChange={setQuantity}
           />
           <SelectField
             label="Type"
@@ -82,7 +178,7 @@ const ItemsSidebar = () => {
               { label: 'Office', callback: () => setType('Office') },
               { label: 'IT', callback: () => setType('IT') },
             ]}
-            isUpdate={isDrawerInEdit}
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
           />
           <ToggleField
             label="Status"
@@ -91,22 +187,22 @@ const ItemsSidebar = () => {
               checked: 'AVAILABLE',
               unchecked: 'UNAVAILABLE',
             }}
-            isUpdate={isDrawerInEdit}
-            handleChange={() => {
-              //
-            }}
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
+            handleChange={setIsAvailable}
           />
           <TextInputField
             label="Location"
             value={location}
-            isUpdate={isDrawerInEdit}
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
+            handleChange={setLocation}
           />
           <TextInputField
             label="Supplier"
             value={supplier}
-            isUpdate={isDrawerInEdit}
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
+            handleChange={setSupplier}
           />
-          {!isDrawerInEdit && (
+          {!isDrawerInEdit && !isDrawerInAdd && (
             <>
               <TextInputField label="Date Added" value={dateAdded} />
               <TextInputField label="Serial Number" value={serialNumber} />
@@ -115,12 +211,11 @@ const ItemsSidebar = () => {
 
           <TextAreaField
             label="Remarks"
-            elementContent={
-              <span className="truncate font-normal h-fit [leading-trim:both] [text-edge:cap] leading-none ">
-                {remarks}
-              </span>
-            }
-            isUpdate={isDrawerInEdit}
+            value={remarks}
+            isUpdate={isDrawerInEdit || isDrawerInAdd}
+            // <span className="truncate font-normal h-fit [leading-trim:both] [text-edge:cap] leading-none ">
+            // </span>
+            handleChange={setRemarks}
           />
         </ul>
 
@@ -128,7 +223,7 @@ const ItemsSidebar = () => {
 
         {/* <QrCodeModal /> */}
 
-        {!isDrawerInEdit && (
+        {!isDrawerInEdit && !isDrawerInAdd && (
           <div className="flex flex-col gap-[8px]">
             <div className="flex justify-between items-center">
               <span className=" h-[16px] text-primary/50 text-[24px] -translate-y-[6px]">
@@ -151,20 +246,47 @@ const ItemsSidebar = () => {
 
         <div className="flex justify-end items-center gap-[16px] py-[32px]">
           <button
-            onClick={() => setIsDrawerInEdit(!isDrawerInEdit)}
+            onClick={() => {
+              if (!isDrawerInEdit) {
+                setIsDrawerInEdit(true);
+              }
+
+              if (isDrawerInEdit) {
+                if (drawerRef && drawerRef.current) {
+                  drawerRef.current.checked = false;
+                }
+
+                setIsDrawerInAdd(false);
+                setShouldUpdate(true);
+              }
+
+              if (isDrawerInAdd) {
+                if (drawerRef && drawerRef.current) {
+                  drawerRef.current.checked = false;
+                }
+                setIsDrawerInAdd(false);
+                setShouldAddItem(true);
+              }
+            }}
             className="btn btn-primary px-[16px] text-[20px]  font-semibold"
           >
             <span className="h-[13px] ">
-              {!isDrawerInEdit ? 'Update' : 'Save Changes'}
+              {isDrawerInEdit
+                ? 'Save Changes'
+                : isDrawerInAdd
+                ? 'Add Item'
+                : 'Update'}
             </span>
           </button>
           <label
             htmlFor="my-drawer"
             className="btn btn-outline px-[16px] hover:btn-error text-[20px]  font-semibold"
-            onClick={() => setIsDrawerInEdit(false)}
+            onClick={() => {
+              setIsDrawerInEdit(false);
+              setIsDrawerInAdd(false);
+            }}
           >
             <span className="h-[13px] ">
-              {' '}
               {!isDrawerInEdit ? 'Close' : 'Cancel'}
             </span>
           </label>

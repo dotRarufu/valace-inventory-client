@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import AccountsSidebar from './AccountsSidebar';
 import ItemsSidebar from './ItemsSidebar';
 import { useDrawer } from '../../hooks/useDrawer';
@@ -7,26 +7,36 @@ type Props = {
   children: ReactNode;
 };
 
+const renderSidebar = (activeTable: 'accounts' | 'items' | null) => {
+  switch (activeTable) {
+    case 'accounts':
+      return <AccountsSidebar />;
+    case 'items':
+      return <ItemsSidebar />;
+
+    default:
+      return '';
+  }
+};
 const DrawerLayout = ({ children }: Props) => {
-  const { activeTable } = useDrawer()!;
+  const { activeTable, setDrawerRef } = useDrawer()!;
 
-  const renderSidebar = () => {
-    switch (activeTable) {
-      case 'accounts':
-        return <AccountsSidebar />;
-      case 'items':
-        return <ItemsSidebar />;
+  const drawerCheckboxRef = useRef<HTMLInputElement>(null);
 
-      default:
-        return '';
-    }
-  };
+  useEffect(() => {
+    setDrawerRef(drawerCheckboxRef);
+  }, [setDrawerRef]);
 
   return (
     <div className="drawer drawer-end">
-      <input id="my-drawer" type="checkbox" className="drawer-toggle" />
+      <input
+        ref={drawerCheckboxRef}
+        id="my-drawer"
+        type="checkbox"
+        className="drawer-toggle"
+      />
       <div className="drawer-content">{children}</div>
-      {renderSidebar()}
+      {renderSidebar(activeTable)}
     </div>
   );
 };
