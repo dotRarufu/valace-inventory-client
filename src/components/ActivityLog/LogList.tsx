@@ -26,37 +26,49 @@ export type ActivityData = {
 
 const getActionDescription = (
   activity: ActivityActionOptions,
-  data: { username?: string; itemName?: string }
+  data: { username?: string; targetName?: string }
 ) => {
-  const itemName = data.itemName || '';
+  const targetName = data.targetName || '';
 
   switch (activity) {
-    case 'ADD':
-      return `added ${itemName}`;
-    case 'ADD THROUGH CSV':
-      return `added ${itemName} through CSV`;
-    case 'DELETE':
-      return `deleted ${itemName}`;
+    case ActivityActionOptions['ADD ITEM']:
+      return `added ${targetName}`;
+    case ActivityActionOptions['ADD ITEM THROUGH CSV']:
+      return `added ${targetName} through CSV`;
+    case ActivityActionOptions['ADD ACCOUNT']:
+      return `added a new account ${targetName}`;
+    case ActivityActionOptions['DELETE ACCOUNT']:
+      return `removed an account ${targetName}`;
+    case ActivityActionOptions['DELETE ITEM']:
+      return `removed an item ${targetName}`;
+    case ActivityActionOptions['EDIT ACCOUNT PASSWORD']:
+      return `changed ${targetName}'s password`;
+    case ActivityActionOptions['EDIT ACCOUNT USERNAME']:
+      return `changed ${targetName}'s username`;
+    case ActivityActionOptions['EDIT ACCOUNT ROLE']:
+      return `changed ${targetName}'s role`;
+    case ActivityActionOptions['EDIT ACCOUNT STATUS']:
+      return `changed ${targetName}'s status`;
     case 'DOWNLOAD QR':
-      return `downloaded the QR Code for ${itemName}`;
+      return `downloaded the QR Code for ${targetName}`;
     case 'LOGIN':
       return `logged in`;
     case 'LOGOUT':
       return `logged out`;
     case 'EDIT NAME':
-      return `edited the name of ${itemName}`;
+      return `edited the name of ${targetName}`;
     case 'EDIT QUANTITY':
-      return `edited the quantity of ${itemName}`;
+      return `edited the quantity of ${targetName}`;
     case 'EDIT LOCATION':
-      return `edited the location of ${itemName}`;
+      return `edited the location of ${targetName}`;
     case 'EDIT SUPPLIER':
-      return `edited the supplier of ${itemName}`;
+      return `edited the supplier of ${targetName}`;
     case 'EDIT REMARKS':
-      return `edited the remarks of ${itemName}`;
+      return `edited the remarks of ${targetName}`;
     case 'EDIT TYPE':
-      return `edited the type of ${itemName}`;
+      return `edited the type of ${targetName}`;
     case 'EDIT IMAGES':
-      return `edited the images of ${itemName}`;
+      return `edited the images of ${targetName}`;
 
     default:
       return '';
@@ -79,13 +91,18 @@ const LogList = ({ date }: Props) => {
             .collection(Collections.User)
             .getOne<UserResponse>(a.user_id);
 
+          // todo: update type: this could result in PocketbaseError
           const item = await pb
             .collection(Collections.Item)
             .getOne<ItemResponse>(a.item_id);
 
+          const targetUser = await pb
+            .collection(Collections.User)
+            .getOne<UserResponse>(a.target_user_id);
+
           const action = getActionDescription(a.action, {
             username: user.username,
-            itemName: item.name,
+            targetName: item.name || targetUser.username,
           });
 
           const data: ActivityData = {
@@ -175,7 +192,11 @@ const LogList = ({ date }: Props) => {
   return (
     <div className="rounded-[5px] bg-secondary px-[24px] py-[32px] gap-[16px] flex flex-col">
       <div className="text-[24px] font-khula color-primary font-semibold uppercase leading-none h-[24px]">
-        {date.toDateString()}
+        {date.toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}
       </div>
 
       {activitiesData.map((d, index) => (
@@ -186,6 +207,12 @@ const LogList = ({ date }: Props) => {
           )}
         </div>
       ))}
+
+      {activitiesData.length === 0 && (
+        <div className="font-khula text-[20px] text-secondary-content/70 font-semibold">
+          No activities on this day
+        </div>
+      )}
 
       {maxPage !== null && currentPage < maxPage && (
         <button onClick={handleClick} className="btn btn-ghost">

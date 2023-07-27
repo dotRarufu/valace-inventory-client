@@ -2,10 +2,17 @@ import SelectField from '../Field/SelectField';
 import TextInputField from '../Field/TextInputField';
 import PasswordField from '../Field/PasswordField';
 import ToggleField from '../Field/ToggleField';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import pb from '../../lib/pocketbase';
-import { Collections, UserResponse } from '../../../pocketbase-types';
+import {
+  ActivityActionOptions,
+  Collections,
+  UserResponse,
+} from '../../../pocketbase-types';
 import { useDrawer } from '../../hooks/useDrawer';
+import { recordActivity } from '../../utils/recordActivity';
+import useUser from '../../hooks/useUser';
+import { UserContext } from '../../contexts/userContext';
 
 const AccountsSidebar = () => {
   const {
@@ -19,15 +26,88 @@ const AccountsSidebar = () => {
   } = useDrawer()!;
 
   // const cancelLabelRef = useRef<HTMLLabelElement>(null);
-  const confirmLabelRef = useRef<HTMLLabelElement>(null);
+  const { user } = useContext(UserContext)!;
   const [username, setUsername] = useState('test');
   const [isAdmin, setIsAdmin] = useState(false);
   const [password, setPassword] = useState('mypassword');
   const [isActive, setIsActive] = useState(false);
   const [id, setId] = useState('');
 
+  const [initialFields, setInitialFields] = useState<{
+    username: string | null;
+    isAdmin: boolean | null;
+    password: string | null;
+    isActive: boolean | null;
+  } | null>(null);
+
+  const [shouldRecordChangedFields, setShouldRecordChangedFields] =
+    useState(false);
+
   const [shouldAddAccount, setShouldAddAccount] = useState(false);
   const [shouldUpdate, setShouldUpdate] = useState(false);
+
+  // Record changed fields
+  useEffect(() => {
+    if (!shouldRecordChangedFields) return;
+
+    const recordChangedFields = async () => {
+      if (initialFields && initialFields.username !== username) {
+        await recordActivity(ActivityActionOptions['EDIT ACCOUNT USERNAME'], {
+          userId: user!.id,
+          targetUserId: id,
+          oldValue: initialFields.username || undefined,
+          newValue: username,
+        });
+      }
+
+      if (initialFields && initialFields.isAdmin !== isAdmin) {
+        await recordActivity(ActivityActionOptions['EDIT ACCOUNT ROLE'], {
+          userId: user!.id,
+          targetUserId: id,
+          oldValue: (initialFields.isAdmin ? 'Admin' : 'Staff') || undefined,
+          newValue: isAdmin ? 'Admin' : 'Staff',
+        });
+      }
+
+      if (initialFields && initialFields.password !== password) {
+        await recordActivity(ActivityActionOptions['EDIT ACCOUNT PASSWORD'], {
+          userId: user!.id,
+          targetUserId: id,
+          oldValue: initialFields.password || undefined,
+          newValue: password,
+        });
+      }
+
+      if (initialFields && initialFields.isActive !== isActive) {
+        await recordActivity(ActivityActionOptions['EDIT ACCOUNT STATUS'], {
+          userId: user!.id,
+          targetUserId: id,
+          oldValue: initialFields.isActive ? 'Active' : 'Inactive',
+          newValue: isActive ? 'Active' : 'Inactive',
+        });
+      }
+
+      // In case user does not change row id
+      setInitialFields({
+        isActive,
+        isAdmin,
+        password,
+        username,
+      });
+      setShouldRecordChangedFields(false);
+    };
+
+    void recordChangedFields();
+  }, [
+    id,
+    initialFields,
+    isActive,
+    isAdmin,
+    password,
+    shouldRecordChangedFields,
+    user,
+    username,
+  ]);
 
   useEffect(() => {
     if (!shouldUpdate) return;
@@ -40,7 +120,7 @@ const AccountsSidebar = () => {
         is_active: isActive,
       };
       await pb.collection(Collections.User).update(activeRowId, data);
-
+      setShouldRecordChangedFields(true);
       setShouldUpdateTable(true);
       setShouldUpdate(false);
     };
@@ -65,6 +145,12 @@ const AccountsSidebar = () => {
       console.log('res:', res);
       console.log('activeRowId:', activeRowId);
 
+      setInitialFields({
+        isActive: res.is_active,
+        isAdmin: res.is_admin,
+        password: res.plain_password,
+        username: res.username,
+      });
       setUsername(res.username);
       setIsAdmin(res.is_admin);
       setPassword(res.plain_password);
@@ -87,8 +173,11 @@ const AccountsSidebar = () => {
         password,
         passwordConfirm: password,
       };
-      await pb.collection(Collections.User).create(data);
-
+      const res = await pb.collection(Collections.User).create(data);
+      await recordActivity(ActivityActionOptions['ADD ACCOUNT'], {
+        userId: user!.id,
+        targetUserId: res.id,
+      });
       setIsDrawerInAdd(false);
       setShouldUpdateTable(true);
       setShouldAddAccount(false);
@@ -102,6 +191,7 @@ const AccountsSidebar = () => {
     setIsDrawerInAdd,
     setShouldUpdateTable,
     shouldAddAccount,
+    user,
     username,
   ]);
 

@@ -7,12 +7,22 @@ import accountsIcon from '../../assets/users.svg';
 import logoutIcon from '../../assets/logout.svg';
 import Modal from '../Modal/Modal';
 import pb from '../../lib/pocketbase';
+import { recordActivity } from '../../utils/recordActivity';
+import { ActivityActionOptions } from '../../../pocketbase-types';
+import useUser from '../../hooks/useUser';
+import { useContext } from 'react';
+import { UserContext } from '../../contexts/userContext';
 
 const NavBar = () => {
-  const handleLogout = () => {
+  const { user } = useContext(UserContext)!;
+
+  const handleLogout = async () => {
     // setUser(null);
     pb.authStore.clear();
     // navigate('/login');
+    await recordActivity(ActivityActionOptions.LOGOUT, {
+      userId: user!.id,
+    });
   };
 
   return (
@@ -56,7 +66,7 @@ const NavBar = () => {
                 <span className="h-[13px]">Cancel</span>
               </label>
               <button
-                onClick={handleLogout}
+                onClick={() => void handleLogout()}
                 className="btn btn-primary flex-1 font-khula text-[20px]"
               >
                 <span className="h-[13px]">Confirm</span>

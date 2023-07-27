@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import Fab from '../components/Fab';
 import Add from '../components/Icons/Add';
-import { UserResponse } from '../../pocketbase-types';
+import { Collections, UserResponse } from '../../pocketbase-types';
 import AccountsTable from '../components/Table/AccountsTable';
 import pb from '../lib/pocketbase';
 import { useDrawer } from '../hooks/useDrawer';
@@ -28,8 +28,11 @@ const Accounts = () => {
     const getAccounts = async () => {
       // admins are stored in user collection to store the the plain password
       const staffResult = await pb
-        .collection('user')
-        .getList<UserResponse>(1, 5);
+        .collection(Collections.User)
+        .getList<UserResponse>(1, 10, {
+          filter: 'is_removed = false',
+        });
+      console.log('staffresult:', staffResult);
 
       setRowData(staffResult.items);
     };
@@ -45,7 +48,9 @@ const Accounts = () => {
       // admins are stored in user collection to store the the plain password
       const staffResult = await pb
         .collection('user')
-        .getList<UserResponse>(1, 5);
+        .getList<UserResponse>(1, 5, {
+          filter: 'is_removed = false',
+        });
 
       setRowData(staffResult.items);
       setShouldUpdateTable(false);

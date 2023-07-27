@@ -34,9 +34,11 @@ export type AuthSystemFields<T = never> = {
 // Record types for each collection
 
 export enum ActivityActionOptions {
-	"ADD" = "ADD",
-	"ADD THROUGH CSV" = "ADD THROUGH CSV",
-	"DELETE" = "DELETE",
+	"ADD ITEM" = "ADD ITEM",
+	"ADD ACCOUNT" = "ADD ACCOUNT",
+	"ADD ITEM THROUGH CSV" = "ADD ITEM THROUGH CSV",
+	"DELETE ITEM" = "DELETE ITEM",
+	"DELETE ACCOUNT" = "DELETE ACCOUNT",
 	"DOWNLOAD QR" = "DOWNLOAD QR",
 	"LOGIN" = "LOGIN",
 	"LOGOUT" = "LOGOUT",
@@ -47,11 +49,16 @@ export enum ActivityActionOptions {
 	"EDIT REMARKS" = "EDIT REMARKS",
 	"EDIT TYPE" = "EDIT TYPE",
 	"EDIT IMAGES" = "EDIT IMAGES",
+	"EDIT ACCOUNT USERNAME" = "EDIT ACCOUNT USERNAME",
+	"EDIT ACCOUNT ROLE" = "EDIT ACCOUNT ROLE",
+	"EDIT ACCOUNT PASSWORD" = "EDIT ACCOUNT PASSWORD",
+	"EDIT ACCOUNT STATUS" = "EDIT ACCOUNT STATUS",
 }
 export type ActivityRecord = {
 	user_id: RecordIdString
-	action?: ActivityActionOptions
+	action: ActivityActionOptions
 	item_id?: RecordIdString
+	target_user_id?: RecordIdString
 	edit_old_value?: string
 	edit_new_value?: string
 }
@@ -84,6 +91,7 @@ export type UserRecord = {
 	plain_password: string
 	is_active?: boolean
 	is_admin?: boolean
+	is_removed?: boolean
 }
 
 // Response types include system fields and match responses from the PocketBase API

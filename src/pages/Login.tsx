@@ -1,8 +1,15 @@
 import { useContext, useEffect, useState } from 'react';
 import pb from '../lib/pocketbase';
 import { useNavigate } from 'react-router-dom';
-import { Collections, UserResponse } from '../../pocketbase-types';
+import {
+  ActivityActionOptions,
+  ActivityRecord,
+  Collections,
+  UserResponse,
+} from '../../pocketbase-types';
 import { UserContext } from '../contexts/userContext';
+import { Collection } from 'pocketbase';
+import { recordActivity } from '../utils/recordActivity';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -21,11 +28,15 @@ const Login = () => {
     if (shouldLogin) {
       const loginUser = async () => {
         try {
-          await pb
+          const res = await pb
             .collection(Collections.User)
             .authWithPassword<UserResponse>(username, password);
 
           console.log('login successful:');
+
+          await recordActivity(ActivityActionOptions.LOGIN, {
+            userId: res.record.id,
+          });
         } catch (err) {
           console.log('show toast, error occured');
         } finally {

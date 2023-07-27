@@ -14,7 +14,7 @@ type Props = {
 
 const LogItem = ({ data: { name, action, details, date, icon } }: Props) => {
   return (
-    <div className="flex p-[16px] gap-[10px] ">
+    <div className="flex p-[16px] pl-[0px] gap-[10px] ">
       <img
         className=" w-[48px] h-[48px] "
         src={icon || adminIcon}
@@ -40,7 +40,11 @@ const LogItem = ({ data: { name, action, details, date, icon } }: Props) => {
 
       <div className=" flex justify-end items-center">
         <div className="text-[24px] font-khula color-primary  leading-none h-[16px] ">
-          {date || '9:00AM'}
+          {new Date(date).toLocaleTimeString(undefined, {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+          })}
         </div>
       </div>
     </div>

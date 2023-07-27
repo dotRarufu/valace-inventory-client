@@ -4,9 +4,15 @@ import fullscreenIcon from '../../assets/fullscreen.svg';
 import editIcon from '../../assets/edit.svg';
 import trashIcon from '../../assets/trash.svg';
 import { useDrawer } from '../../hooks/useDrawer';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import pb from '../../lib/pocketbase';
-import { Collections } from '../../../pocketbase-types';
+import {
+  ActivityActionOptions,
+  Collections,
+  UserRecord,
+} from '../../../pocketbase-types';
+import { recordActivity } from '../../utils/recordActivity';
+import { UserContext } from '../../contexts/userContext';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -14,6 +20,7 @@ type Props = {
 };
 
 const ActionDropdown = ({ position, id }: Props) => {
+  const { user } = useContext(UserContext)!;
   const {
     setIsDrawerInEdit,
     setActiveRowId,
@@ -40,13 +47,18 @@ const ActionDropdown = ({ position, id }: Props) => {
     if (!shouldDeleteRow) return;
 
     const deleteRow = async () => {
-      await pb.collection(Collections.User).delete(id);
+      await pb.collection(Collections.User).update(id, { is_removed: true });
       setShouldUpdateTable(true);
       setShouldDeleteRow(false);
+
+      await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
+        userId: user!.id,
+        targetUserId: id,
+      });
     };
 
     void deleteRow();
-  }, [activeRowId, id, setShouldUpdateTable, shouldDeleteRow]);
+  }, [activeRowId, id, setShouldUpdateTable, shouldDeleteRow, user]);
 
   return (
     <div
