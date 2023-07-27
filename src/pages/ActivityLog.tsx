@@ -11,17 +11,20 @@ export type DayLog = {
 };
 
 const groupLogsByDay = (logs: ActivityResponse[]) => {
-  const trimmedDates: ActivityResponse[] = logs.map(l => ({
-    ...l,
-    created: l.created.slice(0, l.created.indexOf(' ')),
-  }));
+  const trimmedDates: string[] = logs.map(l =>
+    l.created.slice(0, l.created.indexOf(' '))
+  );
 
   // Get unique "created" values
   const days = new Set<string>();
-  trimmedDates.map(d => days.add(d.created));
+  trimmedDates.forEach(d => days.add(d));
 
   const dayLogs: DayLog[] = Array.from(days).map(day => {
-    const dayActivities = trimmedDates.filter(l => l.created === day);
+    const dayActivities = logs.filter(l => {
+      const trimmedDate = l.created.slice(0, l.created.indexOf(' '));
+
+      return trimmedDate === day;
+    });
 
     return {
       date: new Date(day),
@@ -82,8 +85,8 @@ const ActivityLog = () => {
   }, [dayLogs]);
 
   return (
-    <div className="overflow-y-scroll flex flex-col gap-[16px] pb-[28px] px-[36px]">
-      <div className="flex justify-between ">
+    <div className="overflow-y-scroll flex flex-col gap-[16px] pb-[28px] px-[36px] h-full">
+      <div className="flex justify-between">
         <DateDropdown setDateFilter={setDateFilter} />
 
         <SearchBar />
