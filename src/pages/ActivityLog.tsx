@@ -4,46 +4,24 @@ import DateDropdown, { ValuePiece } from '../components/DateDropdown';
 import pb from '../lib/pocketbase';
 import { useEffect, useState } from 'react';
 import { ActivityResponse, Collections } from '../../pocketbase-types';
+import { groupLogsByDay } from '../utils/groupLogsByDay';
+import { dateToDateFilterString } from '../utils/dateToDateFilterString';
 
 export type DayLog = {
   date: Date;
   activities: ActivityResponse[];
 };
 
-const groupLogsByDay = (logs: ActivityResponse[]) => {
-  const trimmedDates: string[] = logs.map(l =>
-    l.created.slice(0, l.created.indexOf(' '))
-  );
+const getDatesBetween = (startDate: Date, endDate: Date): Date[] => {
+  const dates: Date[] = [];
+  const currentDate = new Date(startDate);
 
-  // Get unique "created" values
-  const days = new Set<string>();
-  trimmedDates.forEach(d => days.add(d));
+  while (currentDate <= endDate) {
+    dates.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
 
-  const dayLogs: DayLog[] = Array.from(days).map(day => {
-    const dayActivities = logs.filter(l => {
-      const trimmedDate = l.created.slice(0, l.created.indexOf(' '));
-
-      return trimmedDate === day;
-    });
-
-    return {
-      date: new Date(day),
-      activities: dayActivities,
-    };
-  });
-
-  return dayLogs;
-};
-
-const dateToDateFilterString = (date: Date) => {
-  const year = date.getFullYear().toString().padStart(4, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  const seconds = date.getSeconds().toString().padStart(2, '0');
-
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  return dates;
 };
 
 const ActivityLog = () => {
@@ -51,33 +29,20 @@ const ActivityLog = () => {
   const [dateFilter, setDateFilter] = useState<
     ValuePiece | [ValuePiece, ValuePiece] | undefined
   >();
+  const [dates, setDates] = useState<Date[]>([]);
 
   useEffect(() => {
-    const getActivities = async () => {
-      if (
-        //todo: improve type to not do this
-        Array.isArray(dateFilter) &&
-        dateFilter[0] !== null &&
-        dateFilter[1] !== null &&
-        dateFilter !== undefined &&
-        dateFilter !== null
-      ) {
-        const min = dateToDateFilterString(dateFilter[0]);
-        const max = dateToDateFilterString(dateFilter[1]);
-
-        const activities = await pb
-          .collection(Collections.Activity)
-          .getList<ActivityResponse>(1, 10, {
-            filter: `created > "${min}" && created < "${max}"`,
-          });
-
-        const dayLogs = groupLogsByDay(activities.items);
-
-        setDayLogs(dayLogs);
-      }
-    };
-
-    void getActivities();
+    if (
+      //todo: improve type to not do this
+      Array.isArray(dateFilter) &&
+      dateFilter[0] !== null &&
+      dateFilter[1] !== null &&
+      dateFilter !== undefined &&
+      dateFilter !== null
+    ) {
+      const newDates = getDatesBetween(dateFilter[0], dateFilter[1]);
+      setDates(newDates);
+    }
   }, [dateFilter]);
 
   useEffect(() => {
@@ -92,11 +57,15 @@ const ActivityLog = () => {
         <SearchBar />
       </div>
 
-      {dayLogs.map((d, index) => {
+      {/* {dayLogs.map((d, index) => {
         // console.log(index, '| daylog:', d);
 
         return <LogList key={index} data={d} />;
-      })}
+      })} */}
+
+      {dates.map(d => (
+        <LogList key={d.toDateString()} date={d} />
+      ))}
     </div>
   );
 };

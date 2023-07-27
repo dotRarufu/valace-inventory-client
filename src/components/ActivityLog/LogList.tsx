@@ -4,13 +4,15 @@ import LogItem from './LogItem';
 import pb from '../../lib/pocketbase';
 import {
   ActivityActionOptions,
+  ActivityResponse,
   Collections,
   ItemResponse,
   UserResponse,
 } from '../../../pocketbase-types';
+import { dateToDateFilterString } from '../../utils/dateToDateFilterString';
 
 type Props = {
-  data: DayLog;
+  date: Date;
 };
 
 export type ActivityData = {
@@ -61,9 +63,14 @@ const getActionDescription = (
   }
 };
 
-const LogList = ({ data: { date, activities } }: Props) => {
+const LogList = ({ date }: Props) => {
   const [activitiesData, setActivitiesData] = useState<ActivityData[]>([]);
+  const [activities, setActivities] = useState<ActivityResponse[]>([]);
+  const [maxPage, setMaxPage] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [reachedLastPage, setReachedLastPage] = useState(false);
 
+  // Get activities data
   useEffect(() => {
     const getActivitiesData = async () => {
       const data = await Promise.all(
@@ -98,7 +105,72 @@ const LogList = ({ data: { date, activities } }: Props) => {
     };
 
     void getActivitiesData();
-  }, [activities]);
+  }, [activities, maxPage]);
+
+  // Get date activities, initial
+  useEffect(() => {
+    if (maxPage !== null) {
+      console.log('cant fetch initially again:', maxPage);
+      return;
+    }
+
+    const getActivities = async () => {
+      const min = dateToDateFilterString(date);
+      const limitDate = new Date(date);
+      limitDate.setDate(date.getDate() + 1);
+      const max = dateToDateFilterString(limitDate);
+
+      const resActivities = await pb
+        .collection(Collections.Activity)
+        .getList<ActivityResponse>(1, 3, {
+          filter: `created >= "${min}" && created < "${max}"`,
+        });
+      console.log('activities:', resActivities);
+
+      setMaxPage(resActivities.totalPages);
+      setActivities(resActivities.items);
+    };
+
+    void getActivities();
+  }, [date, maxPage]);
+
+  // Get date activities, per current page change
+  useEffect(() => {
+    if (currentPage === 1) return;
+    if (reachedLastPage) return;
+    if (maxPage !== null && currentPage > maxPage) return;
+    console.log('runs current page change');
+
+    const getActivities = async () => {
+      const min = dateToDateFilterString(date);
+      const limitDate = new Date(date);
+      limitDate.setDate(date.getDate() + 1);
+      const max = dateToDateFilterString(limitDate);
+
+      const resActivities = await pb
+        .collection(Collections.Activity)
+        .getList<ActivityResponse>(currentPage, 3, {
+          filter: `created >= "${min}" && created < "${max}"`,
+        });
+
+      setReachedLastPage(maxPage !== null && currentPage >= maxPage);
+      setCurrentPage(resActivities.page);
+      setActivities(old => [...old, ...resActivities.items]);
+    };
+
+    void getActivities();
+  }, [currentPage, date, maxPage, reachedLastPage]);
+
+  const handleClick = () => {
+    console.log('=====================');
+    console.log('logList:', date);
+    console.log('currentPage:', currentPage);
+    console.log('maxPage:', maxPage);
+    console.log('=====================');
+    if (maxPage !== null && currentPage > maxPage) return;
+
+    setCurrentPage(currentPage + 1);
+  };
 
   return (
     <div className="rounded-[5px] bg-secondary px-[24px] py-[32px] gap-[16px] flex flex-col">
@@ -114,6 +186,12 @@ const LogList = ({ data: { date, activities } }: Props) => {
           )}
         </div>
       ))}
+
+      {maxPage !== null && currentPage < maxPage && (
+        <button onClick={handleClick} className="btn btn-ghost">
+          Show more
+        </button>
+      )}
     </div>
   );
 };
