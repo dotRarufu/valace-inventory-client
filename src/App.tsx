@@ -13,9 +13,9 @@ import Items from './pages/Items';
 const App = () => {
   const { user, setShouldGetUser } = useUser();
 
-  useEffect(() => {
-    console.log('user:', user);
-  }, [user]);
+  // useEffect(() => {
+  //   console.log('user:', user);
+  // }, [user]);
 
   return (
     <UserContext.Provider value={{ user, setShouldGetUser }}>

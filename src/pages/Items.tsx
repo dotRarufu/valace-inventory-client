@@ -166,7 +166,7 @@ const Items = () => {
                 {Object.keys(filters).map(key => (
                   <li key={key} onClick={() => moveFilter(key)}>
                     <a className="justify-between rounded-none px-[24px]  py-[4px]">
-                      <span className="h-[16px] ">{key}</span>
+                      <span className="h-[16px] text-[22px] ">{key}</span>
 
                       {filters[key] !== 'Disabled' ? (
                         filters[key] === 'Ascending' ? (

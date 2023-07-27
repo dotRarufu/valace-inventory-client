@@ -3,6 +3,7 @@
 */
 
 export enum Collections {
+	Activity = "activity",
 	Item = "item",
 	Test = "test",
 	User = "user",
@@ -31,6 +32,29 @@ export type AuthSystemFields<T = never> = {
 } & BaseSystemFields<T>
 
 // Record types for each collection
+
+export enum ActivityActionOptions {
+	"ADD" = "ADD",
+	"ADD THROUGH CSV" = "ADD THROUGH CSV",
+	"DELETE" = "DELETE",
+	"DOWNLOAD QR" = "DOWNLOAD QR",
+	"LOGIN" = "LOGIN",
+	"LOGOUT" = "LOGOUT",
+	"EDIT NAME" = "EDIT NAME",
+	"EDIT QUANTITY" = "EDIT QUANTITY",
+	"EDIT LOCATION" = "EDIT LOCATION",
+	"EDIT SUPPLIER" = "EDIT SUPPLIER",
+	"EDIT REMARKS" = "EDIT REMARKS",
+	"EDIT TYPE" = "EDIT TYPE",
+	"EDIT IMAGES" = "EDIT IMAGES",
+}
+export type ActivityRecord = {
+	user_id: RecordIdString
+	action?: ActivityActionOptions
+	item_id?: RecordIdString
+	edit_old_value?: string
+	edit_new_value?: string
+}
 
 export enum ItemTypeOptions {
 	"Furniture" = "Furniture",
@@ -63,6 +87,7 @@ export type UserRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type ActivityResponse<Texpand = unknown> = Required<ActivityRecord> & BaseSystemFields<Texpand>
 export type ItemResponse<Texpand = unknown> = Required<ItemRecord> & BaseSystemFields<Texpand>
 export type TestResponse<Texpand = unknown> = Required<TestRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
@@ -70,12 +95,14 @@ export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemF
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+	activity: ActivityRecord
 	item: ItemRecord
 	test: TestRecord
 	user: UserRecord
 }
 
 export type CollectionResponses = {
+	activity: ActivityResponse
 	item: ItemResponse
 	test: TestResponse
 	user: UserResponse

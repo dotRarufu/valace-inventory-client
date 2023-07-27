@@ -5,20 +5,31 @@ import Calendar from 'react-calendar';
 import ChevronUp from './Icons/ChevronUp';
 import epochToDate from '../utils/epochToDate';
 
-type ValuePiece = Date | null;
+export type ValuePiece = Date | null;
 export type Value = ValuePiece | [ValuePiece, ValuePiece];
 
-const DateDropdown = () => {
+type Props = {
+  setDateFilter: React.Dispatch<
+    React.SetStateAction<ValuePiece | [ValuePiece, ValuePiece] | undefined>
+  >;
+};
+
+const DateDropdown = ({ setDateFilter }: Props) => {
   const [calendarDateRange, setCalendarDateRange] = useState<
     ValuePiece | [ValuePiece, ValuePiece] | undefined
   >();
   const [dateRange, setDateRange] = useState<
     ValuePiece | [ValuePiece, ValuePiece] | undefined
-  >(new Date());
+  >();
   const [isOpen, setIsOpen] = useState(false);
   const [shouldShowDateRangeLabel, setShouldShowDateRangeLabel] =
     useState(true);
   const detailsRef = useRef<HTMLDetailsElement>(null);
+
+  // Sync dateRange to ActivtyLog's dateFilter
+  useEffect(() => {
+    setDateFilter(dateRange);
+  }, [dateRange, setDateFilter]);
 
   const handleApplyClick = () => {
     setDateRange(calendarDateRange);

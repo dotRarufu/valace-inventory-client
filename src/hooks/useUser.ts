@@ -36,7 +36,7 @@ const useUser = () => {
         console.info('user is inactive:', user.is_active);
         return;
       }
-      console.log('pb.authStore.isValid', pb.authStore.isValid);
+      // console.log('pb.authStore.isValid', pb.authStore.isValid);
       // todo: untested
       // if (!pb.authStore.isValid) {
       //   pb.authStore.clear();

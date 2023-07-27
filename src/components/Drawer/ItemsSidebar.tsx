@@ -135,10 +135,6 @@ const ItemsSidebar = () => {
     type,
   ]);
 
-  console.log('======items sidebar======');
-  console.log('isDrawerInAdd: ', isDrawerInAdd);
-  console.log('isDrawerInEdit: ', isDrawerInEdit);
-
   return (
     <div className="drawer-side z-[9999]">
       <label htmlFor="my-drawer" className="drawer-overlay"></label>
