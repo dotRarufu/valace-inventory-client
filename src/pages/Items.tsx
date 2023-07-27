@@ -58,7 +58,9 @@ const Items = () => {
       // admins are stored in user collection to store the the plain password
       const itemsRes = await pb
         .collection(Collections.Item)
-        .getList<ItemResponse>(1, 8);
+        .getList<ItemResponse>(1, 8, {
+          filter: 'is_removed = false',
+        });
 
       setData(itemsRes.items.map(d => ({ selected: false, ...d })));
     };
@@ -74,7 +76,9 @@ const Items = () => {
       // admins are stored in user collection to store the the plain password
       const itemsRes = await pb
         .collection(Collections.Item)
-        .getList<ItemResponse>(1, 8);
+        .getList<ItemResponse>(1, 8, {
+          filter: 'is_removed = false',
+        });
 
       setData(itemsRes.items.map(d => ({ selected: false, ...d })));
       setShouldUpdateTable(false);

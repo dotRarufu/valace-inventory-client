@@ -36,11 +36,11 @@ const getActionDescription = (
     case ActivityActionOptions['ADD ITEM THROUGH CSV']:
       return `added ${targetName} through CSV`;
     case ActivityActionOptions['ADD ACCOUNT']:
-      return `added a new account ${targetName}`;
+      return `added a new account (${targetName})`;
     case ActivityActionOptions['DELETE ACCOUNT']:
-      return `removed an account ${targetName}`;
+      return `removed an account (${targetName})`;
     case ActivityActionOptions['DELETE ITEM']:
-      return `removed an item ${targetName}`;
+      return `removed an item (${targetName})`;
     case ActivityActionOptions['EDIT ACCOUNT PASSWORD']:
       return `changed ${targetName}'s password`;
     case ActivityActionOptions['EDIT ACCOUNT USERNAME']:
@@ -49,6 +49,20 @@ const getActionDescription = (
       return `changed ${targetName}'s role`;
     case ActivityActionOptions['EDIT ACCOUNT STATUS']:
       return `changed ${targetName}'s status`;
+    case ActivityActionOptions['EDIT LOCATION']:
+      return `changed ${targetName}'s location`;
+    case ActivityActionOptions['EDIT NAME']:
+      return `changed ${targetName}'s name`;
+    case ActivityActionOptions['EDIT PROPERTY NUMBER']:
+      return `changed ${targetName}'s property number`;
+    case ActivityActionOptions['EDIT QUANTITY']:
+      return `changed ${targetName}'s quantity`;
+    case ActivityActionOptions['EDIT REMARKS']:
+      return `changed ${targetName}'s remarks`;
+    case ActivityActionOptions['EDIT SUPPLIER']:
+      return `changed ${targetName}'s supplier`;
+    case ActivityActionOptions['EDIT TYPE']:
+      return `changed ${targetName}'s type`;
     case 'DOWNLOAD QR':
       return `downloaded the QR Code for ${targetName}`;
     case 'LOGIN':

@@ -4,9 +4,11 @@ import qrCodeIcon from '../../assets/qr.svg';
 import editIcon from '../../assets/edit.svg';
 import trashIcon from '../../assets/trash.svg';
 import { useDrawer } from '../../hooks/useDrawer';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import pb from '../../lib/pocketbase';
-import { Collections } from '../../../pocketbase-types';
+import { ActivityActionOptions, Collections } from '../../../pocketbase-types';
+import { UserContext } from '../../contexts/userContext';
+import { recordActivity } from '../../utils/recordActivity';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -14,6 +16,7 @@ type Props = {
 };
 
 const ActionDropdown = ({ position, id }: Props) => {
+  const { user } = useContext(UserContext)!;
   const {
     setIsDrawerInEdit,
     setActiveRowId,
@@ -44,13 +47,19 @@ const ActionDropdown = ({ position, id }: Props) => {
     if (!shouldDeleteRow) return;
 
     const deleteRow = async () => {
-      await pb.collection(Collections.Item).delete(id);
+      await pb.collection(Collections.Item).update(id, {
+        is_removed: true,
+      });
+      await recordActivity(ActivityActionOptions['DELETE ITEM'], {
+        userId: user!.id,
+        itemId: id,
+      });
       setShouldUpdateTable(true);
       setShouldDeleteRow(false);
     };
 
     void deleteRow();
-  }, [activeRowId, id, setShouldUpdateTable, shouldDeleteRow]);
+  }, [activeRowId, id, setShouldUpdateTable, shouldDeleteRow, user]);
 
   return (
     <div

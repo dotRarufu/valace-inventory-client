@@ -5,12 +5,19 @@ import ToggleField from '../Field/ToggleField';
 import Carousel from './Carousel';
 import qrCodeSample from '../../assets/qr.png';
 import { useDrawer } from '../../hooks/useDrawer';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import pb from '../../lib/pocketbase';
-import { Collections, ItemResponse } from '../../../pocketbase-types';
+import {
+  ActivityActionOptions,
+  Collections,
+  ItemResponse,
+} from '../../../pocketbase-types';
 import NumberInputField from '../Field/NumberInputField';
+import { recordActivity } from '../../utils/recordActivity';
+import { UserContext } from '../../contexts/userContext';
 
 const ItemsSidebar = () => {
+  const { user } = useContext(UserContext)!;
   const {
     isDrawerInEdit,
     setIsDrawerInEdit,
@@ -33,7 +40,127 @@ const ItemsSidebar = () => {
   // const [images, setImages] = useState();
   const [shouldUpdate, setShouldUpdate] = useState(false);
   const [shouldAddItem, setShouldAddItem] = useState(false);
+  const [shouldRecordChangedFields, setShouldRecordChangedFields] =
+    useState(false);
+  const [initialFields, setInitialFields] = useState<{
+    type: 'Furniture' | 'Office' | 'IT';
+    isAvailable: boolean | null;
 
+    name: string | null;
+    quantity: number | null;
+    location: string | null;
+    supplier: string | null;
+
+    propertyNumber: string | null;
+    remarks: string | null;
+  } | null>(null);
+
+  // Record changed fields
+  useEffect(() => {
+    if (!shouldRecordChangedFields) return;
+
+    const recordChangedFields = async () => {
+      if (initialFields && initialFields.type !== type) {
+        await recordActivity(ActivityActionOptions['EDIT TYPE'], {
+          userId: user!.id,
+          itemId: activeRowId,
+          oldValue: initialFields.type,
+          newValue: type,
+        });
+      }
+      if (initialFields && initialFields.name !== name) {
+        await recordActivity(ActivityActionOptions['EDIT NAME'], {
+          userId: user!.id,
+          itemId: activeRowId,
+          oldValue: initialFields.name || undefined,
+          newValue: name,
+        });
+      }
+      if (initialFields && initialFields.quantity !== quantity) {
+        await recordActivity(ActivityActionOptions['EDIT QUANTITY'], {
+          userId: user!.id,
+          itemId: activeRowId,
+          oldValue: initialFields?.quantity?.toString() || undefined,
+          newValue: quantity.toString(),
+        });
+      }
+      if (initialFields && initialFields.location !== location) {
+        await recordActivity(ActivityActionOptions['EDIT LOCATION'], {
+          userId: user!.id,
+          itemId: activeRowId,
+          oldValue: initialFields.location || undefined,
+          newValue: location,
+        });
+      }
+      if (initialFields && initialFields.supplier !== supplier) {
+        await recordActivity(ActivityActionOptions['EDIT SUPPLIER'], {
+          userId: user!.id,
+          itemId: activeRowId,
+          oldValue: initialFields.supplier || undefined,
+          newValue: supplier,
+        });
+      }
+      if (initialFields && initialFields.propertyNumber !== propertyNumber) {
+        await recordActivity(ActivityActionOptions['EDIT PROPERTY NUMBER'], {
+          userId: user!.id,
+          itemId: activeRowId,
+          oldValue: initialFields.propertyNumber || undefined,
+          newValue: propertyNumber,
+        });
+      }
+      if (initialFields && initialFields.remarks !== remarks) {
+        await recordActivity(ActivityActionOptions['EDIT REMARKS'], {
+          userId: user!.id,
+          itemId: activeRowId,
+          oldValue: initialFields.remarks || undefined,
+          newValue: remarks,
+        });
+      }
+
+      if (initialFields && initialFields.isAvailable !== isAvailable) {
+        await recordActivity(ActivityActionOptions['EDIT ACCOUNT STATUS'], {
+          userId: user!.id,
+          itemId: activeRowId,
+          oldValue: initialFields.isAvailable ? 'Available' : 'Unavailable',
+          newValue: initialFields.isAvailable ? 'Available' : 'Unavailable',
+        });
+      }
+
+      // In case user does not change row id
+      setInitialFields({
+        type,
+        isAvailable,
+
+        name,
+        quantity,
+        location,
+        supplier,
+
+        propertyNumber,
+        remarks,
+      });
+      setShouldRecordChangedFields(false);
+    };
+
+    void recordChangedFields();
+  }, [
+    activeRowId,
+    dateAdded,
+    initialFields,
+    isAvailable,
+    location,
+    name,
+    propertyNumber,
+    quantity,
+    remarks,
+    serialNumber,
+    shouldRecordChangedFields,
+    supplier,
+    type,
+    user,
+  ]);
+
+  // Get accounts row
   useEffect(() => {
     const getAccountRow = async () => {
       // fixes the bug, try removing this when accounts is all done
@@ -43,8 +170,6 @@ const ItemsSidebar = () => {
       const res = await pb
         .collection(Collections.Item)
         .getOne<ItemResponse>(activeRowId);
-      console.log('res:', res);
-      console.log('activeRowId:', activeRowId);
 
       setPropertyNumber(res.property_number);
       setName(res.name);
@@ -54,17 +179,30 @@ const ItemsSidebar = () => {
       setDateAdded(res.created);
       setSerialNumber(res.serial_number);
       setRemarks(res.remarks);
+      setType(res.type);
       // setImages()
+      setInitialFields({
+        type: res.type,
+        isAvailable: res.is_available,
+
+        name: res.name,
+        quantity: res.quantity,
+        location: res.location,
+        supplier: res.supplier,
+
+        propertyNumber: res.property_number,
+        remarks: res.remarks,
+      });
     };
 
     void getAccountRow();
   }, [activeRowId]);
 
+  // Update item
   useEffect(() => {
     if (!shouldUpdate) return;
 
     const updateItem = async () => {
-      console.log('update item runs');
       const data = {
         property_number: propertyNumber,
         name,
@@ -76,7 +214,7 @@ const ItemsSidebar = () => {
         remarks,
       };
       await pb.collection(Collections.Item).update(activeRowId, data);
-
+      setShouldRecordChangedFields(true);
       setShouldUpdateTable(true);
       setShouldUpdate(false);
     };
@@ -96,9 +234,9 @@ const ItemsSidebar = () => {
     type,
   ]);
 
+  // Add item
   useEffect(() => {
     if (!shouldAddItem) return;
-    console.log('runs shouldadditem');
 
     const addItem = async () => {
       const data = {
@@ -113,8 +251,11 @@ const ItemsSidebar = () => {
         serial_number: '2023-1111',
       };
 
-      await pb.collection(Collections.Item).create(data);
-
+      const res = await pb.collection(Collections.Item).create(data);
+      await recordActivity(ActivityActionOptions['ADD ITEM'], {
+        userId: user!.id,
+        itemId: res.id,
+      });
       setShouldUpdateTable(true);
       setShouldAddItem(false);
     };
@@ -133,6 +274,7 @@ const ItemsSidebar = () => {
     shouldUpdate,
     supplier,
     type,
+    user,
   ]);
 
   return (

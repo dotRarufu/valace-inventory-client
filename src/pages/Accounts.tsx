@@ -32,7 +32,6 @@ const Accounts = () => {
         .getList<UserResponse>(1, 10, {
           filter: 'is_removed = false',
         });
-      console.log('staffresult:', staffResult);
 
       setRowData(staffResult.items);
     };
