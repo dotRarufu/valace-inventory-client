@@ -6,7 +6,7 @@ type Props = {
     checked: string;
     unchecked: string;
   };
-  handleChange: React.Dispatch<React.SetStateAction<boolean>>;
+  handleChange?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ToggleField = ({
@@ -43,7 +43,7 @@ const ToggleField = ({
               type="checkbox"
               className="toggle toggle-success"
               checked={value}
-              onChange={e => handleChange(e.target.checked)}
+              onChange={e => handleChange && handleChange(e.target.checked)}
             />
             <span className="uppercase text-[24px] text-primary font-semibold h-[16px]">
               {value ? labelValues.checked : labelValues.unchecked}

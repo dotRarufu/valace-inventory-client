@@ -1,7 +1,7 @@
 type Props = {
   label: string;
   value: string;
-  isUpdate: boolean;
+  isUpdate?: boolean;
   handleChange?: React.Dispatch<React.SetStateAction<string>>;
 };
 

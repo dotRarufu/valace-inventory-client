@@ -2,7 +2,7 @@ type Props = {
   label: string;
   value: string;
   isUpdate?: boolean;
-  dropdown: { label: string; callback: () => void }[];
+  dropdown: { label: string; callback?: () => void }[];
 };
 
 const getBackgroundColor = (value: string) => {

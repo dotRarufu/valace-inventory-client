@@ -9,6 +9,7 @@ import useUser from './hooks/useUser';
 import { UserContext } from './contexts/userContext';
 import ItemsSidebar from './components/Drawer/ItemsSidebar';
 import Items from './pages/Items';
+import UserDataDisplay from './components/user/UserDataDisplay';
 
 const App = () => {
   const { user, setShouldGetUser } = useUser();
@@ -64,6 +65,8 @@ const App = () => {
             </ProtectedRoute>
           }
         ></Route>
+
+        <Route path="user" element={<UserDataDisplay />} />
       </Routes>
     </UserContext.Provider>
   );
