@@ -15,6 +15,7 @@ import {
 import NumberInputField from '../Field/NumberInputField';
 import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/userContext';
+import QrCode from '../Items/QrCode';
 
 const ItemsSidebar = () => {
   const { user } = useContext(UserContext)!;
@@ -418,24 +419,7 @@ const ItemsSidebar = () => {
         {/* <QrCodeModal /> */}
 
         {!isDrawerInEdit && !isDrawerInAdd && (
-          <div className="flex flex-col gap-[8px]">
-            <div className="flex justify-between items-center">
-              <span className=" h-[16px] text-primary/50 text-[24px] -translate-y-[6px]">
-                QR Code:
-              </span>
-
-              <label
-                htmlFor="QrCodeModal"
-                className="btn btn-outline px-[16px] hover:btn-primary text-[20px]  font-semibold"
-              >
-                <span className="h-[13px] ">Print</span>
-              </label>
-            </div>
-
-            <div className="bg-primary/5 py-[16px] flex justify-center rounded-[5px] ">
-              <img src={qrCodeSample} className="w-[300px] h-[300px]" />
-            </div>
-          </div>
+          <QrCode />
         )}
 
         <div className="flex justify-end items-center gap-[16px] py-[32px]">
