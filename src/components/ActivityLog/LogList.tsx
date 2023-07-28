@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { DayLog } from '../../pages/ActivityLog';
 import LogItem from './LogItem';
 import pb from '../../lib/pocketbase';
@@ -10,6 +10,8 @@ import {
   UserResponse,
 } from '../../../pocketbase-types';
 import { dateToDateFilterString } from '../../utils/dateToDateFilterString';
+import Admin from '../Icons/Admin';
+import Staff from '../Icons/Staff';
 
 type Props = {
   date: Date;
@@ -21,7 +23,7 @@ export type ActivityData = {
 
   details?: [string, string] | undefined;
   date: string;
-  icon?: string | undefined;
+  icon?: ReactNode;
 };
 
 const getActionDescription = (
@@ -63,6 +65,11 @@ const getActionDescription = (
       return `changed ${targetName}'s supplier`;
     case ActivityActionOptions['EDIT TYPE']:
       return `changed ${targetName}'s type`;
+    case ActivityActionOptions['ADD ITEM IMAGE']:
+      return `added images for ${targetName}`;
+    case ActivityActionOptions['DELETE ITEM IMAGE']:
+      return `deleted an image for ${targetName}`;
+
     case 'DOWNLOAD QR':
       return `downloaded the QR Code for ${targetName}`;
     case 'LOGIN':
@@ -125,7 +132,7 @@ const LogList = ({ date }: Props) => {
 
             details: [a.edit_old_value, a.edit_new_value],
             date: a.created,
-            icon: user.avatar,
+            icon: user.is_admin ? <Admin /> : <Staff />,
           };
 
           return data;

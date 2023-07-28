@@ -54,6 +54,8 @@ export enum ActivityActionOptions {
 	"EDIT ACCOUNT PASSWORD" = "EDIT ACCOUNT PASSWORD",
 	"EDIT ACCOUNT STATUS" = "EDIT ACCOUNT STATUS",
 	"EDIT PROPERTY NUMBER" = "EDIT PROPERTY NUMBER",
+	"ADD ITEM IMAGE" = "ADD ITEM IMAGE",
+	"DELETE ITEM IMAGE" = "DELETE ITEM IMAGE",
 }
 export type ActivityRecord = {
 	user_id: RecordIdString

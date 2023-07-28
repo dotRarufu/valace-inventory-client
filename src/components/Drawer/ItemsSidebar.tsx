@@ -37,7 +37,7 @@ const ItemsSidebar = () => {
   const [dateAdded, setDateAdded] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
   const [remarks, setRemarks] = useState('');
-  // const [images, setImages] = useState();
+
   const [shouldUpdate, setShouldUpdate] = useState(false);
   const [shouldAddItem, setShouldAddItem] = useState(false);
   const [shouldRecordChangedFields, setShouldRecordChangedFields] =
@@ -54,6 +54,9 @@ const ItemsSidebar = () => {
     propertyNumber: string | null;
     remarks: string | null;
   } | null>(null);
+  const [itemResponse, setItemResponse] = useState<ItemResponse | null>(null);
+  const [shouldUpdateItemResponse, setShouldUpdateItemResponse] =
+    useState(true);
 
   // Record changed fields
   useEffect(() => {
@@ -171,6 +174,7 @@ const ItemsSidebar = () => {
         .collection(Collections.Item)
         .getOne<ItemResponse>(activeRowId);
 
+      setItemResponse(res);
       setPropertyNumber(res.property_number);
       setName(res.name);
       setQuantity(res.quantity);
@@ -180,7 +184,7 @@ const ItemsSidebar = () => {
       setSerialNumber(res.serial_number);
       setRemarks(res.remarks);
       setType(res.type);
-      // setImages()
+      setShouldUpdateItemResponse(false);
       setInitialFields({
         type: res.type,
         isAvailable: res.is_available,
@@ -197,6 +201,47 @@ const ItemsSidebar = () => {
 
     void getAccountRow();
   }, [activeRowId]);
+
+  // Get accounts row on shouldUpdateData
+  useEffect(() => {
+    if (!shouldUpdateItemResponse) return;
+
+    const getAccountRow = async () => {
+      // fixes the bug, try removing this when accounts is all done
+      // like in accounts sidebar
+      if (activeRowId === '') return;
+
+      const res = await pb
+        .collection(Collections.Item)
+        .getOne<ItemResponse>(activeRowId);
+
+      setItemResponse(res);
+      setPropertyNumber(res.property_number);
+      setName(res.name);
+      setQuantity(res.quantity);
+      setLocation(res.location);
+      setSupplier(res.supplier);
+      setDateAdded(res.created);
+      setSerialNumber(res.serial_number);
+      setRemarks(res.remarks);
+      setType(res.type);
+      setShouldUpdateItemResponse(false);
+      setInitialFields({
+        type: res.type,
+        isAvailable: res.is_available,
+
+        name: res.name,
+        quantity: res.quantity,
+        location: res.location,
+        supplier: res.supplier,
+
+        propertyNumber: res.property_number,
+        remarks: res.remarks,
+      });
+    };
+
+    void getAccountRow();
+  }, [activeRowId, shouldUpdateItemResponse]);
 
   // Update item
   useEffect(() => {
@@ -239,6 +284,10 @@ const ItemsSidebar = () => {
     if (!shouldAddItem) return;
 
     const addItem = async () => {
+      const items = await pb.collection(Collections.Item).getFullList({
+        fields: 'id',
+      });
+
       const data = {
         property_number: propertyNumber,
         name,
@@ -248,7 +297,10 @@ const ItemsSidebar = () => {
         location,
         supplier,
         remarks,
-        serial_number: '2023-1111',
+        serial_number:
+          new Date().getFullYear().toString() +
+          '-' +
+          items.length.toString().padStart(4, '0'),
       };
 
       const res = await pb.collection(Collections.Item).create(data);
@@ -287,7 +339,11 @@ const ItemsSidebar = () => {
           </span>
         </div>
 
-        <Carousel isUpdate={isDrawerInEdit} />
+        <Carousel
+          isUpdate={isDrawerInEdit}
+          data={itemResponse}
+          setShouldUpdateData={setShouldUpdateItemResponse}
+        />
 
         <ul>
           <TextInputField
