@@ -6,6 +6,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
@@ -14,7 +15,7 @@ import {
   rankItem,
   compareItems,
 } from '@tanstack/match-sorter-utils';
-import Pagination from '../Pagination';
+import Pagination, { PaginationProps } from '../Pagination';
 import { useMemo, useState } from 'react';
 import { ItemDataRow } from '../../pages/Items';
 import ActionDropdown from '../Items/ActionDropdown';
@@ -153,6 +154,11 @@ const ItemsTable = ({
   const table = useReactTable({
     data,
     columns,
+    initialState: {
+      pagination: {
+        pageSize: 3,
+      },
+    },
     state: {
       sorting,
       globalFilter,
@@ -162,7 +168,25 @@ const ItemsTable = ({
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
+
+  const paginationProps: PaginationProps = {
+    handleStartClick: () => table.setPageIndex(0),
+    isStartEnabled: table.getCanPreviousPage(),
+
+    handlePreviousClick: () => table.previousPage(),
+    isPreviousEnabled: table.getCanPreviousPage(),
+
+    handleNextClick: () => table.nextPage(),
+    isNextEnabled: table.getCanNextPage(),
+
+    handleEndClick: () => table.nextPage(),
+    isEndEnabled: table.getCanNextPage(),
+
+    currentPage: table.getState().pagination.pageIndex + 1,
+    totalPage: table.getPageCount(),
+  };
 
   return (
     <div className=" h-full  flex flex-col justify-between  pb-[40px] relative ">
@@ -207,7 +231,8 @@ const ItemsTable = ({
           ))}
         </tbody>
       </table>
-      <Pagination />
+
+      <Pagination {...paginationProps} />
     </div>
   );
 };
