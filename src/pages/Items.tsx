@@ -157,36 +157,6 @@ const Items = () => {
 
         <div className="flex gap-[16px]">
           <SearchBar />
-
-          <div className="dropdown dropdown-end">
-            <label tabIndex={0}>
-              <Button label="Sort" icon={<Sort />} />
-            </label>
-            <div
-              tabIndex={0}
-              className="dropdown-content z-[1] rounded-[5px]  w-fit "
-            >
-              <ul className="menu w-56 bg-secondary rounded-[5px] shadow text-[24px] font-khula px-0 gap-[8px] ">
-                {Object.keys(filters).map(key => (
-                  <li key={key} onClick={() => moveFilter(key)}>
-                    <a className="justify-between rounded-none px-[24px]  py-[4px]">
-                      <span className="h-[16px] text-[22px] ">{key}</span>
-
-                      {filters[key] !== 'Disabled' ? (
-                        filters[key] === 'Ascending' ? (
-                          <ArrowUp />
-                        ) : (
-                          <ArrowDown />
-                        )
-                      ) : (
-                        <img src={''} className="h-[28px]" />
-                      )}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
         </div>
       </div>
 

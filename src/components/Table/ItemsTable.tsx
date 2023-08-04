@@ -1,11 +1,13 @@
 import {
+  SortingState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 import Pagination from '../Pagination';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ItemDataRow } from '../../pages/Items';
 import ActionDropdown from '../Items/ActionDropdown';
 
@@ -25,6 +27,8 @@ const ItemsTable = ({ setData, data }: Props) => {
   //   const ids = data.filter(d => d.selected).map(d => d.id);
   //   setSelectedRowsId(ids);
   // }, [data, setSelectedRowsId]);
+
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const columns = useMemo(() => {
     const handleHeaderCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +51,8 @@ const ItemsTable = ({ setData, data }: Props) => {
 
     return [
       // @ts-ignore
-      columnHelper.accessor('selected', {
+      columnHelper.display({
+        id: 'selected',
         header: () => (
           <input
             type="checkbox"
@@ -56,16 +61,17 @@ const ItemsTable = ({ setData, data }: Props) => {
             onChange={handleHeaderCheckbox}
           />
         ),
-        cell: info => (
+        cell: props => (
           <input
             type="checkbox"
             className="checkbox bg-secondary w-[20px] h-[20px]"
-            checked={info.renderValue() || false}
-            onChange={e => handleRowCheckbox(e, info.row.index)}
+            checked={props.row.original.selected || false}
+            onChange={e => handleRowCheckbox(e, props.row.index)}
           />
         ),
-        footer: info => info.column.id,
+        // footer: info => info.column.id,
       }),
+      // @ts-ignore
       columnHelper.accessor('id', {
         header: () => 'ID',
         cell: info => info.getValue(),
@@ -114,16 +120,17 @@ const ItemsTable = ({ setData, data }: Props) => {
         cell: info => (info.renderValue() ? 'YES' : 'NO'),
         footer: info => info.column.id,
       }),
-      columnHelper.accessor('actions', {
+      columnHelper.display({
+        id: 'actions',
         header: () => 'Actions',
-        // pass the item's id? para wala ng context sa parent
+        // // pass the item's id? para wala ng context sa parent
         cell: info => (
           <ActionDropdown
             id={data[info.row.index].id}
             position={info.row.index > 4 ? 'top' : 'bottom'}
           />
         ),
-        footer: info => info.column.id,
+        // footer: info => info.column.id,
       }),
     ];
   }, [data, setData]);
@@ -131,6 +138,11 @@ const ItemsTable = ({ setData, data }: Props) => {
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting,
+    },
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -142,13 +154,22 @@ const ItemsTable = ({ setData, data }: Props) => {
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
                 <th key={header.id} className="text-center">
-                  <div className="pt-[4px]">
+                  <div
+                    className={`pt-[4px] ${
+                      header.column.getCanSort() ? 'cursor-pointer' : ''
+                    }`}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
+                    {{
+                      asc: ' 🔼',
+                      desc: ' 🔽',
+                    }[header.column.getIsSorted() as string] ?? null}
                   </div>
                 </th>
               ))}

@@ -59,7 +59,7 @@ const UserDataDisplay = () => {
   }, [data]);
 
   return (
-    <div className="max-w-[480px] w-full border bg-secondary  border-red-500 mx-auto h-screen">
+    <div className="max-w-[480px] w-full bg-secondary mx-auto h-screen">
       <div className="w-full px-[32px] py-[8px]  h-fit-content text-primary flex justify-between items-center mb-[16px]">
         <span className="flex gap-[8px] items-center">
           <Inventory />
