@@ -1,11 +1,19 @@
 import {
+  FilterFn,
+  Row,
   SortingState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import {
+  RankingInfo,
+  rankItem,
+  compareItems,
+} from '@tanstack/match-sorter-utils';
 import Pagination from '../Pagination';
 import { useMemo, useState } from 'react';
 import { ItemDataRow } from '../../pages/Items';
@@ -16,9 +24,16 @@ const columnHelper = createColumnHelper<ItemDataRow>();
 type Props = {
   setData: React.Dispatch<React.SetStateAction<ItemDataRow[]>>;
   data: ItemDataRow[];
+  setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
+  globalFilter: string;
 };
 
-const ItemsTable = ({ setData, data }: Props) => {
+const ItemsTable = ({
+  setData,
+  data,
+  setGlobalFilter,
+  globalFilter,
+}: Props) => {
   // const [data, setData] = useState<ItemDataRow[]>(
   //   itemRows.map(d => ({ selected: false, ...d }))
   // );
@@ -140,7 +155,10 @@ const ItemsTable = ({ setData, data }: Props) => {
     columns,
     state: {
       sorting,
+      globalFilter,
     },
+    onGlobalFilterChange: setGlobalFilter,
+    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),

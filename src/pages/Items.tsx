@@ -45,6 +45,7 @@ const Items = () => {
     isDrawerInAdd,
     setIsDrawerInAdd,
   } = useDrawer()!;
+  const [globalFilter, setGlobalFilter] = useState('');
 
   useEffect(() => {
     setActiveTable('items');
@@ -156,12 +157,20 @@ const Items = () => {
         </div>
 
         <div className="flex gap-[16px]">
-          <SearchBar />
+          <SearchBar
+            handleOnChange={setGlobalFilter}
+            globalFilter={globalFilter}
+          />
         </div>
       </div>
 
       <div className="bg-secondary rounded-[5px] h-[752px] overflow-y-scroll">
-        <ItemsTable data={data} setData={setData} />
+        <ItemsTable
+          data={data}
+          setData={setData}
+          globalFilter={globalFilter}
+          setGlobalFilter={setGlobalFilter}
+        />
       </div>
       <Fab
         handleClick={() => {
