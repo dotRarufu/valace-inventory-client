@@ -10,13 +10,10 @@ import { UserContext } from './contexts/userContext';
 import ItemsSidebar from './components/Drawer/ItemsSidebar';
 import Items from './pages/Items';
 import UserDataDisplay from './components/user/UserDataDisplay';
+import StaffLayout from './components/StaffLayout';
 
 const App = () => {
   const { user, setShouldGetUser } = useUser();
-
-  // useEffect(() => {
-  //   console.log('user:', user);
-  // }, [user]);
 
   return (
     <UserContext.Provider value={{ user, setShouldGetUser }}>
@@ -32,14 +29,6 @@ const App = () => {
               }
               isAllowed={!!user && user.is_admin}
             >
-              {/* {(() => {
-                console.log('user?.is_admin:', user?.is_admin);
-                console.log(
-                  'condition:',
-                  user === null ? '/login' : user.is_admin ? '/admin' : '/staff'
-                );
-                return '';
-              })()} */}
               <AdminLayout />
             </ProtectedRoute>
           }
@@ -61,10 +50,14 @@ const App = () => {
               }
               isAllowed={!!user && !user.is_admin}
             >
-              <AdminLayout />
+              <StaffLayout />
             </ProtectedRoute>
           }
-        ></Route>
+        >
+          <Route index element={<Navigate to="items" />} />
+          <Route path="reports" element={<div>reports</div>} />
+          <Route path="items" element={<Items />} />
+        </Route>
 
         <Route path="user" element={<UserDataDisplay />} />
       </Routes>

@@ -5,7 +5,7 @@ import DrawerLayout from './Drawer/DrawerLayout';
 import { useState } from 'react';
 import { DrawerContext } from '../contexts/drawerContext';
 
-const AdminLayout = () => {
+const StaffLayout = () => {
   const [isDrawerInEdit, setIsDrawerInEdit] = useState(false);
   const [isDrawerInAdd, setIsDrawerInAdd] = useState(false);
   const [activeTable, setActiveTable] = useState<'accounts' | 'items' | null>(
@@ -37,7 +37,7 @@ const AdminLayout = () => {
       // todo: move in context
       >
         <div className="h-screen w-screen flex overflow-y-clip">
-          <NavBar role="admin" />
+          <NavBar role="staff" />
           <div className="bg-base-100 w-full  gap-[28px] flex flex-col relative ">
             <div className="pt-[28px] px-[36px]">
               <TopAppBar />
@@ -51,4 +51,4 @@ const AdminLayout = () => {
   );
 };
 
-export default AdminLayout;
+export default StaffLayout;

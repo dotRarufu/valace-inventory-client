@@ -13,7 +13,11 @@ import useUser from '../../hooks/useUser';
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/userContext';
 
-const NavBar = () => {
+type Props = {
+  role: 'admin' | 'staff';
+};
+
+const NavBar = ({ role }: Props) => {
   const { user } = useContext(UserContext)!;
 
   const handleLogout = async () => {
@@ -30,10 +34,24 @@ const NavBar = () => {
       <Logo />
 
       <ul className="flex flex-col gap-[8px] h-full ">
-        <Item label="Reports" icon={reportsIcon} id="reports" />
-        <Item label="Items" icon={itemsIcon} id="items" />
-        <Item label="Activity Log" icon={activityLogIcon} id="activity-log" />
-        <Item label="Accounts" icon={accountsIcon} id="accounts" />
+        <Item path={role} label="Reports" icon={reportsIcon} id="reports" />
+        <Item path={role} label="Items" icon={itemsIcon} id="items" />
+        {role === 'admin' && (
+          <>
+            <Item
+              path={'admin'}
+              label="Activity Log"
+              icon={activityLogIcon}
+              id="activity-log"
+            />
+            <Item
+              path={'admin'}
+              label="Accounts"
+              icon={accountsIcon}
+              id="accounts"
+            />
+          </>
+        )}
         <div className="h-full"></div>
 
         <label

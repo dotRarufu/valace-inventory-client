@@ -3,19 +3,20 @@ import { useLocation, useNavigate } from 'react-router-dom';
 interface Props {
   active?: boolean;
   icon: string;
+  path: string;
   label: string;
   id?: string;
   callback?: () => void;
 }
 
-const Item = ({ icon, label, id, callback }: Props) => {
+const Item = ({ icon, label, id, path, callback }: Props) => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleClick = () => {
     callback && callback();
 
-    if (id !== undefined) navigate('/admin/' + id);
+    if (id !== undefined) navigate(`/${path}/` + id);
   };
 
   const isActive = () => location.pathname.slice(1) === id;
