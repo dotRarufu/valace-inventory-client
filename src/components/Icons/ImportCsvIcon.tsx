@@ -1,4 +1,4 @@
-const ImportCsv = () => {
+const ImportCsvIcon = () => {
   return (
     <svg
       width="28"
@@ -27,4 +27,4 @@ const ImportCsv = () => {
   );
 };
 
-export default ImportCsv;
+export default ImportCsvIcon;

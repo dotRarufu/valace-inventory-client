@@ -9,7 +9,6 @@ import SearchBar from '../components/SearchBar';
 import TableExport from '../components/Icons/TableExport';
 import Sort from '../components/Icons/Sort';
 import ItemsTable from '../components/Table/ItemsTable';
-import ImportCsv from '../components/Icons/ImportCsv';
 import ArrowDown from '../components/Icons/ArrowDown';
 import Add from '../components/Icons/Add';
 import XIcon from '../components/Icons/X';
@@ -18,6 +17,9 @@ import QrCode from '../components/Icons/QrCode';
 import { Collections, ItemResponse } from '../../pocketbase-types';
 import pb from '../lib/pocketbase';
 import { useDrawer } from '../hooks/useDrawer';
+import { Parser } from '@json2csv/plainjs';
+import ExportDropdown from '../components/Items/ExportDropdown';
+import ImportCsv from '../components/Items/ImportCsv';
 
 type Filters = {
   [key: string]: 'Ascending' | 'Descending' | 'Disabled';
@@ -59,9 +61,13 @@ const Items = () => {
       // admins are stored in user collection to store the the plain password
       const itemsRes = await pb
         .collection(Collections.Item)
-        .getList<ItemResponse>(1, 8, {
+        .getList<ItemResponse>(1, undefined, {
           filter: 'is_removed = false',
         });
+      console.log(
+        'update table runs 1:',
+        itemsRes.items.map(d => ({ selected: false, ...d }))
+      );
 
       setData(itemsRes.items.map(d => ({ selected: false, ...d })));
     };
@@ -77,9 +83,12 @@ const Items = () => {
       // admins are stored in user collection to store the the plain password
       const itemsRes = await pb
         .collection(Collections.Item)
-        .getList<ItemResponse>(1, 8, {
+        .getList<ItemResponse>(1, undefined, {
           filter: 'is_removed = false',
         });
+
+      const a = await pb.collection(Collections.Item).getFullList();
+      console.log('update table runs 2:', a);
 
       setData(itemsRes.items.map(d => ({ selected: false, ...d })));
       setShouldUpdateTable(false);
@@ -125,23 +134,8 @@ const Items = () => {
         <div className="flex gap-[16px]">
           {getSelectedData().length === 0 ? (
             <>
-              <Dropdown
-                label={<Button label="Export" icon={<TableExport />} />}
-                content={{
-                  type: 'List',
-                  body: [
-                    {
-                      label: 'CSV',
-                      icon: csvIcon,
-                    },
-                    {
-                      label: 'PDF',
-                      icon: pdfIcon,
-                    },
-                  ],
-                }}
-              />
-              <Button label="Import CSV" icon={<ImportCsv />} />
+              <ExportDropdown data={data} />
+              <ImportCsv />
             </>
           ) : (
             <>

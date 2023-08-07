@@ -5,7 +5,14 @@ type Props = {
   label: ReactNode;
   content:
     | { type: 'ReactNode'; body: ReactNode }
-    | { type: 'List'; body: { label: string; icon: string }[] };
+    | {
+        type: 'List';
+        body: {
+          label: string;
+          icon: string;
+          handleClick: () => void;
+        }[];
+      };
 };
 
 const Dropdown = ({ label, content }: Props) => {
@@ -15,7 +22,10 @@ const Dropdown = ({ label, content }: Props) => {
         <ul className="menu w-56 bg-secondary rounded-[5px] shadow text-[24px] font-khula px-0 gap-[16px] ">
           {content.body.map((b, index) => (
             <li key={index}>
-              <a className="justify-between rounded-none px-[24px]">
+              <a
+                onClick={b.handleClick}
+                className="justify-between rounded-none px-[24px]"
+              >
                 <span className="h-[16px]">{b.label}</span> <img src={b.icon} />
               </a>
             </li>

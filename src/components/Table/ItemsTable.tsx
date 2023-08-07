@@ -156,7 +156,7 @@ const ItemsTable = ({
     columns,
     initialState: {
       pagination: {
-        pageSize: 3,
+        pageSize: 8,
       },
     },
     state: {

@@ -16,6 +16,7 @@ import NumberInputField from '../Field/NumberInputField';
 import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/userContext';
 import QrCode from '../Items/QrCode';
+import { generateSerialNumber } from '../../utils/generateSerialNumber';
 
 const ItemsSidebar = () => {
   const { user } = useContext(UserContext)!;
@@ -298,10 +299,7 @@ const ItemsSidebar = () => {
         location,
         supplier,
         remarks,
-        serial_number:
-          new Date().getFullYear().toString() +
-          '-' +
-          items.length.toString().padStart(4, '0'),
+        serial_number: generateSerialNumber(items.length),
       };
 
       const res = await pb.collection(Collections.Item).create(data);
@@ -418,9 +416,7 @@ const ItemsSidebar = () => {
 
         {/* <QrCodeModal /> */}
 
-        {!isDrawerInEdit && !isDrawerInAdd && (
-          <QrCode />
-        )}
+        {!isDrawerInEdit && !isDrawerInAdd && <QrCode />}
 
         <div className="flex justify-end items-center gap-[16px] py-[32px]">
           <button
