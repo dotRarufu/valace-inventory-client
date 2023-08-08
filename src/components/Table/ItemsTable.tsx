@@ -186,6 +186,11 @@ const ItemsTable = ({
 
     currentPage: table.getState().pagination.pageIndex + 1,
     totalPage: table.getPageCount(),
+
+    handleChangePage: (page: number) => {
+      console.log("changep age:", page - 1);
+      table.setPageIndex(page - 1);
+    },
   };
 
   return (

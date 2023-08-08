@@ -44,7 +44,6 @@ const Items = () => {
     setActiveTable,
     shouldUpdateTable,
     setShouldUpdateTable,
-    isDrawerInAdd,
     setIsDrawerInAdd,
   } = useDrawer()!;
   const [globalFilter, setGlobalFilter] = useState('');
@@ -54,7 +53,6 @@ const Items = () => {
   }, [setActiveTable]);
 
   const [data, setData] = useState<ItemDataRow[]>([]);
-  // itemRows.map(d => ({ selected: false, ...d }))
 
   useEffect(() => {
     const getItems = async () => {
@@ -64,10 +62,7 @@ const Items = () => {
         .getList<ItemResponse>(1, undefined, {
           filter: 'is_removed = false',
         });
-      console.log(
-        'update table runs 1:',
-        itemsRes.items.map(d => ({ selected: false, ...d }))
-      );
+      
 
       setData(itemsRes.items.map(d => ({ selected: false, ...d })));
     };
@@ -88,7 +83,6 @@ const Items = () => {
         });
 
       const a = await pb.collection(Collections.Item).getFullList();
-      console.log('update table runs 2:', a);
 
       setData(itemsRes.items.map(d => ({ selected: false, ...d })));
       setShouldUpdateTable(false);
@@ -96,27 +90,6 @@ const Items = () => {
 
     void getItems();
   }, [setShouldUpdateTable, shouldUpdateTable]);
-
-  const moveFilter = (key: string) => {
-    const newFilters = { ...filters };
-
-    switch (newFilters[key]) {
-      case 'Ascending':
-        newFilters[key] = 'Descending';
-        break;
-      case 'Descending':
-        newFilters[key] = 'Disabled';
-        break;
-      case 'Disabled':
-        newFilters[key] = 'Ascending';
-        break;
-
-      default:
-        break;
-    }
-
-    setFilters(newFilters);
-  };
 
   const clearSelected = () => {
     const newData = data.map(d => ({ ...d, selected: false }));
