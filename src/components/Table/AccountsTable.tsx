@@ -96,6 +96,28 @@ const AccountsTable = ({ data }: Props) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const paginationProps: PaginationProps = {
+    handleStartClick: () => table.setPageIndex(0),
+    isStartEnabled: table.getCanPreviousPage(),
+
+    handlePreviousClick: () => table.previousPage(),
+    isPreviousEnabled: table.getCanPreviousPage(),
+
+    handleNextClick: () => table.nextPage(),
+    isNextEnabled: table.getCanNextPage(),
+
+    handleEndClick: () => table.nextPage(),
+    isEndEnabled: table.getCanNextPage(),
+
+    currentPage: table.getState().pagination.pageIndex + 1,
+    totalPage: table.getPageCount(),
+
+    handleChangePage: (page: number) => {
+      console.log('changep age:', page - 1);
+      table.setPageIndex(page - 1);
+    },
+  };
+
   return (
     <div className=" h-full  flex flex-col justify-between  pb-[40px] relative  first-line:">
       <table
@@ -134,7 +156,7 @@ const AccountsTable = ({ data }: Props) => {
           ))}
         </tbody>
       </table>
-      <Pagination />
+      <Pagination {...paginationProps} />
     </div>
   );
 };

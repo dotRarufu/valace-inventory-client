@@ -18,10 +18,13 @@ const Fab = ({ content, label, tooltip, handleClick }: Props) => {
         data-tip={tooltip}
       >
         <label
-          onClick={handleClick}
+          onClick={() => {
+            // console.log('fab clicked');
+            handleClick();
+          }}
           htmlFor="my-drawer"
           tabIndex={0}
-          className="btn btn-circle btn-lg btn-primary px-[16px] border border-red-500"
+          className="btn btn-circle btn-lg btn-primary px-[16px]"
         >
           {label}
         </label>

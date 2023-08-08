@@ -82,10 +82,7 @@ const Carousel = ({ isUpdate, data, setShouldUpdateData }: Props) => {
     user,
   ]);
 
-  useEffect(() => {
-    console.log('currentImageFileName:', currentImageFileName);
-    console.log('data.images:', data?.images);
-  }, [currentImageFileName, data?.images]);
+  useEffect(() => {}, [currentImageFileName, data?.images]);
 
   return (
     <div className=" flex flex-col gap-[8px]">

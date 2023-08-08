@@ -55,6 +55,7 @@ const Pagination = ({
   return (
     <div className="sticky  flex items-center gap-[16px] rounded-[5px]  text-[20px] px-[16px] h-[32px] p-[2px] w-full ">
       <div className="text-base text-base-content/75">
+        {/* todo: fix for pages with non 8 rows */}
         {(currentPage - 1) * 8 || 1} - {(currentPage - 1) * 8 + 8} of{' '}
         {totalPage * 8} items
       </div>

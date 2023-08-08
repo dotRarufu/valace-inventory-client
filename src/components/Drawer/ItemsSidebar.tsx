@@ -328,6 +328,34 @@ const ItemsSidebar = () => {
     user,
   ]);
 
+  const clearData = () => {
+    console.log("clear data runs");
+    setItemResponse(null);
+    setPropertyNumber('');
+    setName('');
+    setQuantity(0);
+    setLocation('');
+    setSupplier('');
+    setDateAdded('');
+    setSerialNumber('');
+    setRemarks('');
+    setType('IT');
+   
+    setInitialFields({
+      type: 'IT',
+      isAvailable: false,
+
+      name: '',
+      quantity: 0,
+      location: '',
+      supplier: '',
+
+      propertyNumber: '',
+      remarks: '',
+    });
+
+  }
+
   return (
     <div className="drawer-side z-[9999]">
       <label htmlFor="my-drawer" className="drawer-overlay"></label>
@@ -456,6 +484,7 @@ const ItemsSidebar = () => {
             htmlFor="my-drawer"
             className="btn btn-outline px-[16px] hover:btn-error text-[20px]  font-semibold"
             onClick={() => {
+              clearData();
               setIsDrawerInEdit(false);
               setIsDrawerInAdd(false);
             }}

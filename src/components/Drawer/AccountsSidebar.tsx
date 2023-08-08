@@ -109,6 +109,24 @@ const AccountsSidebar = () => {
     username,
   ]);
 
+  const clearData = () => {
+    console.log("clear data runs");
+   
+    setInitialFields({
+      isActive: false,
+      isAdmin: false,
+      password: '',
+      username: '',
+    });
+    setUsername('');
+    setIsAdmin(false);
+    setPassword('');
+    setIsActive(false);
+    setId('');
+
+  }
+
+
   useEffect(() => {
     if (!shouldUpdate) return;
 
@@ -290,6 +308,7 @@ const AccountsSidebar = () => {
             htmlFor="my-drawer"
             className="btn btn-outline px-[16px] hover:btn-error text-[20px]  font-semibold"
             onClick={() => {
+              clearData();
               setIsDrawerInEdit(false);
               setIsDrawerInAdd(false);
             }}
