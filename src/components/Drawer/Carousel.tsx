@@ -82,8 +82,6 @@ const Carousel = ({ isUpdate, data, setShouldUpdateData }: Props) => {
     user,
   ]);
 
-  useEffect(() => {}, [currentImageFileName, data?.images]);
-
   return (
     <div className=" flex flex-col gap-[8px]">
       <div className="text-[24px] text-primary/50 flex justify-between items-center">

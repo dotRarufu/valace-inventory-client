@@ -61,9 +61,10 @@ const QrCode = () => {
   }, []);
 
   useEffect(() => {
-    const address = 'http://localhost:5173';
+    const address = import.meta.env.VITE_URL || 'isUndefined';
     const route = 'user';
     const query = '?id=';
+    console.log('url:', `${address}/${route}${query}${activeRowId}`);
     qrCode.update({
       data: `${address}/${route}${query}${activeRowId}`,
     });

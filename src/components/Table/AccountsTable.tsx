@@ -4,7 +4,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import Pagination from '../Pagination';
+import Pagination, { PaginationProps } from '../Pagination';
 import { useMemo } from 'react';
 import ActionDropdown from '../Accounts/ActionDropdown';
 import { AccountDataRow } from '../../pages/Accounts';
@@ -56,7 +56,7 @@ const AccountsTable = ({ data }: Props) => {
       }),
       columnHelper.accessor('created', {
         header: () => 'Date Created',
-        cell: info => info.renderValue(),
+        cell: info => new Date(info.renderValue() || "").toLocaleString(),
         footer: info => info.column.id,
       }),
       columnHelper.accessor('plain_password', {
