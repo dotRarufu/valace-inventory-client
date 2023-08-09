@@ -52,33 +52,34 @@ const ImportCsv = ({ label }: Props) => {
 
     const pushNewData = async () => {
       try {
-      const totalCount = (await pb.collection(Collections.Item).getList(1, 1))
-        .totalItems;
+        const totalCount = (await pb.collection(Collections.Item).getList(1, 1))
+          .totalItems;
 
-      const reqs = newData.map(async (d, index) => {
-        const data = {
-          ...d,
-          is_removed: false,
-          serial_number: generateSerialNumber(totalCount + index + 1),
-        };
-        console.log('push | data:', data);
-        await pb.collection(Collections.Item).create(data);
-      });
-      await Promise.all(reqs);
-     
-      setShouldUpdateTable(true);
-      toast.success(`CSV file imported`, {
-        duration: 7000,
-        position: 'bottom-center',
-        className: 'font-semibold',
-      });
-    } catch (err) {
-      toast.error(`CSV file not imported`, {
-        duration: 7000,
-        position: 'bottom-center',
-        className: 'font-semibold',
-      });
-    }
+        const reqs = newData.map(async (d, index) => {
+          const data = {
+            ...d,
+            is_removed: false,
+            serial_number: await generateSerialNumber(),
+          };
+          console.log('push | data:', data);
+          await pb.collection(Collections.Item).create(data);
+        });
+        await Promise.all(reqs);
+
+        setShouldUpdateTable(true);
+        toast.success(`CSV file imported`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      } catch (err) {
+        console.log("error:", err);
+        toast.error(`CSV file not imported`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      }
     };
 
     void pushNewData();

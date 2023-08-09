@@ -4,6 +4,7 @@
 
 export enum Collections {
 	Activity = "activity",
+	Count = "count",
 	Item = "item",
 	Test = "test",
 	User = "user",
@@ -66,6 +67,11 @@ export type ActivityRecord = {
 	edit_new_value?: string
 }
 
+export type CountRecord = {
+	table: string
+	count: number
+}
+
 export enum ItemTypeOptions {
 	"Furniture" = "Furniture",
 	"IT" = "IT",
@@ -100,6 +106,7 @@ export type UserRecord = {
 
 // Response types include system fields and match responses from the PocketBase API
 export type ActivityResponse<Texpand = unknown> = Required<ActivityRecord> & BaseSystemFields<Texpand>
+export type CountResponse<Texpand = unknown> = Required<CountRecord> & BaseSystemFields<Texpand>
 export type ItemResponse<Texpand = unknown> = Required<ItemRecord> & BaseSystemFields<Texpand>
 export type TestResponse<Texpand = unknown> = Required<TestRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
@@ -108,6 +115,7 @@ export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemF
 
 export type CollectionRecords = {
 	activity: ActivityRecord
+	count: CountRecord
 	item: ItemRecord
 	test: TestRecord
 	user: UserRecord
@@ -115,6 +123,7 @@ export type CollectionRecords = {
 
 export type CollectionResponses = {
 	activity: ActivityResponse
+	count: CountResponse
 	item: ItemResponse
 	test: TestResponse
 	user: UserResponse

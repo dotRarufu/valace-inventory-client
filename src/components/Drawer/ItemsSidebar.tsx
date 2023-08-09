@@ -314,7 +314,7 @@ const ItemsSidebar = () => {
           location,
           supplier,
           remarks,
-          serial_number: generateSerialNumber(items.length + 1),
+          serial_number: await generateSerialNumber(),
         };
 
         const res = await pb.collection(Collections.Item).create(data);
