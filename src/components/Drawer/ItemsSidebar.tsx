@@ -267,7 +267,7 @@ const ItemsSidebar = () => {
         setShouldRecordChangedFields(true);
         setShouldUpdateTable(true);
         setShouldUpdate(false);
-        toast.error(`Item ${name} updated`, {
+        toast.success(`Item ${name} updated`, {
           duration: 7000,
           position: 'bottom-center',
           className: 'font-semibold',

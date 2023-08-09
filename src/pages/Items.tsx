@@ -14,12 +14,19 @@ import Add from '../components/Icons/Add';
 import XIcon from '../components/Icons/X';
 import Trash from '../components/Icons/Trash';
 import QrCode from '../components/Icons/QrCode';
-import { Collections, ItemResponse } from '../../pocketbase-types';
+import {
+  ActivityActionOptions,
+  Collections,
+  ItemResponse,
+} from '../../pocketbase-types';
 import pb from '../lib/pocketbase';
 import { useDrawer } from '../hooks/useDrawer';
 import { Parser } from '@json2csv/plainjs';
 import ExportDropdown from '../components/Items/ExportDropdown';
 import ImportCsv from '../components/Items/ImportCsv';
+import { recordActivity } from '../utils/recordActivity';
+import useUser from '../hooks/useUser';
+import { toast } from 'react-hot-toast';
 
 type Filters = {
   [key: string]: 'Ascending' | 'Descending' | 'Disabled';
@@ -46,6 +53,7 @@ const Items = () => {
     setShouldUpdateTable,
     setIsDrawerInAdd,
   } = useDrawer()!;
+  const { user } = useUser()!;
   const [globalFilter, setGlobalFilter] = useState('');
 
   useEffect(() => {
@@ -62,7 +70,6 @@ const Items = () => {
         .getList<ItemResponse>(1, undefined, {
           filter: 'is_removed = false',
         });
-      
 
       setData(itemsRes.items.map(d => ({ selected: false, ...d })));
     };
@@ -101,6 +108,39 @@ const Items = () => {
     return data.filter(d => d.selected);
   };
 
+  const deleteRows = async () => {
+    // todo: refactor others to be like this
+    // to reduce use of uef
+    try {
+      const rows = data.filter(d => d.selected).map(r => r.id);
+
+      const reqs = rows.map(async id => {
+        await pb.collection(Collections.Item).update(id, {
+          is_removed: true,
+        });
+        await recordActivity(ActivityActionOptions['DELETE ITEM'], {
+          userId: user!.id,
+          itemId: id,
+        });
+      });
+
+      await Promise.all(reqs);
+
+      setShouldUpdateTable(true);
+      toast.success(`Items deleted`, {
+        duration: 7000,
+        position: 'bottom-center',
+        className: 'font-semibold',
+      });
+    } catch (err) {
+      toast.error(`Item not deleted`, {
+        duration: 7000,
+        position: 'bottom-center',
+        className: 'font-semibold',
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-[16px] pb-[28px] px-[36px] h-full  ">
       <div className="flex justify-between ">
@@ -117,7 +157,11 @@ const Items = () => {
                 icon={<XIcon />}
                 handleClick={clearSelected}
               />
-              <Button label="Delete" icon={<Trash />} />
+              <Button
+                label="Delete"
+                icon={<Trash />}
+                handleClick={() => void deleteRows()}
+              />
               <Button label="PRINT QR" icon={<QrCode />} />
             </>
           )}

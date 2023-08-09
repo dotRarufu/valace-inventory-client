@@ -21,7 +21,7 @@ const TopAppBar = () => {
         <img src={adminIcon} alt="Admin Icon" />
         {/* improve type on user */}
         <span className="leading-none h-[16px]">
-          {user?.username} | {user?.email}
+          {user?.username}
         </span>
       </div>
       <div className="flex gap-[16px]">
