@@ -16,8 +16,9 @@ import NumberInputField from '../Field/NumberInputField';
 import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/userContext';
 import QrCode from '../Items/QrCode';
-import { generateSerialNumber } from '../../utils/generateSerialNumber';
+import generateSerialNumber from '../../utils/generateSerialNumber';
 import { toast } from 'react-hot-toast';
+import { increaseRowCount } from '../../utils/increaseRowCount';
 
 const ItemsSidebar = () => {
   const { user } = useContext(UserContext)!;
@@ -322,6 +323,7 @@ const ItemsSidebar = () => {
           userId: user!.id,
           itemId: res.id,
         });
+        await increaseRowCount('m940ztp5mzi2wlq');
         setShouldUpdateTable(true);
         setShouldAddItem(false);
         toast.success(`Item ${name} added`, {

@@ -10,8 +10,9 @@ import {
 } from '../../../pocketbase-types';
 import { useDrawer } from '../../hooks/useDrawer';
 import pb from '../../lib/pocketbase';
-import { generateSerialNumber } from '../../utils/generateSerialNumber';
+import generateSerialNumber from '../../utils/generateSerialNumber';
 import { toast } from 'react-hot-toast';
+import { increaseRowCount } from '../../utils/increaseRowCount';
 
 interface Props {
   label?: string;
@@ -52,19 +53,22 @@ const ImportCsv = ({ label }: Props) => {
 
     const pushNewData = async () => {
       try {
-        const totalCount = (await pb.collection(Collections.Item).getList(1, 1))
-          .totalItems;
+        const newSerialNumbers = await generateSerialNumber(newData.length);
 
+        console.log('newSerialNumbers:', newSerialNumbers);
         const reqs = newData.map(async (d, index) => {
+          console.log('current:', newSerialNumbers[index]);
+
           const data = {
             ...d,
             is_removed: false,
-            serial_number: await generateSerialNumber(),
+            serial_number: newSerialNumbers[index],
           };
           console.log('push | data:', data);
           await pb.collection(Collections.Item).create(data);
         });
         await Promise.all(reqs);
+        await increaseRowCount('m940ztp5mzi2wlq', reqs.length);
 
         setShouldUpdateTable(true);
         toast.success(`CSV file imported`, {
@@ -73,7 +77,7 @@ const ImportCsv = ({ label }: Props) => {
           className: 'font-semibold',
         });
       } catch (err) {
-        console.log("error:", err);
+        console.log('error:', err);
         toast.error(`CSV file not imported`, {
           duration: 7000,
           position: 'bottom-center',
