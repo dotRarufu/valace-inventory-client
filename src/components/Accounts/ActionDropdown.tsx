@@ -13,6 +13,7 @@ import {
 } from '../../../pocketbase-types';
 import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/userContext';
+import { toast } from 'react-hot-toast';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -47,14 +48,28 @@ const ActionDropdown = ({ position, id }: Props) => {
     if (!shouldDeleteRow) return;
 
     const deleteRow = async () => {
-      await pb.collection(Collections.User).update(id, { is_removed: true });
-      setShouldUpdateTable(true);
-      setShouldDeleteRow(false);
+      try {
+        await pb.collection(Collections.User).update(id, { is_removed: true });
+        setShouldUpdateTable(true);
+        setShouldDeleteRow(false);
 
-      await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
-        userId: user!.id,
-        targetUserId: id,
-      });
+        await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
+          userId: user!.id,
+          targetUserId: id,
+        });
+
+        toast.success(`Account removed`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      } catch (err) {
+        toast.error(`Account not removed`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      }
     };
 
     void deleteRow();

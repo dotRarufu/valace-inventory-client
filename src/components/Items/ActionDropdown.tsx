@@ -9,6 +9,7 @@ import pb from '../../lib/pocketbase';
 import { ActivityActionOptions, Collections } from '../../../pocketbase-types';
 import { UserContext } from '../../contexts/userContext';
 import { recordActivity } from '../../utils/recordActivity';
+import { toast } from 'react-hot-toast';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -47,15 +48,28 @@ const ActionDropdown = ({ position, id }: Props) => {
     if (!shouldDeleteRow) return;
 
     const deleteRow = async () => {
-      await pb.collection(Collections.Item).update(id, {
-        is_removed: true,
-      });
-      await recordActivity(ActivityActionOptions['DELETE ITEM'], {
-        userId: user!.id,
-        itemId: id,
-      });
-      setShouldUpdateTable(true);
-      setShouldDeleteRow(false);
+      try {
+        await pb.collection(Collections.Item).update(id, {
+          is_removed: true,
+        });
+        await recordActivity(ActivityActionOptions['DELETE ITEM'], {
+          userId: user!.id,
+          itemId: id,
+        });
+        setShouldUpdateTable(true);
+        setShouldDeleteRow(false);
+        toast.success(`Item deleted`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      } catch (err) {
+        toast.error(`Item not deleted`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      }
     };
 
     void deleteRow();

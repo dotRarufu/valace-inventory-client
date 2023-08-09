@@ -11,12 +11,14 @@ import ItemsSidebar from './components/Drawer/ItemsSidebar';
 import Items from './pages/Items';
 import UserDataDisplay from './components/user/UserDataDisplay';
 import StaffLayout from './components/StaffLayout';
+import { Toaster } from 'react-hot-toast';
 
 const App = () => {
   const { user, setShouldGetUser } = useUser();
 
   return (
     <UserContext.Provider value={{ user, setShouldGetUser }}>
+      <Toaster />
       <Routes>
         <Route index element={<div>Landing</div>} />
         <Route path="login" element={<Login />} />

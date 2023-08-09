@@ -11,6 +11,7 @@ import {
 import { useDrawer } from '../../hooks/useDrawer';
 import pb from '../../lib/pocketbase';
 import { generateSerialNumber } from '../../utils/generateSerialNumber';
+import { toast } from 'react-hot-toast';
 
 interface Props {
   label?: string;
@@ -50,6 +51,7 @@ const ImportCsv = ({ label }: Props) => {
     if (!shouldPushNewData) return;
 
     const pushNewData = async () => {
+      try {
       const totalCount = (await pb.collection(Collections.Item).getList(1, 1))
         .totalItems;
 
@@ -63,8 +65,20 @@ const ImportCsv = ({ label }: Props) => {
         await pb.collection(Collections.Item).create(data);
       });
       await Promise.all(reqs);
-      console.log('done pushing new data');
+     
       setShouldUpdateTable(true);
+      toast.success(`CSV file imported`, {
+        duration: 7000,
+        position: 'bottom-center',
+        className: 'font-semibold',
+      });
+    } catch (err) {
+      toast.error(`CSV file not imported`, {
+        duration: 7000,
+        position: 'bottom-center',
+        className: 'font-semibold',
+      });
+    }
     };
 
     void pushNewData();

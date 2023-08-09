@@ -10,6 +10,7 @@ import {
 import { UserContext } from '../contexts/userContext';
 import { Collection } from 'pocketbase';
 import { recordActivity } from '../utils/recordActivity';
+import { toast } from 'react-hot-toast';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -38,7 +39,11 @@ const Login = () => {
             userId: res.record.id,
           });
         } catch (err) {
-          console.log('show toast, error occured');
+          toast.error('Login failed', {
+            duration: 7000,
+            position: 'bottom-center',
+            className: 'font-semibold',
+          });
         } finally {
           setShouldGetUser(true);
           setShouldLogin(false);

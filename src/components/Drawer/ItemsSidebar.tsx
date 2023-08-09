@@ -17,6 +17,7 @@ import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/userContext';
 import QrCode from '../Items/QrCode';
 import { generateSerialNumber } from '../../utils/generateSerialNumber';
+import { toast } from 'react-hot-toast';
 
 const ItemsSidebar = () => {
   const { user } = useContext(UserContext)!;
@@ -250,20 +251,33 @@ const ItemsSidebar = () => {
     if (!shouldUpdate) return;
 
     const updateItem = async () => {
-      const data = {
-        property_number: propertyNumber,
-        name,
-        quantity,
-        type,
-        is_available: isAvailable,
-        location,
-        supplier,
-        remarks,
-      };
-      await pb.collection(Collections.Item).update(activeRowId, data);
-      setShouldRecordChangedFields(true);
-      setShouldUpdateTable(true);
-      setShouldUpdate(false);
+      try {
+        const data = {
+          property_number: propertyNumber,
+          name,
+          quantity,
+          type,
+          is_available: isAvailable,
+          location,
+          supplier,
+          remarks,
+        };
+        await pb.collection(Collections.Item).update(activeRowId, data);
+        setShouldRecordChangedFields(true);
+        setShouldUpdateTable(true);
+        setShouldUpdate(false);
+        toast.error(`Item ${name} updated`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      } catch (err) {
+        toast.error(`Item ${name} not updated`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      }
     };
 
     void updateItem();
@@ -286,29 +300,42 @@ const ItemsSidebar = () => {
     if (!shouldAddItem) return;
 
     const addItem = async () => {
-      const items = await pb.collection(Collections.Item).getFullList({
-        fields: 'id',
-      });
+      try {
+        const items = await pb.collection(Collections.Item).getFullList({
+          fields: 'id',
+        });
 
-      const data = {
-        property_number: propertyNumber,
-        name,
-        quantity,
-        type,
-        is_available: isAvailable,
-        location,
-        supplier,
-        remarks,
-        serial_number: generateSerialNumber(items.length),
-      };
+        const data = {
+          property_number: propertyNumber,
+          name,
+          quantity,
+          type,
+          is_available: isAvailable,
+          location,
+          supplier,
+          remarks,
+          serial_number: generateSerialNumber(items.length + 1),
+        };
 
-      const res = await pb.collection(Collections.Item).create(data);
-      await recordActivity(ActivityActionOptions['ADD ITEM'], {
-        userId: user!.id,
-        itemId: res.id,
-      });
-      setShouldUpdateTable(true);
-      setShouldAddItem(false);
+        const res = await pb.collection(Collections.Item).create(data);
+        await recordActivity(ActivityActionOptions['ADD ITEM'], {
+          userId: user!.id,
+          itemId: res.id,
+        });
+        setShouldUpdateTable(true);
+        setShouldAddItem(false);
+        toast.success(`Item ${name} added`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      } catch (err) {
+        toast.error(`Item ${name} not added`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      }
     };
 
     void addItem();
@@ -329,7 +356,7 @@ const ItemsSidebar = () => {
   ]);
 
   const clearData = () => {
-    console.log("clear data runs");
+    console.log('clear data runs');
     setItemResponse(null);
     setPropertyNumber('');
     setName('');
@@ -340,7 +367,7 @@ const ItemsSidebar = () => {
     setSerialNumber('');
     setRemarks('');
     setType('IT');
-   
+
     setInitialFields({
       type: 'IT',
       isAvailable: false,
@@ -353,8 +380,7 @@ const ItemsSidebar = () => {
       propertyNumber: '',
       remarks: '',
     });
-
-  }
+  };
 
   return (
     <div className="drawer-side z-[9999]">

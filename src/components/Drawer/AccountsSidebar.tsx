@@ -13,6 +13,7 @@ import { useDrawer } from '../../hooks/useDrawer';
 import { recordActivity } from '../../utils/recordActivity';
 import useUser from '../../hooks/useUser';
 import { UserContext } from '../../contexts/userContext';
+import toast from 'react-hot-toast';
 
 const AccountsSidebar = () => {
   const {
@@ -110,8 +111,8 @@ const AccountsSidebar = () => {
   ]);
 
   const clearData = () => {
-    console.log("clear data runs");
-   
+    console.log('clear data runs');
+
     setInitialFields({
       isActive: false,
       isAdmin: false,
@@ -123,24 +124,35 @@ const AccountsSidebar = () => {
     setPassword('');
     setIsActive(false);
     setId('');
-
-  }
-
+  };
 
   useEffect(() => {
     if (!shouldUpdate) return;
 
     const updateAccount = async () => {
-      const data = {
-        username,
-        is_admin: isAdmin,
-        plain_password: password,
-        is_active: isActive,
-      };
-      await pb.collection(Collections.User).update(activeRowId, data);
-      setShouldRecordChangedFields(true);
-      setShouldUpdateTable(true);
-      setShouldUpdate(false);
+      try {
+        const data = {
+          username,
+          is_admin: isAdmin,
+          plain_password: password,
+          is_active: isActive,
+        };
+        await pb.collection(Collections.User).update(activeRowId, data);
+        toast.success(`Account ${username} updated`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+        setShouldRecordChangedFields(true);
+        setShouldUpdateTable(true);
+        setShouldUpdate(false);
+      } catch (err) {
+        toast.error(`Account not updated`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      }
     };
 
     void updateAccount();
@@ -183,22 +195,35 @@ const AccountsSidebar = () => {
     if (!shouldAddAccount) return;
 
     const addAccount = async () => {
-      const data = {
-        username,
-        is_admin: isAdmin,
-        is_active: isActive,
-        plain_password: password,
-        password,
-        passwordConfirm: password,
-      };
-      const res = await pb.collection(Collections.User).create(data);
-      await recordActivity(ActivityActionOptions['ADD ACCOUNT'], {
-        userId: user!.id,
-        targetUserId: res.id,
-      });
-      setIsDrawerInAdd(false);
-      setShouldUpdateTable(true);
-      setShouldAddAccount(false);
+      try {
+        const data = {
+          username,
+          is_admin: isAdmin,
+          is_active: isActive,
+          plain_password: password,
+          password,
+          passwordConfirm: password,
+        };
+        const res = await pb.collection(Collections.User).create(data);
+        await recordActivity(ActivityActionOptions['ADD ACCOUNT'], {
+          userId: user!.id,
+          targetUserId: res.id,
+        });
+        toast.success(`Account ${username} added`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+        setIsDrawerInAdd(false);
+        setShouldUpdateTable(true);
+        setShouldAddAccount(false);
+      } catch (err) {
+        toast.error(`Account not added`, {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      }
     };
 
     void addAccount();
