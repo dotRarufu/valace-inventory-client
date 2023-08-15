@@ -4,12 +4,13 @@ import qrCodeIcon from '../../assets/qr.svg';
 import editIcon from '../../assets/edit.svg';
 import trashIcon from '../../assets/trash.svg';
 import { useDrawer } from '../../hooks/useDrawer';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import pb from '../../lib/pocketbase';
 import { ActivityActionOptions, Collections } from '../../../pocketbase-types';
 import { UserContext } from '../../contexts/userContext';
 import { recordActivity } from '../../utils/recordActivity';
 import { toast } from 'react-hot-toast';
+import { generateCoutout } from '../../utils/generateCutout';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -23,15 +24,19 @@ const ActionDropdown = ({ position, id }: Props) => {
     setActiveRowId,
     activeRowId,
     setShouldUpdateTable,
+    setActiveTable,
   } = useDrawer()!;
   const [shouldDeleteRow, setShouldDeleteRow] = useState(false);
+  const donwloadRef = useRef<HTMLAnchorElement>(null);
 
   const handleViewClick = () => {
+    setActiveTable('items');
     setActiveRowId(id);
     setIsDrawerInEdit(false);
   };
 
   const handleEditClick = () => {
+    setActiveTable('items');
     setActiveRowId(id);
     setIsDrawerInEdit(true);
   };
@@ -39,9 +44,34 @@ const ActionDropdown = ({ position, id }: Props) => {
   const handleDeleteClick = () => {
     setShouldDeleteRow(true);
   };
+  const [shouldGenerateCutout, setShouldGenerateCutout] = useState(false);
+  useEffect(() => {
+    if (!shouldGenerateCutout) return;
+
+    const generateCutout = async () => {
+      const res = await generateCoutout({
+        items: [
+          { amount: 1, id: 'nfvjv6ihf5c0hjm' },
+          { amount: 5, id: 'cho2a43pr5vjpcg' },
+        ],
+      });
+
+      if (res !== undefined) {
+        if (donwloadRef.current === null) return;
+        donwloadRef.current.href = res;
+        donwloadRef.current.download = 'test.pdf';
+        // donwloadRef.current.click();
+      }
+
+      setShouldGenerateCutout(false);
+    };
+
+    void generateCutout();
+  }, [shouldGenerateCutout]);
 
   const handlePrintClick = () => {
     console.log('handle print click');
+    setShouldGenerateCutout(true);
   };
 
   useEffect(() => {
@@ -81,6 +111,7 @@ const ActionDropdown = ({ position, id }: Props) => {
         position === 'top' ? 'dropdown-top' : 'dropdown-bottom'
       }`}
     >
+      <a ref={donwloadRef} className="hidden" />
       <label
         tabIndex={0}
         className="btn btn-outline btn-ghost w-[48px] h-[48px] p-[12px] hover:bg-primary/80"

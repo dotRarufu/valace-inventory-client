@@ -56,10 +56,6 @@ const Items = () => {
   const { user } = useUser()!;
   const [globalFilter, setGlobalFilter] = useState('');
 
-  useEffect(() => {
-    setActiveTable('items');
-  }, [setActiveTable]);
-
   const [data, setData] = useState<ItemDataRow[]>([]);
 
   useEffect(() => {
@@ -162,7 +158,17 @@ const Items = () => {
                 icon={<Trash />}
                 handleClick={() => void deleteRows()}
               />
-              <Button label="PRINT QR" icon={<QrCode />} />
+
+              <label
+                onClick={() => {
+                  setActiveTable('print-qr');
+                }}
+                htmlFor="my-drawer"
+                className="btn btn-secondary hover:btn-primary px-[16px] text-[20px] font-semibold"
+              >
+                <Trash />
+                Print qr
+              </label>
             </>
           )}
         </div>

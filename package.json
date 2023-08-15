@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "pb-dev": "sudo ../pocketbase/pocketbase serve --http='170.10.0.198:8090'",
+    "pb-dev": "sudo ../pocketbase/pocketbase serve --http='172.18.0.1:8090'",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
@@ -14,13 +14,15 @@
   "dependencies": {
     "@json2csv/plainjs": "^7.0.1",
     "@tanstack/react-table": "^8.9.3",
+    "axios": "^1.4.0",
     "browserify-fs": "^1.0.0",
     "csv-parser": "^3.0.0",
     "docx": "^8.2.0",
     "neat-csv": "^7.0.0",
     "papaparse": "^5.4.1",
+    "pdfmake": "^0.2.7",
     "pocketbase": "^0.15.2",
-    "pocketbase-typegen": "^1.1.11",
+    "pocketbase-typegen": "^1.1.12",
     "qr-code-styling": "^1.6.0-rc.1",
     "react": "^18.2.0",
     "react-calendar": "^4.3.0",
@@ -32,6 +34,7 @@
   },
   "devDependencies": {
     "@types/papaparse": "^5.3.7",
+    "@types/pdfmake": "^0.2.2",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "@typescript-eslint/eslint-plugin": "^5.61.0",

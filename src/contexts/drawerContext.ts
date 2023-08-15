@@ -5,9 +5,9 @@ export const DrawerContext = createContext<{
   setDrawerRef: React.Dispatch<
     React.SetStateAction<React.RefObject<HTMLInputElement> | null>
   >;
-  activeTable: 'accounts' | 'items' | null;
+  activeTable: 'accounts' | 'items' | 'print-qr' | null;
   setActiveTable: React.Dispatch<
-    React.SetStateAction<'accounts' | 'items' | null>
+    React.SetStateAction<'accounts' | 'items' | 'print-qr' | null>
   >;
   isDrawerInEdit: boolean;
   setIsDrawerInEdit: React.Dispatch<React.SetStateAction<boolean>>;

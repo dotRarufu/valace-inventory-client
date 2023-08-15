@@ -8,9 +8,9 @@ import { DrawerContext } from '../contexts/drawerContext';
 const AdminLayout = () => {
   const [isDrawerInEdit, setIsDrawerInEdit] = useState(false);
   const [isDrawerInAdd, setIsDrawerInAdd] = useState(false);
-  const [activeTable, setActiveTable] = useState<'accounts' | 'items' | null>(
-    null
-  );
+  const [activeTable, setActiveTable] = useState<
+    'accounts' | 'items' | 'print-qr' | null
+  >(null);
   const [activeRowId, setActiveRowId] = useState('');
   const [shouldUpdateTable, setShouldUpdateTable] = useState(false);
   const [drawerRef, setDrawerRef] =
