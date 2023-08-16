@@ -89,6 +89,7 @@ export type ItemRecord = {
 	property_number: string
 	serial_number: string
 	is_removed?: boolean
+	qr: string
 }
 
 export type TestRecord = {

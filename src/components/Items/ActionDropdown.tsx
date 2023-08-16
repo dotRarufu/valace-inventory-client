@@ -71,7 +71,7 @@ const ActionDropdown = ({ position, id }: Props) => {
 
   const handlePrintClick = () => {
     console.log('handle print click');
-    setShouldGenerateCutout(true);
+    // setShouldGenerateCutout(true);
   };
 
   useEffect(() => {

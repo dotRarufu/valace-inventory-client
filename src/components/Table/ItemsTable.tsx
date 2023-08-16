@@ -10,11 +10,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  RankingInfo,
-  rankItem,
-  compareItems,
-} from '@tanstack/match-sorter-utils';
 import Pagination, { PaginationProps } from '../Pagination';
 import { useMemo, useState } from 'react';
 import { ItemDataRow } from '../../pages/Items';
@@ -35,15 +30,6 @@ const ItemsTable = ({
   setGlobalFilter,
   globalFilter,
 }: Props) => {
-  // const [data, setData] = useState<ItemDataRow[]>(
-  //   itemRows.map(d => ({ selected: false, ...d }))
-  // );
-
-  // useEffect(() => {
-  //   const ids = data.filter(d => d.selected).map(d => d.id);
-  //   setSelectedRowsId(ids);
-  // }, [data, setSelectedRowsId]);
-
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const columns = useMemo(() => {
@@ -188,7 +174,7 @@ const ItemsTable = ({
     totalPage: table.getPageCount(),
 
     handleChangePage: (page: number) => {
-      console.log("changep age:", page - 1);
+      console.log('changep age:', page - 1);
       table.setPageIndex(page - 1);
     },
   };

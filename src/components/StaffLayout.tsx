@@ -4,17 +4,19 @@ import TopAppBar from './TopAppBar';
 import DrawerLayout from './Drawer/DrawerLayout';
 import { useState } from 'react';
 import { DrawerContext } from '../contexts/drawerContext';
+import { ItemDataRow } from '../pages/Items';
 
 const StaffLayout = () => {
   const [isDrawerInEdit, setIsDrawerInEdit] = useState(false);
   const [isDrawerInAdd, setIsDrawerInAdd] = useState(false);
-  const [activeTable, setActiveTable] = useState<'accounts' | 'items' | null>(
-    null
-  );
+  const [activeTable, setActiveTable] = useState<
+    'accounts' | 'items' | 'print-qr' | null
+  >(null);
   const [activeRowId, setActiveRowId] = useState('');
   const [shouldUpdateTable, setShouldUpdateTable] = useState(false);
   const [drawerRef, setDrawerRef] =
     useState<React.RefObject<HTMLInputElement> | null>(null);
+  const [selectedRows, setSelectedRows] = useState<ItemDataRow[]>([]);
 
   return (
     <DrawerContext.Provider
@@ -31,6 +33,8 @@ const StaffLayout = () => {
         setShouldUpdateTable,
         isDrawerInAdd,
         setIsDrawerInAdd,
+        selectedRows,
+        setSelectedRows,
       }}
     >
       <DrawerLayout

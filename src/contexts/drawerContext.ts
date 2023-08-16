@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { ItemDataRow } from '../pages/Items';
 
 export const DrawerContext = createContext<{
   drawerRef: React.RefObject<HTMLInputElement> | null;
@@ -17,4 +18,6 @@ export const DrawerContext = createContext<{
   setShouldUpdateTable: React.Dispatch<React.SetStateAction<boolean>>;
   setIsDrawerInAdd: React.Dispatch<React.SetStateAction<boolean>>;
   isDrawerInAdd: boolean;
+  setSelectedRows: React.Dispatch<React.SetStateAction<ItemDataRow[]>>;
+  selectedRows: ItemDataRow[];
 } | null>(null);

@@ -4,6 +4,7 @@ import TopAppBar from './TopAppBar';
 import DrawerLayout from './Drawer/DrawerLayout';
 import { useState } from 'react';
 import { DrawerContext } from '../contexts/drawerContext';
+import { ItemDataRow } from '../pages/Items';
 
 const AdminLayout = () => {
   const [isDrawerInEdit, setIsDrawerInEdit] = useState(false);
@@ -15,6 +16,7 @@ const AdminLayout = () => {
   const [shouldUpdateTable, setShouldUpdateTable] = useState(false);
   const [drawerRef, setDrawerRef] =
     useState<React.RefObject<HTMLInputElement> | null>(null);
+  const [selectedRows, setSelectedRows] = useState<ItemDataRow[]>([]);
 
   return (
     <DrawerContext.Provider
@@ -31,6 +33,8 @@ const AdminLayout = () => {
         setShouldUpdateTable,
         isDrawerInAdd,
         setIsDrawerInAdd,
+        selectedRows,
+        setSelectedRows,
       }}
     >
       <DrawerLayout

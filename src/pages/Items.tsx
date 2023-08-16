@@ -27,6 +27,7 @@ import ImportCsv from '../components/Items/ImportCsv';
 import { recordActivity } from '../utils/recordActivity';
 import useUser from '../hooks/useUser';
 import { toast } from 'react-hot-toast';
+import { generateCoutout } from '../utils/generateCutout';
 
 type Filters = {
   [key: string]: 'Ascending' | 'Descending' | 'Disabled';
@@ -38,20 +39,12 @@ export interface ItemDataRow extends ItemResponse {
 }
 
 const Items = () => {
-  const [filters, setFilters] = useState<Filters>({
-    ID: 'Disabled',
-    Name: 'Disabled',
-    Type: 'Disabled',
-    Location: 'Disabled',
-    Status: 'Disabled',
-    Supplier: 'Disabled',
-    'Date Added': 'Disabled',
-  });
   const {
     setActiveTable,
     shouldUpdateTable,
     setShouldUpdateTable,
     setIsDrawerInAdd,
+    setSelectedRows,
   } = useDrawer()!;
   const { user } = useUser()!;
   const [globalFilter, setGlobalFilter] = useState('');
@@ -72,6 +65,12 @@ const Items = () => {
 
     void getItems();
   }, []);
+
+  useEffect(() => {
+    const selectedRows = data.filter(d => d.selected);
+
+    setSelectedRows(selectedRows);
+  }, [data, setSelectedRows]);
 
   // separated for readability
   useEffect(() => {
