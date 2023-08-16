@@ -19,6 +19,40 @@ import QrCode from '../Items/QrCode';
 import generateSerialNumber from '../../utils/generateSerialNumber';
 import { toast } from 'react-hot-toast';
 import { increaseRowCount } from '../../utils/increaseRowCount';
+import QRCodeStyling from 'qr-code-styling';
+import { qrCodeValAceLogo } from '../../assets/qrCodeValaceLogo';
+
+const qrCode = new QRCodeStyling({
+  width: 300,
+  height: 300,
+  data: 'https://www.google.com/search?client=firefox-b-d&q=uuid+example',
+  margin: 0,
+  qrOptions: {
+    typeNumber: 0,
+    mode: 'Byte',
+    errorCorrectionLevel: 'Q',
+  },
+  imageOptions: {
+    hideBackgroundDots: true,
+    imageSize: 0.4,
+    margin: 0,
+  },
+  dotsOptions: {
+    type: 'rounded',
+    color: '#00104a',
+  },
+  backgroundOptions: {
+    color: '#ffffff',
+  },
+  image: qrCodeValAceLogo,
+
+  cornersSquareOptions: {
+    color: '#00104a',
+  },
+  cornersDotOptions: {
+    color: '#00104a',
+  },
+});
 
 const ItemsSidebar = () => {
   const { user } = useContext(UserContext)!;
@@ -302,10 +336,6 @@ const ItemsSidebar = () => {
 
     const addItem = async () => {
       try {
-        const items = await pb.collection(Collections.Item).getFullList({
-          fields: 'id',
-        });
-
         const data = {
           property_number: propertyNumber,
           name,
@@ -319,6 +349,29 @@ const ItemsSidebar = () => {
         };
 
         const res = await pb.collection(Collections.Item).create(data);
+        console.log('passed init');
+
+        const newFormData = new FormData();
+
+        const address = import.meta.env.VITE_URL || 'isUndefined';
+        const route = 'user';
+        const query = '?id=';
+
+        qrCode.update({
+          data: `${address}/${route}${query}${activeRowId}`,
+        });
+
+        const file = await qrCode.getRawData();
+
+        if (file === null)
+          throw new Error('could not convert qrcoderaw data to blob');
+
+        newFormData.append('qr', file);
+
+        const qrRes = await pb
+          .collection(Collections.Item)
+          .update(res.id, newFormData);
+
         await recordActivity(ActivityActionOptions['ADD ITEM'], {
           userId: user!.id,
           itemId: res.id,

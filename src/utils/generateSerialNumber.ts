@@ -22,7 +22,7 @@ async function generateSerialNumber(
 
       return a;
     });
-
+    console.log("new serial numbers:", serialNumbers);
     return serialNumbers;
   } else {
     return (

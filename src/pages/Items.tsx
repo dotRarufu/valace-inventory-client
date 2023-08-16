@@ -188,13 +188,26 @@ const Items = () => {
           setGlobalFilter={setGlobalFilter}
         />
       </div>
-      <Fab
-        handleClick={() => {
-          setIsDrawerInAdd(true);
-        }}
-        label={<Add />}
-        tooltip="Item"
-      />
+
+      <div className="dropdown dropdown-top dropdown-end  absolute bottom-[16px] right-[16px] z-[1]">
+        <div className="tooltip tooltip-left tooltip-primary " data-tip="Item">
+          <label
+            onClick={() => {
+              setActiveTable('items');
+              setIsDrawerInAdd(true);
+            }}
+            htmlFor="my-drawer"
+            tabIndex={0}
+            className="btn btn-circle btn-lg btn-primary px-[16px]"
+          >
+            <Add />
+          </label>
+        </div>
+        <div
+          tabIndex={0}
+          className="dropdown-content z-[1] rounded-[5px] bg-base-secondary w-fit "
+        ></div>
+      </div>
     </div>
   );
 };
