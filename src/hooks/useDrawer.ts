@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { DrawerContext } from '../contexts/drawerContext';
+import { SidebarContext } from '../contexts/SidebarContext';
 
 export const useDrawer = () => {
-  return useContext(DrawerContext);
+  return useContext(SidebarContext);
 };

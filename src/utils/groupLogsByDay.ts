@@ -1,5 +1,5 @@
 import { ActivityResponse } from '../../pocketbase-types';
-import { DayLog } from '../pages/ActivityLog';
+import { DayLog } from '../pages/activity-log/ActivityLog';
 
 export const groupLogsByDay = (logs: ActivityResponse[]) => {
   const trimmedDates: string[] = logs.map(l =>
