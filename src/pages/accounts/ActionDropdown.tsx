@@ -1,19 +1,14 @@
 import Kebab from '../../components/icons/Kebab';
 import fullscreenIcon from '../../assets/fullscreen.svg';
-
 import editIcon from '../../assets/edit.svg';
 import trashIcon from '../../assets/trash.svg';
 import { useDrawer } from '../../hooks/useDrawer';
 import { useContext, useEffect, useState } from 'react';
-import pb from '../../lib/pocketbase';
-import {
-  ActivityActionOptions,
-  Collections,
-  UserRecord,
-} from '../../../pocketbase-types';
+import { ActivityActionOptions } from '../../../pocketbase-types';
 import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/UserContext';
 import { toast } from 'react-hot-toast';
+import { updateAccount } from '../../services/accounts';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -44,36 +39,33 @@ const ActionDropdown = ({ position, id }: Props) => {
     setShouldDeleteRow(true);
   };
 
+  // Remove account
   useEffect(() => {
     if (!shouldDeleteRow) return;
 
-    const deleteRow = async () => {
-      try {
-        await pb.collection(Collections.User).update(id, { is_removed: true });
-        setShouldUpdateTable(true);
-        setShouldDeleteRow(false);
+    updateAccount(id, { is_removed: true }, () => {
+      toast.success(`Account removed`, {
+        duration: 7000,
+        position: 'bottom-center',
+        className: 'font-semibold',
+      });
 
-        await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
-          userId: user!.id,
-          targetUserId: id,
-        });
+      setShouldUpdateTable(true);
+      setShouldDeleteRow(false);
 
-        toast.success(`Account removed`, {
-          duration: 7000,
-          position: 'bottom-center',
-          className: 'font-semibold',
-        });
-      } catch (err) {
-        toast.error(`Account not removed`, {
-          duration: 7000,
-          position: 'bottom-center',
-          className: 'font-semibold',
-        });
-      }
-    };
-
-    void deleteRow();
-  }, [activeRowId, id, setShouldUpdateTable, shouldDeleteRow, user]);
+      // This should never fail
+      void recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
+        userId: user!.id,
+        targetUserId: id,
+      });
+    }).catch(err => {
+      toast.error(`Account not removed`, {
+        duration: 7000,
+        position: 'bottom-center',
+        className: 'font-semibold',
+      });
+    });
+  }, [id, setShouldUpdateTable, shouldDeleteRow, user]);
 
   return (
     <div
@@ -87,6 +79,7 @@ const ActionDropdown = ({ position, id }: Props) => {
       >
         <Kebab />
       </label>
+
       <ul
         tabIndex={0}
         className="dropdown-content menu z-[1] w-52 rounded-[5px] bg-secondary p-2 drop-shadow-md"
@@ -105,7 +98,7 @@ const ActionDropdown = ({ position, id }: Props) => {
           <label
             onClick={handleEditClick}
             htmlFor="my-drawer"
-            className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
+            className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px] "
           >
             <div className=" h-[13px]">Edit</div>
             <img src={editIcon} />

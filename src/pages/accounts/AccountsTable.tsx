@@ -18,10 +18,10 @@ type Props = {
 };
 
 const AccountsTable = ({ data }: Props) => {
-  const columns = useMemo(() => {
-    return [
+  const columns = useMemo(
+    () => [
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-
       columnHelper.accessor('id', {
         header: () => 'UID',
         cell: info => info.renderValue(),
@@ -32,11 +32,6 @@ const AccountsTable = ({ data }: Props) => {
         cell: info => info.renderValue(),
         footer: info => info.column.id,
       }),
-      // columnHelper.accessor('email', {
-      //   header: () => 'Email',
-      //   cell: info => info.renderValue(),
-      //   footer: info => info.column.id,
-      // }),
       columnHelper.accessor('is_admin', {
         header: () => 'Role',
         cell: info => {
@@ -87,8 +82,9 @@ const AccountsTable = ({ data }: Props) => {
         ),
         footer: info => info.column.id,
       }),
-    ];
-  }, [data]);
+    ],
+    [data]
+  );
 
   const table = useReactTable({
     data,
@@ -113,7 +109,6 @@ const AccountsTable = ({ data }: Props) => {
     totalPage: table.getPageCount(),
 
     handleChangePage: (page: number) => {
-      console.log('changep age:', page - 1);
       table.setPageIndex(page - 1);
     },
   };

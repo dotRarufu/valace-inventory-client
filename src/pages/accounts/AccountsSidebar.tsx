@@ -3,18 +3,13 @@ import TextInputField from '../../components/field/TextInputField';
 import PasswordField from '../../components/field/PasswordField';
 import ToggleField from '../../components/field/ToggleField';
 import { useContext, useEffect, useState } from 'react';
-import pb from '../../lib/pocketbase';
-import {
-  ActivityActionOptions,
-  Collections,
-  UserResponse,
-} from '../../../pocketbase-types';
+import { ActivityActionOptions } from '../../../pocketbase-types';
 import { useDrawer } from '../../hooks/useDrawer';
-import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/UserContext';
 import toast from 'react-hot-toast';
-import { updateAccount } from '../../services/accounts';
+import { addAccount, getAccount, updateAccount } from '../../services/accounts';
 import { toastSettings } from '../../data/toastSettings';
+import { recordActivity } from '../../services/logger';
 
 const AccountsSidebar = () => {
   const {
@@ -110,22 +105,7 @@ const AccountsSidebar = () => {
     username,
   ]);
 
-  const clearData = () => {
-    console.log('clear data runs');
-
-    setInitialFields({
-      isActive: false,
-      isAdmin: false,
-      password: '',
-      username: '',
-    });
-    setUsername('');
-    setIsAdmin(false);
-    setPassword('');
-    setIsActive(false);
-    setId('');
-  };
-
+  // Update account
   useEffect(() => {
     if (!shouldUpdate) return;
 
@@ -157,15 +137,9 @@ const AccountsSidebar = () => {
     username,
   ]);
 
+  // Get account
   useEffect(() => {
-    const getAccountRow = async () => {
-      const res = await pb
-        .collection(Collections.User)
-        .getOne<UserResponse>(activeRowId);
-
-      console.log('res:', res);
-      console.log('activeRowId:', activeRowId);
-
+    void getAccount(activeRowId, res => {
       setInitialFields({
         isActive: res.is_active,
         isAdmin: res.is_admin,
@@ -177,47 +151,36 @@ const AccountsSidebar = () => {
       setPassword(res.plain_password);
       setIsActive(res.is_active);
       setId(res.id);
-    };
-
-    void getAccountRow();
+    });
   }, [activeRowId]);
 
+  // Add account
   useEffect(() => {
     if (!shouldAddAccount) return;
 
-    const addAccount = async () => {
-      try {
-        const data = {
-          username,
-          is_admin: isAdmin,
-          is_active: isActive,
-          plain_password: password,
-          password,
-          passwordConfirm: password,
-        };
-        const res = await pb.collection(Collections.User).create(data);
-        await recordActivity(ActivityActionOptions['ADD ACCOUNT'], {
-          userId: user!.id,
-          targetUserId: res.id,
-        });
-        toast.success(`Account ${username} added`, {
-          duration: 7000,
-          position: 'bottom-center',
-          className: 'font-semibold',
-        });
-        setIsDrawerInAdd(false);
-        setShouldUpdateTable(true);
-        setShouldAddAccount(false);
-      } catch (err) {
-        toast.error(`Account not added`, {
-          duration: 7000,
-          position: 'bottom-center',
-          className: 'font-semibold',
-        });
-      }
+    const data = {
+      username,
+      is_admin: isAdmin,
+      is_active: isActive,
+      plain_password: password,
+      password,
+      passwordConfirm: password,
     };
 
-    void addAccount();
+    addAccount(data, res => {
+      toast.success(`Account ${username} added`, toastSettings);
+      setIsDrawerInAdd(false);
+      setShouldUpdateTable(true);
+      setShouldAddAccount(false);
+
+      // this should never fail
+      void recordActivity(ActivityActionOptions['ADD ACCOUNT'], {
+        userId: user!.id,
+        targetUserId: res.id,
+      });
+    }).catch(err => {
+      toast.error(`Account not added`, toastSettings);
+    });
   }, [
     isActive,
     isAdmin,
@@ -228,6 +191,20 @@ const AccountsSidebar = () => {
     user,
     username,
   ]);
+
+  const clearData = () => {
+    setInitialFields({
+      isActive: false,
+      isAdmin: false,
+      password: '',
+      username: '',
+    });
+    setUsername('');
+    setIsAdmin(false);
+    setPassword('');
+    setIsActive(false);
+    setId('');
+  };
 
   return (
     <div className="drawer-side z-[9999]">
@@ -283,8 +260,6 @@ const AccountsSidebar = () => {
         </ul>
 
         <div className="h-full"></div>
-
-        {/* <QrCodeModal /> */}
 
         <div className="flex items-center justify-end gap-[16px] py-[32px]">
           <button
