@@ -1,16 +1,10 @@
 import { ReactNode, useEffect, useState } from 'react';
 import LogItem from './LogItem';
-import pb from '../../lib/pocketbase';
-import {
-  ActivityActionOptions,
-  ActivityResponse,
-  Collections,
-  ItemResponse,
-  UserResponse,
-} from '../../../pocketbase-types';
+import { ActivityResponse } from '../../../pocketbase-types';
 import { dateToDateFilterString } from '../../utils/dateToDateFilterString';
-import { Admin } from 'pocketbase';
-import Staff from '../../components/icons/Staff';
+import { getActivityData, getPaginatedActivities } from '../../services/logger';
+import { toast } from 'react-hot-toast';
+import { toastSettings } from '../../data/toastSettings';
 
 type Props = {
   date: Date;
@@ -19,80 +13,9 @@ type Props = {
 export type ActivityData = {
   name: string;
   action: string;
-
   details?: [string, string] | undefined;
   date: string;
   icon?: ReactNode;
-};
-
-const getActionDescription = (
-  activity: ActivityActionOptions,
-  data: { username?: string; targetName?: string }
-) => {
-  const targetName = data.targetName || '';
-
-  switch (activity) {
-    case ActivityActionOptions['ADD ITEM']:
-      return `added ${targetName}`;
-    case ActivityActionOptions['ADD ITEM THROUGH CSV']:
-      return `added ${targetName} through CSV`;
-    case ActivityActionOptions['ADD ACCOUNT']:
-      return `added a new account (${targetName})`;
-    case ActivityActionOptions['DELETE ACCOUNT']:
-      return `removed an account (${targetName})`;
-    case ActivityActionOptions['DELETE ITEM']:
-      return `removed an item (${targetName})`;
-    case ActivityActionOptions['EDIT ACCOUNT PASSWORD']:
-      return `changed ${targetName}'s password`;
-    case ActivityActionOptions['EDIT ACCOUNT USERNAME']:
-      return `changed ${targetName}'s username`;
-    case ActivityActionOptions['EDIT ACCOUNT ROLE']:
-      return `changed ${targetName}'s role`;
-    case ActivityActionOptions['EDIT ACCOUNT STATUS']:
-      return `changed ${targetName}'s status`;
-    case ActivityActionOptions['EDIT LOCATION']:
-      return `changed ${targetName}'s location`;
-    case ActivityActionOptions['EDIT NAME']:
-      return `changed ${targetName}'s name`;
-    case ActivityActionOptions['EDIT PROPERTY NUMBER']:
-      return `changed ${targetName}'s property number`;
-    case ActivityActionOptions['EDIT QUANTITY']:
-      return `changed ${targetName}'s quantity`;
-    case ActivityActionOptions['EDIT REMARKS']:
-      return `changed ${targetName}'s remarks`;
-    case ActivityActionOptions['EDIT SUPPLIER']:
-      return `changed ${targetName}'s supplier`;
-    case ActivityActionOptions['EDIT TYPE']:
-      return `changed ${targetName}'s type`;
-    case ActivityActionOptions['ADD ITEM IMAGE']:
-      return `added images for ${targetName}`;
-    case ActivityActionOptions['DELETE ITEM IMAGE']:
-      return `deleted an image for ${targetName}`;
-
-    case 'DOWNLOAD QR':
-      return `downloaded the QR Code for ${targetName}`;
-    case 'LOGIN':
-      return `logged in`;
-    case 'LOGOUT':
-      return `logged out`;
-    case 'EDIT NAME':
-      return `edited the name of ${targetName}`;
-    case 'EDIT QUANTITY':
-      return `edited the quantity of ${targetName}`;
-    case 'EDIT LOCATION':
-      return `edited the location of ${targetName}`;
-    case 'EDIT SUPPLIER':
-      return `edited the supplier of ${targetName}`;
-    case 'EDIT REMARKS':
-      return `edited the remarks of ${targetName}`;
-    case 'EDIT TYPE':
-      return `edited the type of ${targetName}`;
-    case 'EDIT IMAGES':
-      return `edited the images of ${targetName}`;
-
-    default:
-      return '';
-  }
 };
 
 const LogList = ({ date }: Props) => {
@@ -106,50 +29,20 @@ const LogList = ({ date }: Props) => {
   useEffect(() => {
     const getActivitiesData = async () => {
       const data = await Promise.all(
-        activities.map(async a => {
-          const user = await pb
-            .collection(Collections.User)
-            .getOne<UserResponse>(a.user_id);
-
-          // todo: update type: this could result in PocketbaseError
-          const item = await pb
-            .collection(Collections.Item)
-            .getOne<ItemResponse>(a.item_id);
-
-          const targetUser = await pb
-            .collection(Collections.User)
-            .getOne<UserResponse>(a.target_user_id);
-
-          const action = getActionDescription(a.action, {
-            username: user.username,
-            targetName: item.name || targetUser.username,
-          });
-
-          const data: ActivityData = {
-            name: user.username,
-            action: action,
-
-            details: [a.edit_old_value, a.edit_new_value],
-            date: a.created,
-            icon: user.is_admin ? <Admin /> : <Staff />,
-          };
-
-          return data;
-        })
+        activities.map(async activity => await getActivityData(activity))
       );
 
       setActivitiesData(data);
     };
 
-    void getActivitiesData();
+    getActivitiesData().catch(() => {
+      toast.error('Failed to get activities data', toastSettings);
+    });
   }, [activities, maxPage]);
 
   // Get date activities, initial
   useEffect(() => {
-    if (maxPage !== null) {
-      console.log('cant fetch initially again:', maxPage);
-      return;
-    }
+    if (maxPage !== null) return;
 
     const getActivities = async () => {
       const min = dateToDateFilterString(date);
@@ -157,18 +50,15 @@ const LogList = ({ date }: Props) => {
       limitDate.setDate(date.getDate() + 1);
       const max = dateToDateFilterString(limitDate);
 
-      const resActivities = await pb
-        .collection(Collections.Activity)
-        .getList<ActivityResponse>(1, 3, {
-          filter: `created >= "${min}" && created < "${max}"`,
-        });
-      console.log('activities:', resActivities);
+      const resActivities = await getPaginatedActivities(min, max, 1, 3);
 
       setMaxPage(resActivities.totalPages);
       setActivities(resActivities.items);
     };
 
-    void getActivities();
+    getActivities().catch(() => {
+      toast.error('Failed to get activities', toastSettings);
+    });
   }, [date, maxPage]);
 
   // Get date activities, per current page change
@@ -176,7 +66,6 @@ const LogList = ({ date }: Props) => {
     if (currentPage === 1) return;
     if (reachedLastPage) return;
     if (maxPage !== null && currentPage > maxPage) return;
-    console.log('runs current page change');
 
     const getActivities = async () => {
       const min = dateToDateFilterString(date);
@@ -184,26 +73,24 @@ const LogList = ({ date }: Props) => {
       limitDate.setDate(date.getDate() + 1);
       const max = dateToDateFilterString(limitDate);
 
-      const resActivities = await pb
-        .collection(Collections.Activity)
-        .getList<ActivityResponse>(currentPage, 3, {
-          filter: `created >= "${min}" && created < "${max}"`,
-        });
+      const resActivities = await getPaginatedActivities(
+        min,
+        max,
+        currentPage,
+        3
+      );
 
       setReachedLastPage(maxPage !== null && currentPage >= maxPage);
       setCurrentPage(resActivities.page);
       setActivities(old => [...old, ...resActivities.items]);
     };
 
-    void getActivities();
+    getActivities().catch(() => {
+      toast.error('Failed to get activities', toastSettings);
+    });
   }, [currentPage, date, maxPage, reachedLastPage]);
 
   const handleClick = () => {
-    console.log('=====================');
-    console.log('logList:', date);
-    console.log('currentPage:', currentPage);
-    console.log('maxPage:', maxPage);
-    console.log('=====================');
     if (maxPage !== null && currentPage > maxPage) return;
 
     setCurrentPage(currentPage + 1);

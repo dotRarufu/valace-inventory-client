@@ -1,6 +1,6 @@
 import { Calendar as CalendarIcon } from '../../components/icons/Calendar';
 import ChevronDown from '../../components/icons/ChevronDown';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Calendar from 'react-calendar';
 import ChevronUp from '../../components/icons/ChevronUp';
 import epochToDate from '../../utils/epochToDate';
@@ -9,87 +9,58 @@ export type ValuePiece = Date | null;
 export type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 type Props = {
-  setDateFilter: React.Dispatch<
-    React.SetStateAction<ValuePiece | [ValuePiece, ValuePiece] | undefined>
-  >;
+  setDateFilter: React.Dispatch<React.SetStateAction<[Date, Date]>>;
+  dateFilter: [Date, Date];
 };
 
-const DateDropdown = ({ setDateFilter }: Props) => {
+const DateDropdown = ({ setDateFilter, dateFilter }: Props) => {
   const [calendarDateRange, setCalendarDateRange] = useState<
-    ValuePiece | [ValuePiece, ValuePiece] | undefined
-  >();
-  const [dateRange, setDateRange] = useState<
-    ValuePiece | [ValuePiece, ValuePiece] | undefined
-  >();
+    [Date, Date | null] | null
+  >(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [shouldShowDateRangeLabel, setShouldShowDateRangeLabel] =
-    useState(true);
+
   const detailsRef = useRef<HTMLDetailsElement>(null);
 
-  // Sync dateRange to ActivtyLog's dateFilter
-  useEffect(() => {
-    setDateFilter(dateRange);
-  }, [dateRange, setDateFilter]);
-
   const handleApplyClick = () => {
-    setDateRange(calendarDateRange);
-    setCalendarDateRange([null, null]);
+    if (calendarDateRange === null) return;
+
+    setDateFilter(calendarDateRange as [Date, Date]);
     setIsOpen(!isOpen);
 
     if (detailsRef.current !== null) {
       detailsRef.current.open = !isOpen;
     }
-
-    setShouldShowDateRangeLabel(true);
   };
 
-  useEffect(() => {
-    if (isOpen) {
-      setShouldShowDateRangeLabel(false);
-      setCalendarDateRange(dateRange);
-      return;
-    }
-
-    setShouldShowDateRangeLabel(true);
-  }, [dateRange, isOpen]);
-
   const getDateLabel = () => {
-    if (dateRange instanceof Array) {
-      // todo: remove non different dates
-      // to remove 2 span item of same date
-      //   const unique = [...new Set(dateRange)];
-      const nonNullDateRange = dateRange.filter(d => d instanceof Date);
-      const milliseconds = nonNullDateRange.map(d => d!.getTime());
-      const seconds = milliseconds.map(ms => Math.floor(ms / 1000));
-      const stringDate = seconds.map(s => epochToDate(s));
-      const template = stringDate.map((label, index) => (
-        <span key={index}>{label}</span>
-      ));
+    // todo: remove non different dates
+    // to remove 2 span item of same date
+    //   const unique = [...new Set(dateRange)];
 
-      return template;
-    }
+    const nonNullDateRange = dateFilter.filter(d => d instanceof Date);
+    const milliseconds = nonNullDateRange.map(d => d.getTime());
+    const seconds = milliseconds.map(ms => Math.floor(ms / 1000));
+    const stringDate = seconds.map(s => epochToDate(s));
+    const template = stringDate.map((label, index) => (
+      <span key={index}>{label}</span>
+    ));
 
-    if (dateRange !== null && dateRange !== undefined) {
-      const milliseconds = dateRange.getTime();
-      const seconds = Math.floor(milliseconds / 1000);
-      const stringDate = epochToDate(seconds);
-      const template = <span>{stringDate}</span>;
-
-      return template;
-    }
+    return template;
   };
 
   const clearCalendar = () => {
-    setCalendarDateRange([null, null]);
+    setCalendarDateRange(null);
   };
 
   const shouldDisplayClearButton = () => {
-    if (calendarDateRange instanceof Array) {
-      const nonNull = calendarDateRange.filter(i => i !== null);
-
-      return nonNull.length === 2;
+    if (calendarDateRange === null) {
+      return false;
     }
-    return false;
+
+    const dates = calendarDateRange.filter(
+      c => c instanceof Date && c !== null
+    );
+    return dates.length === 2;
   };
 
   return (
@@ -100,7 +71,7 @@ const DateDropdown = ({ setDateFilter }: Props) => {
       >
         <CalendarIcon />
         <span className="h-[13px] font-khula font-semibold">Date</span>
-        {shouldShowDateRangeLabel && getDateLabel()}
+        {!isOpen && getDateLabel()}
         {isOpen ? <ChevronDown /> : <ChevronUp />}
       </summary>
       <div
@@ -109,7 +80,10 @@ const DateDropdown = ({ setDateFilter }: Props) => {
       >
         <div className="border-red flex flex-col border bg-secondary  p-[8px] pb-[16px]">
           <Calendar
-            onChange={setCalendarDateRange}
+            onChange={v => {
+              const value = v as [Date, Date | null];
+              setCalendarDateRange(value);
+            }}
             value={calendarDateRange}
             allowPartialRange={true}
             goToRangeStartOnSelect={true}
