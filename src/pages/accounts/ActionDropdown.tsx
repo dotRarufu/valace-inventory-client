@@ -5,11 +5,11 @@ import trashIcon from '../../assets/trash.svg';
 import { useDrawer } from '../../hooks/useDrawer';
 import { useContext } from 'react';
 import { ActivityActionOptions } from '../../../pocketbase-types';
-import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/UserContext';
 import { toast } from 'react-hot-toast';
 import { updateAccount } from '../../services/accounts';
 import { toastSettings } from '../../data/toastSettings';
+import { recordActivity } from '../../services/logger';
 
 type Props = {
   position?: 'top' | 'bottom';

@@ -8,9 +8,9 @@ import pb from '../../lib/pocketbase';
 import Add from '../icons/Add';
 import Trash from '../icons/Trash';
 import { useDrawer } from '../../hooks/useDrawer';
-import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/UserContext';
 import AddImage from '../../pages/items/AddImage';
+import { recordActivity } from '../../services/logger';
 
 type Props = {
   isUpdate: boolean;

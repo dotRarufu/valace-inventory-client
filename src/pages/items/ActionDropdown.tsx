@@ -7,11 +7,11 @@ import { useDrawer } from '../../hooks/useDrawer';
 import { useContext, useRef } from 'react';
 import { ActivityActionOptions } from '../../../pocketbase-types';
 import { UserContext } from '../../contexts/UserContext';
-import { recordActivity } from '../../utils/recordActivity';
 import { toast } from 'react-hot-toast';
 import { generateCoutout } from '../../utils/generateCutout';
 import { toastSettings } from '../../data/toastSettings';
 import { removeItem } from '../../services/item';
+import { recordActivity } from '../../services/logger';
 
 type Props = {
   position?: 'top' | 'bottom';

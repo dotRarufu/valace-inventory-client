@@ -2,13 +2,13 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { FileUploader } from 'react-drag-drop-files';
 import { ActivityActionOptions } from '../../../pocketbase-types';
 import { useDrawer } from '../../hooks/useDrawer';
-import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/UserContext';
 import Add from '../../components/icons/Add';
 import XIcon from '../../components/icons/X';
 import { addItemImages } from '../../services/item';
 import { toastSettings } from '../../data/toastSettings';
 import { toast } from 'react-hot-toast';
+import { recordActivity } from '../../services/logger';
 
 const fileTypes = ['JPG', 'PNG', 'GIF'];
 

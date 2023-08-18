@@ -1,7 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import pb from '../../lib/pocketbase';
 import { useDrawer } from '../../hooks/useDrawer';
-import { recordActivity } from '../../utils/recordActivity';
 import useUser from '../../hooks/useUser';
 import { toast } from 'react-hot-toast';
 import {
@@ -19,6 +18,7 @@ import ExportDropdown from './ExportDropdown';
 import ImportCsv from './ImportCsv';
 import { getAllItems } from '../../services/item';
 import { toastSettings } from '../../data/toastSettings';
+import { recordActivity } from '../../services/logger';
 
 export interface ItemDataRow extends ItemResponse {
   selected: boolean;

@@ -7,11 +7,10 @@ import accountsIcon from '../../assets/users.svg';
 import logoutIcon from '../../assets/logout.svg';
 import Modal from '../ui/Modal';
 import pb from '../../lib/pocketbase';
-import { recordActivity } from '../../utils/recordActivity';
 import { ActivityActionOptions } from '../../../pocketbase-types';
-import useUser from '../../hooks/useUser';
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
+import { recordActivity } from '../../services/logger';
 
 type Props = {
   role: 'admin' | 'staff';

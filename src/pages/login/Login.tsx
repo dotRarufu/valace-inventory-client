@@ -9,8 +9,8 @@ import {
 } from '../../../pocketbase-types';
 import { UserContext } from '../../contexts/UserContext';
 import { Collection } from 'pocketbase';
-import { recordActivity } from '../../utils/recordActivity';
 import { toast } from 'react-hot-toast';
+import { recordActivity } from '../../services/logger';
 
 const Login = () => {
   const [username, setUsername] = useState('');

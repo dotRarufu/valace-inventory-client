@@ -12,13 +12,13 @@ import {
   ItemResponse,
 } from '../../../pocketbase-types';
 import NumberInputField from '../../components/field/NumberInputField';
-import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/UserContext';
 import generateSerialNumber from '../../utils/generateSerialNumber';
 import { toast } from 'react-hot-toast';
 import { increaseRowCount } from '../../utils/increaseRowCount';
 import QrCode from './QrCode';
 import { qrCode } from '../../services/qrCodeStyling';
+import { recordActivity } from '../../services/logger';
 
 const ItemsSidebar = () => {
   const { user } = useContext(UserContext)!;
