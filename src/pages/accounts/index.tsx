@@ -1,10 +1,12 @@
 import { ReactNode, useEffect, useState } from 'react';
 import Add from '../../components/icons/Add';
 import { UserResponse } from '../../../pocketbase-types';
-import AccountsTable from './AccountsTable';
+import Table from './Table';
 import { useDrawer } from '../../hooks/useDrawer';
 import Fab from '../../components/ui/Fab';
 import { getAccounts } from '../../services/accounts';
+import { toast } from 'react-hot-toast';
+import { toastSettings } from '../../data/toastSettings';
 
 export interface AccountDataRow extends UserResponse {
   actions?: ReactNode;
@@ -22,31 +24,39 @@ const Accounts = () => {
 
   // Initial fetch
   useEffect(() => {
-    void getAccounts(({ items }) => setRowData(items));
+    getAccounts(({ items }) => setRowData(items)).catch(() => {
+      toast.error('Failed to load accounts', toastSettings);
+    });
   }, []);
 
   // Separated for readability
   useEffect(() => {
     if (!shouldUpdateTable) return;
 
-    void getAccounts(({ items }) => {
+    getAccounts(({ items }) => {
       setRowData(items);
       setShouldUpdateTable(false);
-    });
+    }).catch(() =>
+      toast.error('Failed to update accounts table', toastSettings)
+    );
   }, [setShouldUpdateTable, shouldUpdateTable]);
 
-  const handleFabClick = () => {
+  // Set sidebar
+  useEffect(() => {
     setActiveTable('accounts');
-    setIsDrawerInAdd(!isDrawerInAdd);
-  };
+  }, [setActiveTable]);
 
   return (
     <div className="flex h-full flex-col gap-[16px] px-[36px] pb-[28px]  ">
       <div className="h-[752px] rounded-[5px] bg-secondary  ">
-        <AccountsTable data={rowData} setData={setRowData} />
+        <Table data={rowData} setData={setRowData} />
       </div>
 
-      <Fab handleClick={handleFabClick} label={<Add />} tooltip="Account" />
+      <Fab
+        handleClick={() => setIsDrawerInAdd(!isDrawerInAdd)}
+        label={<Add />}
+        tooltip="Account"
+      />
     </div>
   );
 };

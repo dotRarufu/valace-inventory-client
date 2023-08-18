@@ -3,12 +3,13 @@ import fullscreenIcon from '../../assets/fullscreen.svg';
 import editIcon from '../../assets/edit.svg';
 import trashIcon from '../../assets/trash.svg';
 import { useDrawer } from '../../hooks/useDrawer';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { ActivityActionOptions } from '../../../pocketbase-types';
 import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/UserContext';
 import { toast } from 'react-hot-toast';
 import { updateAccount } from '../../services/accounts';
+import { toastSettings } from '../../data/toastSettings';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -17,13 +18,8 @@ type Props = {
 
 const ActionDropdown = ({ position, id }: Props) => {
   const { user } = useContext(UserContext)!;
-  const {
-    setIsDrawerInEdit,
-    setActiveRowId,
-    activeRowId,
-    setShouldUpdateTable,
-  } = useDrawer()!;
-  const [shouldDeleteRow, setShouldDeleteRow] = useState(false);
+  const { setIsDrawerInEdit, setActiveRowId, setShouldUpdateTable } =
+    useDrawer()!;
 
   const handleViewClick = () => {
     setActiveRowId(id);
@@ -35,37 +31,21 @@ const ActionDropdown = ({ position, id }: Props) => {
     setIsDrawerInEdit(true);
   };
 
-  const handleDeleteClick = () => {
-    setShouldDeleteRow(true);
-  };
-
-  // Remove account
-  useEffect(() => {
-    if (!shouldDeleteRow) return;
-
+  const handleRemoveAccount = () => {
     updateAccount(id, { is_removed: true }, () => {
-      toast.success(`Account removed`, {
-        duration: 7000,
-        position: 'bottom-center',
-        className: 'font-semibold',
-      });
+      toast.success(`Account removed`, toastSettings);
 
       setShouldUpdateTable(true);
-      setShouldDeleteRow(false);
 
       // This should never fail
       void recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
         userId: user!.id,
         targetUserId: id,
       });
-    }).catch(err => {
-      toast.error(`Account not removed`, {
-        duration: 7000,
-        position: 'bottom-center',
-        className: 'font-semibold',
-      });
+    }).catch(() => {
+      toast.error(`Account not removed`, toastSettings);
     });
-  }, [id, setShouldUpdateTable, shouldDeleteRow, user]);
+  };
 
   return (
     <div
@@ -90,7 +70,7 @@ const ActionDropdown = ({ position, id }: Props) => {
             htmlFor="my-drawer"
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
           >
-            <div className=" h-[13px]">View</div>
+            <div className="h-[13px]">View</div>
             <img src={fullscreenIcon} />
           </label>
         </li>
@@ -100,16 +80,16 @@ const ActionDropdown = ({ position, id }: Props) => {
             htmlFor="my-drawer"
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px] "
           >
-            <div className=" h-[13px]">Edit</div>
+            <div className="h-[13px]">Edit</div>
             <img src={editIcon} />
           </label>
         </li>
         <li>
           <label
-            onClick={handleDeleteClick}
+            onClick={handleRemoveAccount}
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
           >
-            <div className=" h-[13px]">Delete</div>
+            <div className="h-[13px]">Delete</div>
             <img src={trashIcon} />
           </label>
         </li>

@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useRef } from 'react';
-import AccountsSidebar from '../../pages/accounts/AccountsSidebar';
+import Sidebar from '../../pages/accounts/Sidebar';
 import ItemsSidebar from '../../pages/items/ItemsSidebar';
 import { useDrawer } from '../../hooks/useDrawer';
 import PrintQr from '../../pages/items/PrintQr';
@@ -13,7 +13,7 @@ const renderSidebar = (
 ) => {
   switch (activeTable) {
     case 'accounts':
-      return <AccountsSidebar />;
+      return <Sidebar />;
     case 'items':
       return <ItemsSidebar />;
     case 'print-qr':

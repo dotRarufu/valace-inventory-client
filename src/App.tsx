@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ActivityLog from './pages/activity-log/ActivityLog';
-import Accounts from './pages/accounts/Accounts';
+import Accounts from './pages/accounts';
 import Login from './pages/login/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import useUser from './hooks/useUser';

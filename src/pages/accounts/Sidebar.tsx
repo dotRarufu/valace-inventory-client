@@ -11,7 +11,7 @@ import { addAccount, getAccount, updateAccount } from '../../services/accounts';
 import { toastSettings } from '../../data/toastSettings';
 import { recordActivity } from '../../services/logger';
 
-const AccountsSidebar = () => {
+const Sidebar = () => {
   const {
     isDrawerInEdit,
     setIsDrawerInEdit,
@@ -36,107 +36,6 @@ const AccountsSidebar = () => {
     isActive: boolean | null;
   } | null>(null);
 
-  const [shouldRecordChangedFields, setShouldRecordChangedFields] =
-    useState(false);
-
-  const [shouldAddAccount, setShouldAddAccount] = useState(false);
-  const [shouldUpdate, setShouldUpdate] = useState(false);
-
-  // Record changed fields
-  useEffect(() => {
-    if (!shouldRecordChangedFields) return;
-
-    const recordChangedFields = async () => {
-      if (initialFields && initialFields.username !== username) {
-        await recordActivity(ActivityActionOptions['EDIT ACCOUNT USERNAME'], {
-          userId: user!.id,
-          targetUserId: id,
-          oldValue: initialFields.username || undefined,
-          newValue: username,
-        });
-      }
-
-      if (initialFields && initialFields.isAdmin !== isAdmin) {
-        await recordActivity(ActivityActionOptions['EDIT ACCOUNT ROLE'], {
-          userId: user!.id,
-          targetUserId: id,
-          oldValue: (initialFields.isAdmin ? 'Admin' : 'Staff') || undefined,
-          newValue: isAdmin ? 'Admin' : 'Staff',
-        });
-      }
-
-      if (initialFields && initialFields.password !== password) {
-        await recordActivity(ActivityActionOptions['EDIT ACCOUNT PASSWORD'], {
-          userId: user!.id,
-          targetUserId: id,
-          oldValue: initialFields.password || undefined,
-          newValue: password,
-        });
-      }
-
-      if (initialFields && initialFields.isActive !== isActive) {
-        await recordActivity(ActivityActionOptions['EDIT ACCOUNT STATUS'], {
-          userId: user!.id,
-          targetUserId: id,
-          oldValue: initialFields.isActive ? 'Active' : 'Inactive',
-          newValue: isActive ? 'Active' : 'Inactive',
-        });
-      }
-
-      // In case user does not change row id
-      setInitialFields({
-        isActive,
-        isAdmin,
-        password,
-        username,
-      });
-      setShouldRecordChangedFields(false);
-    };
-
-    void recordChangedFields();
-  }, [
-    id,
-    initialFields,
-    isActive,
-    isAdmin,
-    password,
-    shouldRecordChangedFields,
-    user,
-    username,
-  ]);
-
-  // Update account
-  useEffect(() => {
-    if (!shouldUpdate) return;
-
-    const data = {
-      username,
-      is_admin: isAdmin,
-      plain_password: password,
-      is_active: isActive,
-    };
-
-    try {
-      void updateAccount(activeRowId, data, () => {
-        toast.success(`Account ${username} updated`, toastSettings);
-
-        setShouldRecordChangedFields(true);
-        setShouldUpdateTable(true);
-        setShouldUpdate(false);
-      });
-    } catch (err) {
-      toast.error(`Account not updated`, toastSettings);
-    }
-  }, [
-    activeRowId,
-    isActive,
-    isAdmin,
-    password,
-    setShouldUpdateTable,
-    shouldUpdate,
-    username,
-  ]);
-
   // Get account
   useEffect(() => {
     void getAccount(activeRowId, res => {
@@ -151,13 +50,76 @@ const AccountsSidebar = () => {
       setPassword(res.plain_password);
       setIsActive(res.is_active);
       setId(res.id);
+    }).catch(() => {
+      toast.error('Failed to load account data', toastSettings);
     });
   }, [activeRowId]);
 
-  // Add account
-  useEffect(() => {
-    if (!shouldAddAccount) return;
+  const recordChangedFields = async () => {
+    if (initialFields && initialFields.username !== username) {
+      await recordActivity(ActivityActionOptions['EDIT ACCOUNT USERNAME'], {
+        userId: user!.id,
+        targetUserId: id,
+        oldValue: initialFields.username || undefined,
+        newValue: username,
+      });
+    }
 
+    if (initialFields && initialFields.isAdmin !== isAdmin) {
+      await recordActivity(ActivityActionOptions['EDIT ACCOUNT ROLE'], {
+        userId: user!.id,
+        targetUserId: id,
+        oldValue: (initialFields.isAdmin ? 'Admin' : 'Staff') || undefined,
+        newValue: isAdmin ? 'Admin' : 'Staff',
+      });
+    }
+
+    if (initialFields && initialFields.password !== password) {
+      await recordActivity(ActivityActionOptions['EDIT ACCOUNT PASSWORD'], {
+        userId: user!.id,
+        targetUserId: id,
+        oldValue: initialFields.password || undefined,
+        newValue: password,
+      });
+    }
+
+    if (initialFields && initialFields.isActive !== isActive) {
+      await recordActivity(ActivityActionOptions['EDIT ACCOUNT STATUS'], {
+        userId: user!.id,
+        targetUserId: id,
+        oldValue: initialFields.isActive ? 'Active' : 'Inactive',
+        newValue: isActive ? 'Active' : 'Inactive',
+      });
+    }
+
+    // In case user does not change row id
+    setInitialFields({
+      isActive,
+      isAdmin,
+      password,
+      username,
+    });
+  };
+
+  const handleUpdateAccount = () => {
+    const data = {
+      username,
+      is_admin: isAdmin,
+      plain_password: password,
+      is_active: isActive,
+    };
+
+    void updateAccount(activeRowId, data, () => {
+      toast.success(`Account ${username} updated`, toastSettings);
+
+      void recordChangedFields();
+      setShouldUpdateTable(true);
+    }).catch(() => {
+      toast.error(`Account not updated`, toastSettings);
+    });
+  };
+
+  const handleAddAccount = () => {
     const data = {
       username,
       is_admin: isAdmin,
@@ -169,28 +131,19 @@ const AccountsSidebar = () => {
 
     addAccount(data, res => {
       toast.success(`Account ${username} added`, toastSettings);
+
       setIsDrawerInAdd(false);
       setShouldUpdateTable(true);
-      setShouldAddAccount(false);
 
-      // this should never fail
+      // This should never fail
       void recordActivity(ActivityActionOptions['ADD ACCOUNT'], {
         userId: user!.id,
         targetUserId: res.id,
       });
-    }).catch(err => {
+    }).catch(() => {
       toast.error(`Account not added`, toastSettings);
     });
-  }, [
-    isActive,
-    isAdmin,
-    password,
-    setIsDrawerInAdd,
-    setShouldUpdateTable,
-    shouldAddAccount,
-    user,
-    username,
-  ]);
+  };
 
   const clearData = () => {
     setInitialFields({
@@ -274,7 +227,7 @@ const AccountsSidebar = () => {
                 }
 
                 setIsDrawerInAdd(false);
-                setShouldUpdate(true);
+                handleUpdateAccount();
               }
 
               if (isDrawerInAdd) {
@@ -282,7 +235,7 @@ const AccountsSidebar = () => {
                   drawerRef.current.checked = false;
                 }
                 setIsDrawerInAdd(false);
-                setShouldAddAccount(true);
+                handleAddAccount();
               }
             }}
             className="btn-primary btn px-[16px] text-[20px]  font-semibold"
@@ -314,4 +267,4 @@ const AccountsSidebar = () => {
   );
 };
 
-export default AccountsSidebar;
+export default Sidebar;
