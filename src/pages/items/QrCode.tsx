@@ -1,94 +1,53 @@
-import QRCodeStyling from 'qr-code-styling';
-import { useEffect, useRef, useState } from 'react';
-import { qrCodeValAceLogo } from '../../assets/qrCodeValaceLogo';
+import { useEffect, useRef } from 'react';
 import { useDrawer } from '../../hooks/useDrawer';
-
-const qrCode = new QRCodeStyling({
-  width: 300,
-  height: 300,
-  data: 'https://www.google.com/search?client=firefox-b-d&q=uuid+example',
-  margin: 0,
-  qrOptions: {
-    typeNumber: 0,
-    mode: 'Byte',
-    errorCorrectionLevel: 'Q',
-  },
-  imageOptions: {
-    hideBackgroundDots: true,
-    imageSize: 0.4,
-    margin: 0,
-  },
-  dotsOptions: {
-    type: 'rounded',
-    color: '#00104a',
-  },
-  backgroundOptions: {
-    color: '#ffffff',
-  },
-  image: qrCodeValAceLogo,
-
-  cornersSquareOptions: {
-    color: '#00104a',
-  },
-  cornersDotOptions: {
-    color: '#00104a',
-  },
-});
+import { qrCode } from '../../services/qrCodeStyling';
 
 const QrCode = () => {
-  const [shouldDownload, setShouldDownload] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { activeRowId } = useDrawer()!;
 
-  useEffect(() => {
-    if (shouldDownload) {
-      const downloadQr = async () => {
-        await qrCode.download({
-          extension: 'png',
-        });
-
-        setShouldDownload(false);
-      };
-
-      void downloadQr();
-    }
-  }, [shouldDownload]);
-
+  // Display QR Code
   useEffect(() => {
     if (containerRef.current === null) return;
 
     qrCode.append(containerRef.current);
   }, []);
 
+  // Set QR Code data
   useEffect(() => {
     const address = import.meta.env.VITE_URL || 'isUndefined';
     const route = 'user';
     const query = '?id=';
-    console.log('url:', `${address}/${route}${query}${activeRowId}`);
     qrCode.update({
       data: `${address}/${route}${query}${activeRowId}`,
     });
   }, [activeRowId]);
 
+  const downloadQr = async () => {
+    await qrCode.download({
+      extension: 'png',
+    });
+  };
+
   return (
     <div className="flex flex-col gap-[8px]">
-      <div className="flex justify-between items-center">
-        <span className=" h-[16px] text-primary/50 text-[24px] -translate-y-[6px]">
+      <div className="flex items-center justify-between">
+        <span className=" h-[16px] -translate-y-[6px] text-[24px] text-primary/50">
           QR Code:
         </span>
 
         <label
           htmlFor="QrCodeModal"
-          className="btn btn-outline px-[16px] hover:btn-primary text-[20px]  font-semibold"
+          className="btn-outline btn px-[16px] text-[20px] font-semibold  hover:btn-primary"
         >
-          <span onClick={() => setShouldDownload(true)} className="h-[13px] ">
+          <span onClick={() => void downloadQr()} className="h-[13px] ">
             Download
           </span>
         </label>
       </div>
 
-      <div className="bg-primary/5 py-[16px] flex justify-center rounded-[5px] ">
-        <div ref={containerRef} className="w-[300px] h-[300px]" />
+      <div className="flex justify-center rounded-[5px] bg-primary/5 py-[16px] ">
+        <div ref={containerRef} className="h-[300px] w-[300px]" />
       </div>
     </div>
   );

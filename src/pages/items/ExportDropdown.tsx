@@ -1,9 +1,9 @@
 import 'react-calendar/dist/Calendar.css';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import csvIcon from '../../assets/csv.svg';
 import pdfIcon from '../../assets/pdf.svg';
 import { Parser } from '@json2csv/plainjs';
-import { ItemDataRow } from '../../pages/items/Items';
+import { ItemDataRow } from '.';
 import { toCsvFormat } from '../../utils/toCsvFormat';
 import TableExport from '../../components/icons/TableExport';
 import Button from '../../components/ui/Button';
@@ -18,6 +18,7 @@ const ExportDropdown = ({ data }: Props) => {
   const pdfAnchor = useRef<HTMLAnchorElement>(null);
   const [shouldDownloadCsv, setShouldDownloadCsv] = useState(false);
 
+  // Export CSV
   useEffect(() => {
     if (!shouldDownloadCsv) return;
     // 1. export object to csv

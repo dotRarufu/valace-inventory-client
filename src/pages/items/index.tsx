@@ -13,10 +13,12 @@ import Button from '../../components/ui/Button';
 import XIcon from '../../components/icons/X';
 import Trash from '../../components/icons/Trash';
 import SearchBar from '../../components/ui/SearchBar';
-import ItemsTable from './ItemsTable';
+import Table from './Table';
 import Add from '../../components/icons/Add';
 import ExportDropdown from './ExportDropdown';
 import ImportCsv from './ImportCsv';
+import { getAllItems } from '../../services/item';
+import { toastSettings } from '../../data/toastSettings';
 
 export interface ItemDataRow extends ItemResponse {
   selected: boolean;
@@ -33,49 +35,38 @@ const Items = () => {
   } = useDrawer()!;
   const { user } = useUser()!;
   const [globalFilter, setGlobalFilter] = useState('');
-
   const [data, setData] = useState<ItemDataRow[]>([]);
 
+  // Get all items
   useEffect(() => {
-    const getItems = async () => {
-      // admins are stored in user collection to store the the plain password
-      const itemsRes = await pb
-        .collection(Collections.Item)
-        .getList<ItemResponse>(1, undefined, {
-          filter: 'is_removed = false',
-        });
-
-      setData(itemsRes.items.map(d => ({ selected: false, ...d })));
-    };
-
-    void getItems();
+    getAllItems()
+      .then(res => {
+        setData(res.items.map(d => ({ selected: false, ...d })));
+      })
+      .catch(() => {
+        toast.error('Faield to load items', toastSettings);
+      });
   }, []);
 
+  // Sync selected rows
   useEffect(() => {
     const selectedRows = data.filter(d => d.selected);
 
     setSelectedRows(selectedRows);
   }, [data, setSelectedRows]);
 
-  // separated for readability
+  // Update items
   useEffect(() => {
     if (!shouldUpdateTable) return;
 
-    const getItems = async () => {
-      // admins are stored in user collection to store the the plain password
-      const itemsRes = await pb
-        .collection(Collections.Item)
-        .getList<ItemResponse>(1, undefined, {
-          filter: 'is_removed = false',
-        });
-
-      const a = await pb.collection(Collections.Item).getFullList();
-
-      setData(itemsRes.items.map(d => ({ selected: false, ...d })));
-      setShouldUpdateTable(false);
-    };
-
-    void getItems();
+    getAllItems()
+      .then(res => {
+        setData(res.items.map(d => ({ selected: false, ...d })));
+        setShouldUpdateTable(false);
+      })
+      .catch(() => {
+        toast.error('Failed to load items', toastSettings);
+      });
   }, [setShouldUpdateTable, shouldUpdateTable]);
 
   const clearSelected = () => {
@@ -84,16 +75,11 @@ const Items = () => {
     setData(newData);
   };
 
-  const getSelectedData = () => {
-    return data.filter(d => d.selected);
-  };
+  const getSelectedData = () => data.filter(d => d.selected);
 
   const deleteRows = async () => {
-    // todo: refactor others to be like this
-    // to reduce use of uef
     try {
       const rows = data.filter(d => d.selected).map(r => r.id);
-
       const reqs = rows.map(async id => {
         await pb.collection(Collections.Item).update(id, {
           is_removed: true,
@@ -103,21 +89,12 @@ const Items = () => {
           itemId: id,
         });
       });
-
       await Promise.all(reqs);
 
       setShouldUpdateTable(true);
-      toast.success(`Items deleted`, {
-        duration: 7000,
-        position: 'bottom-center',
-        className: 'font-semibold',
-      });
+      toast.success(`Items deleted`, toastSettings);
     } catch (err) {
-      toast.error(`Item not deleted`, {
-        duration: 7000,
-        position: 'bottom-center',
-        className: 'font-semibold',
-      });
+      toast.error(`Item not deleted`, toastSettings);
     }
   };
 
@@ -166,7 +143,7 @@ const Items = () => {
       </div>
 
       <div className="h-[752px] overflow-y-scroll rounded-[5px] bg-secondary">
-        <ItemsTable
+        <Table
           data={data}
           setData={setData}
           globalFilter={globalFilter}

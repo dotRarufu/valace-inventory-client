@@ -1,5 +1,5 @@
 import { ItemRecord } from '../../pocketbase-types';
-import { ItemDataRow } from '../pages/items/Items';
+import { ItemDataRow } from '../pages/items';
 
 export const toCsvFormat = (data: ItemDataRow) => {
   const {

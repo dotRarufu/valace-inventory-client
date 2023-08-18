@@ -5,7 +5,7 @@ import Login from './pages/login/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import useUser from './hooks/useUser';
 import { UserContext } from './contexts/UserContext';
-import Items from './pages/items/Items';
+import Items from './pages/items';
 import { Toaster } from 'react-hot-toast';
 import UserDataDisplay from './pages/user-data-display/UserDataDisplay';
 import SidebarWrapper from './components/ui/SidebarWrapper';

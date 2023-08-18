@@ -4,7 +4,7 @@ import TopAppBar from './TopAppBar';
 import Drawer from './Drawer';
 import { useState } from 'react';
 import { SidebarContext } from '../../contexts/SidebarContext';
-import { ItemDataRow } from '../../pages/items/Items';
+import { ItemDataRow } from '../../pages/items';
 import useUser from '../../hooks/useUser';
 
 export type Sidebars = 'accounts' | 'items' | 'print-qr';

@@ -9,19 +9,18 @@ export type PrintItemRequest = {
   amount: number;
 };
 
-const PrintQr = () => {
+const PrintQrSidebar = () => {
   const { selectedRows } = useDrawer()!;
   const [printItems, setPrintItems] = useState<PrintItemRequest[]>([]);
   const anchorDownloadRef = useRef<HTMLAnchorElement>(null);
+
+  // Update print items
   useEffect(() => {
     setPrintItems(selectedRows.map(r => ({ id: r.id, amount: 1 })));
   }, [selectedRows]);
 
-  const [shouldGenerateCutout, setShouldGenerateCutout] = useState(false);
-  useEffect(() => {
-    if (!shouldGenerateCutout) return;
-
-    const generateCutout = async () => {
+  const handleGenerateCutout = async () => {
+    try {
       const res = await generateCoutout({
         items: printItems,
       });
@@ -29,31 +28,23 @@ const PrintQr = () => {
       anchorDownloadRef.current!.href = res;
       anchorDownloadRef.current!.download = 'qrcodes.pdf';
       anchorDownloadRef.current!.click();
-
-      setShouldGenerateCutout(false);
-    };
-
-    void generateCutout();
-  }, [printItems, shouldGenerateCutout]);
-
-  const handlePrintClick = () => {
-    console.log('print items:', printItems);
-    console.log('selectedrows:', selectedRows);
-    setShouldGenerateCutout(true);
+    } catch (err) {
+      toast.error('Failed to prepare QR Code cutout');
+    }
   };
 
   return (
     <div className="drawer-side z-[9999]">
       <a ref={anchorDownloadRef} className="hidden" target="_blank" />
       <label htmlFor="my-drawer" className="drawer-overlay"></label>
-      <div className="px-[32px] w-[723px] pt-0 h-full bg-secondary text-secondary-content font-khula flex flex-col gap-[8px] overflow-y-scroll">
-        <div className="flex justify-start pt-[32px] pb-[16px]  items-center">
-          <span className="font-semibold h-[21px] text-[32px] leading-none text-primary">
+      <div className="flex h-full w-[723px] flex-col gap-[8px] overflow-y-scroll bg-secondary px-[32px] pt-0 font-khula text-secondary-content">
+        <div className="flex items-center justify-start pb-[16px]  pt-[32px]">
+          <span className="h-[21px] text-[32px] font-semibold leading-none text-primary">
             Print QR Code
           </span>
         </div>
 
-        <ul className="flex flex-col gap-4 flex-1 overflow-y-scroll px-4">
+        <ul className="flex flex-1 flex-col gap-4 overflow-y-scroll px-4">
           {selectedRows.map(row => (
             <PrintQrCodeItem
               key={row.id}
@@ -63,16 +54,16 @@ const PrintQr = () => {
           ))}
         </ul>
 
-        <div className="flex justify-end items-center gap-[16px] py-[32px]">
+        <div className="flex items-center justify-end gap-[16px] py-[32px]">
           <button
-            onClick={handlePrintClick}
-            className="btn btn-primary px-[16px] text-[20px]  font-semibold"
+            onClick={() => void handleGenerateCutout()}
+            className="btn-primary btn px-[16px] text-[20px]  font-semibold"
           >
             <span className="h-[13px] ">Print</span>
           </button>
           <label
             htmlFor="my-drawer"
-            className="btn btn-outline px-[16px] hover:btn-error text-[20px]  font-semibold"
+            className="btn-outline btn px-[16px] text-[20px] font-semibold  hover:btn-error"
           >
             <span className="h-[13px] ">Close</span>
           </label>
@@ -82,4 +73,4 @@ const PrintQr = () => {
   );
 };
 
-export default PrintQr;
+export default PrintQrSidebar;

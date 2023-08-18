@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { ItemDataRow } from '../pages/items/Items';
+import { ItemDataRow } from '../pages/items';
 
 export const SidebarContext = createContext<{
   drawerRef: React.RefObject<HTMLInputElement> | null;

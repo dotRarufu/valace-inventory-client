@@ -4,13 +4,14 @@ import qrCodeIcon from '../../assets/qr.svg';
 import editIcon from '../../assets/edit.svg';
 import trashIcon from '../../assets/trash.svg';
 import { useDrawer } from '../../hooks/useDrawer';
-import { useContext, useEffect, useRef, useState } from 'react';
-import pb from '../../lib/pocketbase';
-import { ActivityActionOptions, Collections } from '../../../pocketbase-types';
+import { useContext, useRef } from 'react';
+import { ActivityActionOptions } from '../../../pocketbase-types';
 import { UserContext } from '../../contexts/UserContext';
 import { recordActivity } from '../../utils/recordActivity';
 import { toast } from 'react-hot-toast';
 import { generateCoutout } from '../../utils/generateCutout';
+import { toastSettings } from '../../data/toastSettings';
+import { removeItem } from '../../services/item';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -22,11 +23,9 @@ const ActionDropdown = ({ position, id }: Props) => {
   const {
     setIsDrawerInEdit,
     setActiveRowId,
-    activeRowId,
     setShouldUpdateTable,
     setActiveTable,
   } = useDrawer()!;
-  const [shouldDeleteRow, setShouldDeleteRow] = useState(false);
   const donwloadRef = useRef<HTMLAnchorElement>(null);
 
   const handleViewClick = () => {
@@ -42,68 +41,45 @@ const ActionDropdown = ({ position, id }: Props) => {
   };
 
   const handleDeleteClick = () => {
-    setShouldDeleteRow(true);
+    void deleteRow();
   };
-  const [shouldGenerateCutout, setShouldGenerateCutout] = useState(false);
-  useEffect(() => {
-    if (!shouldGenerateCutout) return;
 
-    const generateCutout = async () => {
-      const res = await generateCoutout({
-        items: [
-          { amount: 1, id: 'nfvjv6ihf5c0hjm' },
-          { amount: 5, id: 'cho2a43pr5vjpcg' },
-        ],
-      });
+  const generateCutout = async () => {
+    const res = await generateCoutout({
+      items: [
+        { amount: 1, id: 'nfvjv6ihf5c0hjm' },
+        { amount: 5, id: 'cho2a43pr5vjpcg' },
+      ],
+    });
 
-      if (res !== undefined) {
-        if (donwloadRef.current === null) return;
-        donwloadRef.current.href = res;
-        donwloadRef.current.download = 'test.pdf';
-        // donwloadRef.current.click();
-      }
-
-      setShouldGenerateCutout(false);
-    };
-
-    void generateCutout();
-  }, [shouldGenerateCutout]);
+    if (res !== undefined) {
+      if (donwloadRef.current === null) return;
+      donwloadRef.current.href = res;
+      donwloadRef.current.download = 'test.pdf';
+      // donwloadRef.current.click();
+    }
+  };
 
   const handlePrintClick = () => {
     console.log('handle print click');
     // setShouldGenerateCutout(true);
   };
 
-  useEffect(() => {
-    if (!shouldDeleteRow) return;
+  const deleteRow = async () => {
+    try {
+      await removeItem(id);
+      await recordActivity(ActivityActionOptions['DELETE ITEM'], {
+        userId: user!.id,
+        itemId: id,
+      });
 
-    const deleteRow = async () => {
-      try {
-        await pb.collection(Collections.Item).update(id, {
-          is_removed: true,
-        });
-        await recordActivity(ActivityActionOptions['DELETE ITEM'], {
-          userId: user!.id,
-          itemId: id,
-        });
-        setShouldUpdateTable(true);
-        setShouldDeleteRow(false);
-        toast.success(`Item deleted`, {
-          duration: 7000,
-          position: 'bottom-center',
-          className: 'font-semibold',
-        });
-      } catch (err) {
-        toast.error(`Item not deleted`, {
-          duration: 7000,
-          position: 'bottom-center',
-          className: 'font-semibold',
-        });
-      }
-    };
+      setShouldUpdateTable(true);
 
-    void deleteRow();
-  }, [activeRowId, id, setShouldUpdateTable, shouldDeleteRow, user]);
+      toast.success(`Item deleted`, toastSettings);
+    } catch (err) {
+      toast.error(`Item not deleted`, toastSettings);
+    }
+  };
 
   return (
     <div

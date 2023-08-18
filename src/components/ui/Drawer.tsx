@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useRef } from 'react';
 import Sidebar from '../../pages/accounts/Sidebar';
 import ItemsSidebar from '../../pages/items/ItemsSidebar';
 import { useDrawer } from '../../hooks/useDrawer';
-import PrintQr from '../../pages/items/PrintQr';
+import PrintQrSidebar from '../../pages/items/PrintQrSidebar';
 
 type Props = {
   body: ReactNode;
@@ -17,7 +17,7 @@ const renderSidebar = (
     case 'items':
       return <ItemsSidebar />;
     case 'print-qr':
-      return <PrintQr />;
+      return <PrintQrSidebar />;
 
     default:
       return '';

@@ -1,12 +1,14 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { FileUploader } from 'react-drag-drop-files';
-import pb from '../../lib/pocketbase';
-import { ActivityActionOptions, Collections } from '../../../pocketbase-types';
+import { ActivityActionOptions } from '../../../pocketbase-types';
 import { useDrawer } from '../../hooks/useDrawer';
 import { recordActivity } from '../../utils/recordActivity';
 import { UserContext } from '../../contexts/UserContext';
 import Add from '../../components/icons/Add';
 import XIcon from '../../components/icons/X';
+import { addItemImages } from '../../services/item';
+import { toastSettings } from '../../data/toastSettings';
+import { toast } from 'react-hot-toast';
 
 const fileTypes = ['JPG', 'PNG', 'GIF'];
 
@@ -20,7 +22,6 @@ const AddImage = ({ setShouldUpdateData }: Props) => {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [formData, setFormData] = useState(new FormData());
-  const [shouldAddImages, setShouldAddImage] = useState(false);
 
   const handleChange = (newFiles: FileList) => {
     const addedFiles = Array.from(newFiles).filter(file => {
@@ -30,11 +31,10 @@ const AddImage = ({ setShouldUpdateData }: Props) => {
       return isNotInFiles;
     });
 
-    console.log('handlechange:', newFiles);
     setFiles(old => [...old, ...addedFiles]);
   };
 
-  // Add image
+  // Add file to form data
   useEffect(() => {
     const newFormData = new FormData();
 
@@ -51,29 +51,25 @@ const AddImage = ({ setShouldUpdateData }: Props) => {
     setFiles(newFiles);
   };
 
-  useEffect(() => {
-    if (!shouldAddImages) return;
+  const addImages = async () => {
+    try {
+      await addItemImages(activeRowId, formData);
+      toast.error('Images added successfully', toastSettings);
 
-    const addImages = async () => {
-      const res = await pb
-        .collection(Collections.Item)
-        .update(activeRowId, formData);
+      setShouldUpdateData(true);
+      setFiles([]);
 
-      console.log('add imaege res:', res);
       await recordActivity(ActivityActionOptions['ADD ITEM IMAGE'], {
         userId: user!.id,
         itemId: activeRowId,
       });
-      setShouldAddImage(false);
-      setShouldUpdateData(true);
-      setFiles([]);
-    };
-
-    void addImages();
-  }, [activeRowId, files, formData, setShouldUpdateData, shouldAddImages]);
+    } catch (err) {
+      toast.error('Failed to add images', toastSettings);
+    }
+  };
 
   const handleAddClick = () => {
-    setShouldAddImage(true);
+    void addImages();
     detailsRef.current?.removeAttribute('open');
   };
 

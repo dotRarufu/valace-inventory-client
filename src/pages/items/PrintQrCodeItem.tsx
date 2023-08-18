@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import pb from '../../lib/pocketbase';
-import { ItemDataRow } from '../../pages/items/Items';
-import { PrintItemRequest } from './PrintQr';
+import { ItemDataRow } from '.';
+import { PrintItemRequest } from './PrintQrSidebar';
 
 type Props = {
   row: ItemDataRow;
@@ -12,6 +12,7 @@ const PrintQrCodeItem = ({ row, setPrintItems }: Props) => {
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const [amount, setAmount] = useState(1);
 
+  // Update print items
   useEffect(() => {
     setPrintItems(old => {
       const newItems = old.map(i => (i.id === row.id ? { ...i, amount } : i));
@@ -20,6 +21,7 @@ const PrintQrCodeItem = ({ row, setPrintItems }: Props) => {
     });
   }, [amount, row.id, setPrintItems]);
 
+  // Set QR Code URL
   useEffect(() => {
     if (qrCodeUrl !== null) return;
 
@@ -37,8 +39,6 @@ const PrintQrCodeItem = ({ row, setPrintItems }: Props) => {
 
   const handleInputChange = (value: string) => {
     const re = /^[0-9\b]+$/;
-
-    console.log('val:', value);
 
     if (value === '') {
       setAmount(0);

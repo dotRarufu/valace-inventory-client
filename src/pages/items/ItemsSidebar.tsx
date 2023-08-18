@@ -3,7 +3,6 @@ import TextInputField from '../../components/field/TextInputField';
 import SelectField from '../../components/field/SelectField';
 import ToggleField from '../../components/field/ToggleField';
 import Carousel from '../../components/carousel/Carousel';
-import qrCodeSample from '../../assets/qr.png';
 import { useDrawer } from '../../hooks/useDrawer';
 import { useContext, useEffect, useState } from 'react';
 import pb from '../../lib/pocketbase';
@@ -18,41 +17,8 @@ import { UserContext } from '../../contexts/UserContext';
 import generateSerialNumber from '../../utils/generateSerialNumber';
 import { toast } from 'react-hot-toast';
 import { increaseRowCount } from '../../utils/increaseRowCount';
-import QRCodeStyling from 'qr-code-styling';
-import { qrCodeValAceLogo } from '../../assets/qrCodeValaceLogo';
 import QrCode from './QrCode';
-
-const qrCode = new QRCodeStyling({
-  width: 300,
-  height: 300,
-  data: 'https://www.google.com/search?client=firefox-b-d&q=uuid+example',
-  margin: 0,
-  qrOptions: {
-    typeNumber: 0,
-    mode: 'Byte',
-    errorCorrectionLevel: 'Q',
-  },
-  imageOptions: {
-    hideBackgroundDots: true,
-    imageSize: 0.4,
-    margin: 0,
-  },
-  dotsOptions: {
-    type: 'rounded',
-    color: '#00104a',
-  },
-  backgroundOptions: {
-    color: '#ffffff',
-  },
-  image: qrCodeValAceLogo,
-
-  cornersSquareOptions: {
-    color: '#00104a',
-  },
-  cornersDotOptions: {
-    color: '#00104a',
-  },
-});
+import { qrCode } from '../../services/qrCodeStyling';
 
 const ItemsSidebar = () => {
   const { user } = useContext(UserContext)!;
@@ -368,10 +334,6 @@ const ItemsSidebar = () => {
 
         newFormData.append('qr', file);
 
-        const qrRes = await pb
-          .collection(Collections.Item)
-          .update(res.id, newFormData);
-
         await recordActivity(ActivityActionOptions['ADD ITEM'], {
           userId: user!.id,
           itemId: res.id,
@@ -522,8 +484,6 @@ const ItemsSidebar = () => {
         </ul>
 
         <div className="h-full"></div>
-
-        {/* <QrCodeModal /> */}
 
         {!isDrawerInEdit && !isDrawerInAdd && <QrCode />}
 
