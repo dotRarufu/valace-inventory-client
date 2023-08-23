@@ -8,7 +8,6 @@ import { useContext, useRef } from 'react';
 import { ActivityActionOptions } from '../../../pocketbase-types';
 import { UserContext } from '../../contexts/UserContext';
 import { toast } from 'react-hot-toast';
-import { generateCoutout } from './utils/generateCutout';
 import { toastSettings } from '../../data/toastSettings';
 import { removeItem } from '../../services/item';
 import { recordActivity } from '../../services/logger';
@@ -42,22 +41,6 @@ const ActionDropdown = ({ position, id }: Props) => {
 
   const handleDeleteClick = () => {
     void deleteRow();
-  };
-
-  const generateCutout = async () => {
-    const res = await generateCoutout({
-      items: [
-        { amount: 1, id: 'nfvjv6ihf5c0hjm' },
-        { amount: 5, id: 'cho2a43pr5vjpcg' },
-      ],
-    });
-
-    if (res !== undefined) {
-      if (donwloadRef.current === null) return;
-      donwloadRef.current.href = res;
-      donwloadRef.current.download = 'test.pdf';
-      // donwloadRef.current.click();
-    }
   };
 
   const handlePrintClick = () => {

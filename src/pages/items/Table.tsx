@@ -154,6 +154,7 @@ const Table = ({ setData, data, setGlobalFilter, globalFilter }: Props) => {
       sorting,
       globalFilter,
     },
+    autoResetPageIndex: false,
     onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
