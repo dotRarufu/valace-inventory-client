@@ -14,9 +14,7 @@ import {
 } from '../../../pocketbase-types';
 import NumberInputField from '../../components/field/NumberInputField';
 import { UserContext } from '../../contexts/UserContext';
-import generateSerialNumber from './generateSerialNumber';
 import { toast } from 'react-hot-toast';
-import { increaseRowCount } from './increaseRowCount';
 import QrCode from './QrCode';
 import { qrCode } from '../../services/qrCodeStyling';
 import { recordActivity } from '../../services/logger';
@@ -26,6 +24,8 @@ import {
   getItem,
   updateItem,
 } from '../../services/item';
+import generateSerialNumber from './utils/generateSerialNumber';
+import { increaseRowCount } from './utils/increaseRowCount';
 
 const ItemsSidebar = () => {
   const { user } = useContext(UserContext)!;

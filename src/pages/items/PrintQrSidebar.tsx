@@ -21,8 +21,10 @@ const PrintQrSidebar = () => {
 
   const handleGenerateCutout = async () => {
     try {
+      const items = printItems.filter(i => i.amount !== 0);
+
       const res = await generateCoutout({
-        items: printItems,
+        items,
       });
 
       anchorDownloadRef.current!.href = res;
