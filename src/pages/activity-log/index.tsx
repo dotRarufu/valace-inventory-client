@@ -3,7 +3,7 @@ import DateDropdown from './DateDropdown';
 import { useState } from 'react';
 import { ActivityResponse } from '../../../pocketbase-types';
 import LogList from './LogList';
-import { getDatesBetween } from './getDatesBetween';
+import { getDatesBetween } from './utils/getDatesBetween';
 
 export type DayLog = {
   date: Date;
