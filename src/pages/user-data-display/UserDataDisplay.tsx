@@ -1,13 +1,14 @@
 import valAceLogo from '../../assets/valace-logo.png';
 import { useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-
 import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { Collections, ItemResponse } from '../../../pocketbase-types';
-import pb from '../../lib/pocketbase';
+import { ItemResponse } from '../../../pocketbase-types';
 import Inventory from '../../components/icons/Inventory';
 import ArrowLeft from '../../components/icons/ArrowLeft';
+import { getData, getImageUrl } from '../../services/item';
+import { toast } from 'react-hot-toast';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { toastSettings } from '../../data/toastSettings';
 
 const getBackgroundColor = (value: string) => {
   switch (value) {
@@ -24,32 +25,29 @@ const UserDataDisplay = () => {
   const [data, setData] = useState<ItemResponse | null>(null);
   const [images, setImages] = useState<string[]>([]);
 
+  // Get item data
   useEffect(() => {
     const itemId = searchParams.get('id');
 
     if (itemId === null) return;
 
-    const getData = async () => {
-      const res = await pb
-        .collection(Collections.Item)
-        .getOne<ItemResponse>(itemId);
-
-      setData(res);
-    };
-
-    void getData();
+    getData(itemId)
+      .then(res => {
+        setData(res);
+      })
+      .catch(() => {
+        toast.error('Failed to get item data', toastSettings);
+      });
   }, [searchParams]);
 
+  // Get image url
   useEffect(() => {
     if (data === null) return;
 
-    const getImages = () => {
-      const urls = data.images.map(image => pb.files.getUrl(data, image));
+    const images = data.images;
+    const urls = images.map(i => getImageUrl(data, i));
 
-      setImages(urls);
-    };
-
-    void getImages();
+    setImages(urls);
   }, [data]);
 
   return (

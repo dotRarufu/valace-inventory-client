@@ -5,11 +5,12 @@ import ToggleField from '../../components/field/ToggleField';
 import Carousel from '../../components/carousel/Carousel';
 import { useDrawer } from '../../hooks/useDrawer';
 import { useContext, useEffect, useState } from 'react';
-import pb from '../../lib/pocketbase';
 import {
   ActivityActionOptions,
   Collections,
+  ItemRecord,
   ItemResponse,
+  ItemTypeOptions,
 } from '../../../pocketbase-types';
 import NumberInputField from '../../components/field/NumberInputField';
 import { UserContext } from '../../contexts/UserContext';
@@ -19,6 +20,12 @@ import { increaseRowCount } from '../../utils/increaseRowCount';
 import QrCode from './QrCode';
 import { qrCode } from '../../services/qrCodeStyling';
 import { recordActivity } from '../../services/logger';
+import {
+  ItemUpdate,
+  createItem,
+  getItem,
+  updateItem,
+} from '../../services/item';
 
 const ItemsSidebar = () => {
   const { user } = useContext(UserContext)!;
@@ -31,7 +38,7 @@ const ItemsSidebar = () => {
     setIsDrawerInAdd,
     drawerRef,
   } = useDrawer()!;
-  const [type, setType] = useState<'Furniture' | 'Office' | 'IT'>('Furniture');
+  const [type, setType] = useState<ItemTypeOptions>(ItemTypeOptions.Furniture);
   const [isAvailable, setIsAvailable] = useState(false);
   const [propertyNumber, setPropertyNumber] = useState('');
   const [name, setName] = useState('');
@@ -174,9 +181,7 @@ const ItemsSidebar = () => {
       // like in accounts sidebar
       if (activeRowId === '') return;
 
-      const res = await pb
-        .collection(Collections.Item)
-        .getOne<ItemResponse>(activeRowId);
+      const res = await getItem(activeRowId);
 
       setItemResponse(res);
       setPropertyNumber(res.property_number);
@@ -215,9 +220,7 @@ const ItemsSidebar = () => {
       // like in accounts sidebar
       if (activeRowId === '') return;
 
-      const res = await pb
-        .collection(Collections.Item)
-        .getOne<ItemResponse>(activeRowId);
+      const res = await getItem(activeRowId);
 
       setItemResponse(res);
       setPropertyNumber(res.property_number);
@@ -251,37 +254,35 @@ const ItemsSidebar = () => {
   useEffect(() => {
     if (!shouldUpdate) return;
 
-    const updateItem = async () => {
-      try {
-        const data = {
-          property_number: propertyNumber,
-          name,
-          quantity,
-          type,
-          is_available: isAvailable,
-          location,
-          supplier,
-          remarks,
-        };
-        await pb.collection(Collections.Item).update(activeRowId, data);
+    const data: ItemUpdate = {
+      property_number: propertyNumber,
+      name,
+      quantity,
+      type,
+      is_available: isAvailable,
+      location,
+      supplier,
+      remarks,
+    };
+    updateItem(activeRowId, data)
+      .then(() => {
         setShouldRecordChangedFields(true);
         setShouldUpdateTable(true);
         setShouldUpdate(false);
+
         toast.success(`Item ${name} updated`, {
           duration: 7000,
           position: 'bottom-center',
           className: 'font-semibold',
         });
-      } catch (err) {
+      })
+      .catch(() => {
         toast.error(`Item ${name} not updated`, {
           duration: 7000,
           position: 'bottom-center',
           className: 'font-semibold',
         });
-      }
-    };
-
-    void updateItem();
+      });
   }, [
     activeRowId,
     isAvailable,
@@ -302,7 +303,7 @@ const ItemsSidebar = () => {
 
     const addItem = async () => {
       try {
-        const data = {
+        const data: ItemRecord = {
           property_number: propertyNumber,
           name,
           quantity,
@@ -314,11 +315,8 @@ const ItemsSidebar = () => {
           serial_number: await generateSerialNumber(),
         };
 
-        const res = await pb.collection(Collections.Item).create(data);
-        console.log('passed init');
-
+        const res = await createItem(data);
         const newFormData = new FormData();
-
         const address = import.meta.env.VITE_URL || 'isUndefined';
         const route = 'user';
         const query = '?id=';
@@ -373,7 +371,6 @@ const ItemsSidebar = () => {
   ]);
 
   const clearData = () => {
-    console.log('clear data runs');
     setItemResponse(null);
     setPropertyNumber('');
     setName('');
@@ -383,7 +380,7 @@ const ItemsSidebar = () => {
     setDateAdded('');
     setSerialNumber('');
     setRemarks('');
-    setType('IT');
+    setType(ItemTypeOptions.IT);
 
     setInitialFields({
       type: 'IT',
@@ -438,9 +435,15 @@ const ItemsSidebar = () => {
             label="Type"
             value={type}
             dropdown={[
-              { label: 'Furniture', callback: () => setType('Furniture') },
-              { label: 'Office', callback: () => setType('Office') },
-              { label: 'IT', callback: () => setType('IT') },
+              {
+                label: 'Furniture',
+                callback: () => setType(ItemTypeOptions.Furniture),
+              },
+              {
+                label: 'Office',
+                callback: () => setType(ItemTypeOptions.Office),
+              },
+              { label: 'IT', callback: () => setType(ItemTypeOptions.IT) },
             ]}
             isUpdate={isDrawerInEdit || isDrawerInAdd}
           />

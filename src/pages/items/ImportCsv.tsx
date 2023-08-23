@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import * as Papa from 'papaparse';
-import { Collections, ItemRecord } from '../../../pocketbase-types';
+import { ItemRecord } from '../../../pocketbase-types';
 import { useDrawer } from '../../hooks/useDrawer';
-import pb from '../../lib/pocketbase';
 import generateSerialNumber from '../../utils/generateSerialNumber';
 import { toast } from 'react-hot-toast';
 import { increaseRowCount } from '../../utils/increaseRowCount';
 import ImportCsvIcon from '../../components/icons/ImportCsvIcon';
 import { toastSettings } from '../../data/toastSettings';
+import { createItem } from '../../services/item';
 
 type ItemImport = Required<
   Omit<ItemRecord, 'images' | 'serial_number' | 'is_removed'>
@@ -35,7 +35,7 @@ const ImportCsv = () => {
             serial_number: newSerialNumbers[index],
           };
 
-          await pb.collection(Collections.Item).create(data);
+          await createItem(data);
         });
         await Promise.all(reqs);
         await increaseRowCount('m940ztp5mzi2wlq', reqs.length);

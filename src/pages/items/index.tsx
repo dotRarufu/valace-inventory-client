@@ -1,13 +1,8 @@
 import { ReactNode, useEffect, useState } from 'react';
-import pb from '../../lib/pocketbase';
 import { useDrawer } from '../../hooks/useDrawer';
 import useUser from '../../hooks/useUser';
 import { toast } from 'react-hot-toast';
-import {
-  ActivityActionOptions,
-  Collections,
-  ItemResponse,
-} from '../../../pocketbase-types';
+import { ActivityActionOptions, ItemResponse } from '../../../pocketbase-types';
 import Button from '../../components/ui/Button';
 import XIcon from '../../components/icons/X';
 import Trash from '../../components/icons/Trash';
@@ -16,7 +11,7 @@ import Table from './Table';
 import Add from '../../components/icons/Add';
 import ExportDropdown from './ExportDropdown';
 import ImportCsv from './ImportCsv';
-import { getAllItems } from '../../services/item';
+import { getAllItems, removeItem } from '../../services/item';
 import { toastSettings } from '../../data/toastSettings';
 import { recordActivity } from '../../services/logger';
 
@@ -81,9 +76,7 @@ const Items = () => {
     try {
       const rows = data.filter(d => d.selected).map(r => r.id);
       const reqs = rows.map(async id => {
-        await pb.collection(Collections.Item).update(id, {
-          is_removed: true,
-        });
+        await removeItem(id);
         await recordActivity(ActivityActionOptions['DELETE ITEM'], {
           userId: user!.id,
           itemId: id,

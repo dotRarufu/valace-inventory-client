@@ -1,63 +1,42 @@
 import { useContext, useEffect, useState } from 'react';
 import pb from '../../lib/pocketbase';
-import { useNavigate } from 'react-router-dom';
-import {
-  ActivityActionOptions,
-  ActivityRecord,
-  Collections,
-  UserResponse,
-} from '../../../pocketbase-types';
 import { UserContext } from '../../contexts/UserContext';
-import { Collection } from 'pocketbase';
 import { toast } from 'react-hot-toast';
-import { recordActivity } from '../../services/logger';
+import { loginUser } from '../../services/auth';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  // Use Form (similar to Angular)
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [shouldLogin, setShouldLogin] = useState(false);
-  const navigate = useNavigate();
   const { user, setShouldGetUser } = useContext(UserContext)!;
+  const navigate = useNavigate();
 
+  // Automatically navigate to appropriate route
   useEffect(() => {
     if (user !== null) {
       navigate(user.is_admin ? '/admin' : '/staff');
     }
   }, [navigate, user]);
 
+  // Login
   useEffect(() => {
-    if (shouldLogin) {
-      const loginUser = async () => {
-        try {
-          const res = await pb
-            .collection(Collections.User)
-            .authWithPassword<UserResponse>(username, password);
+    if (!shouldLogin) return;
 
-          console.log('login successful:');
-
-          await recordActivity(ActivityActionOptions.LOGIN, {
-            userId: res.record.id,
-          });
-        } catch (err) {
-          toast.error('Login failed', {
-            duration: 7000,
-            position: 'bottom-center',
-            className: 'font-semibold',
-          });
-        } finally {
-          setShouldGetUser(true);
-          setShouldLogin(false);
-        }
-      };
-
-      void loginUser();
-    }
+    loginUser(username, password)
+      .catch(() => {
+        toast.error('Login failed', {
+          duration: 7000,
+          position: 'bottom-center',
+          className: 'font-semibold',
+        });
+      })
+      .finally(() => {
+        setShouldGetUser(true);
+        setShouldLogin(false);
+      });
   }, [password, setShouldGetUser, shouldLogin, username]);
-
-  const handleLogin = () => {
-    setShouldLogin(true);
-    console.log('login clicked');
-  };
 
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center gap-[8px] ">
@@ -73,7 +52,7 @@ const Login = () => {
         placeholder="Password"
       />
 
-      <button onClick={handleLogin} className="btn-primary btn">
+      <button onClick={() => setShouldLogin(true)} className="btn-primary btn">
         Login
       </button>
       <button onClick={() => pb.authStore.clear()} className="btn-primary btn">

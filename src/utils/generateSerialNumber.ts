@@ -4,9 +4,9 @@ import pb from '../lib/pocketbase';
 const itemId = 'm940ztp5mzi2wlq';
 
 // todo: improve type
-async function generateSerialNumber(
+async function generateSerialNumber<T extends number | undefined, R = T extends number ? string[] : string>(
   itemsLength?: number
-): Promise<string | string[]> {
+): Promise<R> {
   const item = await pb
     .collection(Collections.Count)
     .getOne<CountRecord>(itemId);
@@ -22,14 +22,14 @@ async function generateSerialNumber(
 
       return a;
     });
-    console.log("new serial numbers:", serialNumbers);
-    return serialNumbers;
+    
+    return serialNumbers as R;
   } else {
     return (
       new Date().getFullYear().toString() +
       '-' +
       newLast.toString().padStart(4, '0')
-    );
+    ) as R;
   }
 }
 

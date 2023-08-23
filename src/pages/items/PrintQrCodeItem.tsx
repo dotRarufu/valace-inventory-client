@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import pb from '../../lib/pocketbase';
 import { ItemDataRow } from '.';
 import { PrintItemRequest } from './PrintQrSidebar';
+import { getImageUrlTokenized } from '../../services/item';
+import { toast } from 'react-hot-toast';
+import { toastSettings } from '../../data/toastSettings';
 
 type Props = {
   row: ItemDataRow;
@@ -25,16 +27,15 @@ const PrintQrCodeItem = ({ row, setPrintItems }: Props) => {
   useEffect(() => {
     if (qrCodeUrl !== null) return;
 
-    const getQrCodeUrl = async () => {
-      const fileToken = await pb.files.getToken();
-      // todo: add check if token is expired
-      const fileName = row.qr;
-      const url = pb.files.getUrl(row, fileName, { token: fileToken });
-
-      setQrCodeUrl(url);
-    };
-
-    void getQrCodeUrl();
+    const fileName = row.qr;
+    // todo: add check if token is expired
+    getImageUrlTokenized(row, fileName)
+      .then(url => {
+        setQrCodeUrl(url);
+      })
+      .catch(() => {
+        toast.error('Failed to set QR Code URL', toastSettings);
+      });
   }, [qrCodeUrl, row]);
 
   const handleInputChange = (value: string) => {

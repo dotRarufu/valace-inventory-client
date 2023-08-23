@@ -1,16 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
-import {
-  ActivityActionOptions,
-  Collections,
-  ItemResponse,
-} from '../../../pocketbase-types';
-import pb from '../../lib/pocketbase';
-import Add from '../icons/Add';
+import { ActivityActionOptions, ItemResponse } from '../../../pocketbase-types';
 import Trash from '../icons/Trash';
 import { useDrawer } from '../../hooks/useDrawer';
 import { UserContext } from '../../contexts/UserContext';
 import AddImage from '../../pages/items/AddImage';
 import { recordActivity } from '../../services/logger';
+import { deleteImage, getImageUrlTokenized } from '../../services/item';
+import { toast } from 'react-hot-toast';
+import { toastSettings } from '../../data/toastSettings';
 
 type Props = {
   isUpdate: boolean;
@@ -19,6 +16,7 @@ type Props = {
 };
 
 const Carousel = ({ isUpdate, data, setShouldUpdateData }: Props) => {
+  // todo: use useUser instead
   const { user } = useContext(UserContext)!;
   const [images, setImages] = useState<string[]>([]);
   const [currentImageFileName, setCurrentImageFileName] = useState<
@@ -39,32 +37,25 @@ const Carousel = ({ isUpdate, data, setShouldUpdateData }: Props) => {
   useEffect(() => {
     if (data === null) return;
 
-    const getImagesUrl = async () => {
-      const imagesUrl = await Promise.all(
-        data.images.map(async fileName => {
-          const fileToken = await pb.files.getToken();
-          // todo: add check if token is expired
-          const url = pb.files.getUrl(data, fileName, { token: fileToken });
-
-          return url;
-        })
-      );
-
-      setImages(imagesUrl);
-    };
-
-    void getImagesUrl();
+    Promise.all(
+      // todo: add check if token is expired
+      data.images.map(async fileName => getImageUrlTokenized(data, fileName))
+    )
+      .then(res => {
+        setImages(res);
+      })
+      .catch(() => {
+        toast.error('Failed to get images', toastSettings);
+      });
   }, [data]);
 
   // Delete current image
   useEffect(() => {
     if (!shouldDeleteCurrentImage) return;
+    if (currentImageFileName === undefined) return;
 
     const deleteCurrentImage = async () => {
-      const data = {
-        'images-': [currentImageFileName],
-      };
-      await pb.collection(Collections.Item).update(activeRowId, data);
+      await deleteImage(activeRowId, [currentImageFileName]);
       await recordActivity(ActivityActionOptions['DELETE ITEM IMAGE'], {
         userId: user!.id,
         itemId: activeRowId,
