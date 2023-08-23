@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import pb from '../lib/pocketbase';
 import { UserResponse } from '../../pocketbase-types';
-import { getInitialAuthenticated } from '../utils/getInitialAuthenticated';
 
 const useUser = () => {
   // sets the initial user
@@ -71,3 +70,10 @@ const useUser = () => {
 };
 
 export default useUser;
+
+const getInitialAuthenticated = () => {
+  // no admin account is ever logged in
+  const user = pb.authStore.model as unknown as UserResponse | null;
+
+  return user;
+};

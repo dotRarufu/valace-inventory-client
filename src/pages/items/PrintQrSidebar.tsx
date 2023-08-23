@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDrawer } from '../../hooks/useDrawer';
 import PrintQrCodeItem from './PrintQrCodeItem';
-import { generateCoutout } from '../../utils/generateCutout';
+import { generateCoutout } from './utils/generateCutout';
 import toast from 'react-hot-toast';
 
 export type PrintItemRequest = {

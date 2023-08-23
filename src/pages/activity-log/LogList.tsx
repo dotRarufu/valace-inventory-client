@@ -1,10 +1,10 @@
 import { ReactNode, useEffect, useState } from 'react';
 import LogItem from './LogItem';
 import { ActivityResponse } from '../../../pocketbase-types';
-import { dateToDateFilterString } from '../../utils/dateToDateFilterString';
 import { getActivityData, getPaginatedActivities } from '../../services/logger';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
+import { dateToDateFilterString } from './utils/dateToDateFilterString';
 
 type Props = {
   date: Date;

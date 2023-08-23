@@ -4,9 +4,9 @@ import csvIcon from '../../assets/csv.svg';
 import pdfIcon from '../../assets/pdf.svg';
 import { Parser } from '@json2csv/plainjs';
 import { ItemDataRow } from '.';
-import { toCsvFormat } from '../../utils/toCsvFormat';
 import TableExport from '../../components/icons/TableExport';
 import Button from '../../components/ui/Button';
+import { ItemRecord } from '../../../pocketbase-types';
 
 type Props = {
   data: ItemDataRow[];
@@ -86,3 +86,34 @@ const ExportDropdown = ({ data }: Props) => {
 };
 
 export default ExportDropdown;
+
+const toCsvFormat = (data: ItemDataRow) => {
+  const {
+    name,
+    quantity,
+    location,
+    supplier,
+    is_available,
+    remarks,
+    type,
+    images,
+    property_number,
+    serial_number,
+    is_removed,
+  } = data;
+  const res: ItemRecord = {
+    name,
+    quantity,
+    location,
+    supplier,
+    is_available,
+    remarks,
+    type,
+    images,
+    property_number,
+    serial_number,
+    is_removed,
+  };
+
+  return res;
+};

@@ -14,9 +14,9 @@ import {
 } from '../../../pocketbase-types';
 import NumberInputField from '../../components/field/NumberInputField';
 import { UserContext } from '../../contexts/UserContext';
-import generateSerialNumber from '../../utils/generateSerialNumber';
+import generateSerialNumber from './generateSerialNumber';
 import { toast } from 'react-hot-toast';
-import { increaseRowCount } from '../../utils/increaseRowCount';
+import { increaseRowCount } from './increaseRowCount';
 import QrCode from './QrCode';
 import { qrCode } from '../../services/qrCodeStyling';
 import { recordActivity } from '../../services/logger';

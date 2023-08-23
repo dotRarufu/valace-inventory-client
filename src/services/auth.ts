@@ -15,3 +15,9 @@ export const loginUser = async (username: string, password: string) => {
     userId: res.record.id,
   });
 };
+
+export const getUser = async (id: string) => {
+  const user = await pb.collection('user').getOne<UserResponse>(id);
+
+  return user;
+};

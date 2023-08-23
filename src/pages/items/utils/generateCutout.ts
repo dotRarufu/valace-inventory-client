@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { GenerateCutoutRequest } from '../types/GenerateCutoutRequest';
+import { GenerateCutoutRequest } from '../../../types/GenerateCutoutRequest';
 
 export const generateCoutout = async (items: GenerateCutoutRequest) => {
   try {

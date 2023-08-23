@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import * as Papa from 'papaparse';
 import { ItemRecord } from '../../../pocketbase-types';
 import { useDrawer } from '../../hooks/useDrawer';
-import generateSerialNumber from '../../utils/generateSerialNumber';
 import { toast } from 'react-hot-toast';
-import { increaseRowCount } from '../../utils/increaseRowCount';
 import ImportCsvIcon from '../../components/icons/ImportCsvIcon';
 import { toastSettings } from '../../data/toastSettings';
 import { createItem } from '../../services/item';
+import generateSerialNumber from './utils/generateSerialNumber';
+import { increaseRowCount } from './utils/increaseRowCount';
 
 type ItemImport = Required<
   Omit<ItemRecord, 'images' | 'serial_number' | 'is_removed'>

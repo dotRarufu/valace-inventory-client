@@ -1,5 +1,5 @@
-import pb from '../lib/pocketbase';
-import { Collections, CountRecord } from '../../pocketbase-types';
+import pb from '../../lib/pocketbase';
+import { Collections, CountRecord } from '../../../pocketbase-types';
 
 export const increaseRowCount = async (rowId: string, count?: number) => {
   const old = await pb.collection(Collections.Count).getOne<CountRecord>(rowId);

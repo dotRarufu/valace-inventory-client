@@ -1,12 +1,13 @@
-import { Collections, CountRecord } from '../../pocketbase-types';
-import pb from '../lib/pocketbase';
+import { Collections, CountRecord } from '../../../../pocketbase-types';
+import pb from '../../../lib/pocketbase';
 
 const itemId = 'm940ztp5mzi2wlq';
 
 // todo: improve type
-async function generateSerialNumber<T extends number | undefined, R = T extends number ? string[] : string>(
-  itemsLength?: number
-): Promise<R> {
+async function generateSerialNumber<
+  T extends number | undefined,
+  R = T extends number ? string[] : string
+>(itemsLength?: number): Promise<R> {
   const item = await pb
     .collection(Collections.Count)
     .getOne<CountRecord>(itemId);
@@ -22,14 +23,12 @@ async function generateSerialNumber<T extends number | undefined, R = T extends 
 
       return a;
     });
-    
+
     return serialNumbers as R;
   } else {
-    return (
-      new Date().getFullYear().toString() +
+    return (new Date().getFullYear().toString() +
       '-' +
-      newLast.toString().padStart(4, '0')
-    ) as R;
+      newLast.toString().padStart(4, '0')) as R;
   }
 }
 
