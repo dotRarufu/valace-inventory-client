@@ -494,7 +494,7 @@ const ItemsSidebar = () => {
                 return;
               }
 
-              setState("inEdit");
+              setState('inEdit');
             }}
             className="btn-primary btn px-[16px] text-[20px]  font-semibold"
           >
