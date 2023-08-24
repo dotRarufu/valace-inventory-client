@@ -25,7 +25,7 @@ const Items = () => {
     setActiveTable,
     shouldUpdateTable,
     setShouldUpdateTable,
-    setIsDrawerInAdd,
+    setState,
     setSelectedRows,
   } = useDrawer()!;
   const { user } = useUser()!;
@@ -149,7 +149,7 @@ const Items = () => {
           <label
             onClick={() => {
               setActiveTable('items');
-              setIsDrawerInAdd(true);
+              setState('inAdd');
             }}
             htmlFor="my-drawer"
             tabIndex={0}

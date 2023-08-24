@@ -24,7 +24,13 @@ const renderSidebar = (
   }
 };
 const Drawer = ({ body }: Props) => {
-  const { activeTable, setDrawerRef } = useDrawer()!;
+  const {
+    activeTable,
+    setDrawerRef,
+    //  state,
+    setState,
+    drawerRef
+  } = useDrawer()!;
 
   const drawerCheckboxRef = useRef<HTMLInputElement>(null);
 
@@ -39,6 +45,10 @@ const Drawer = ({ body }: Props) => {
         id="my-drawer"
         type="checkbox"
         className="drawer-toggle"
+        onChange={e => {
+          console.log('checked:', e.target.checked);
+
+        }}
       />
       <div className="drawer-content">{body}</div>
       {renderSidebar(activeTable)}

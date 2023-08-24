@@ -6,7 +6,7 @@ type Props = {
     checked: string;
     unchecked: string;
   };
-  handleChange?: React.Dispatch<React.SetStateAction<boolean>>;
+  handleChange?: (v: boolean) => void;
 };
 
 const ToggleField = ({

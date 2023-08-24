@@ -2,7 +2,7 @@ type Props = {
   label: string;
   value: string;
   isUpdate?: boolean;
-  handleChange?: React.Dispatch<React.SetStateAction<string>>;
+  handleChange?: (v: string) => void;
 };
 
 const TextAreaField = ({ label, value, handleChange, isUpdate }: Props) => {

@@ -10,14 +10,17 @@ export const SidebarContext = createContext<{
   setActiveTable: React.Dispatch<
     React.SetStateAction<'accounts' | 'items' | 'print-qr' | null>
   >;
-  isDrawerInEdit: boolean;
-  setIsDrawerInEdit: React.Dispatch<React.SetStateAction<boolean>>;
+ 
   activeRowId: string;
   setActiveRowId: React.Dispatch<React.SetStateAction<string>>;
   shouldUpdateTable: boolean;
   setShouldUpdateTable: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsDrawerInAdd: React.Dispatch<React.SetStateAction<boolean>>;
-  isDrawerInAdd: boolean;
+
   setSelectedRows: React.Dispatch<React.SetStateAction<ItemDataRow[]>>;
   selectedRows: ItemDataRow[];
+
+  state: SidebarStates
+  setState: React.Dispatch<React.SetStateAction<SidebarStates>>;
 } | null>(null);
+
+export type SidebarStates = "inAdd" | "inEdit" | null; 

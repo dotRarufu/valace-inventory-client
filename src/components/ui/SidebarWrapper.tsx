@@ -3,15 +3,14 @@ import NavBar from '../nav-bar/NavBar';
 import TopAppBar from './TopAppBar';
 import Drawer from './Drawer';
 import { useState } from 'react';
-import { SidebarContext } from '../../contexts/SidebarContext';
+import { SidebarContext, SidebarStates } from '../../contexts/SidebarContext';
 import { ItemDataRow } from '../../pages/items';
 import useUser from '../../hooks/useUser';
 
 export type Sidebars = 'accounts' | 'items' | 'print-qr';
 
 const SidebarWrapper = () => {
-  const [isDrawerInEdit, setIsDrawerInEdit] = useState(false);
-  const [isDrawerInAdd, setIsDrawerInAdd] = useState(false);
+  const [state, setState] = useState<SidebarStates>(null);
   const [activeTable, setActiveTable] = useState<Sidebars | null>(null);
   const [activeRowId, setActiveRowId] = useState('');
   const [shouldUpdateTable, setShouldUpdateTable] = useState(false);
@@ -24,16 +23,17 @@ const SidebarWrapper = () => {
     setDrawerRef,
     activeTable,
     setActiveTable,
-    isDrawerInEdit,
-    setIsDrawerInEdit,
+
     activeRowId,
     setActiveRowId,
     shouldUpdateTable,
     setShouldUpdateTable,
-    isDrawerInAdd,
-    setIsDrawerInAdd,
+
     selectedRows,
     setSelectedRows,
+
+    state,
+    setState,
   };
 
   const { user } = useUser()!;

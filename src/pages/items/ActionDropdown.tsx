@@ -20,23 +20,25 @@ type Props = {
 const ActionDropdown = ({ position, id }: Props) => {
   const { user } = useContext(UserContext)!;
   const {
-    setIsDrawerInEdit,
     setActiveRowId,
     setShouldUpdateTable,
     setActiveTable,
+    drawerRef,
+    setState,
   } = useDrawer()!;
   const donwloadRef = useRef<HTMLAnchorElement>(null);
 
   const handleViewClick = () => {
     setActiveTable('items');
     setActiveRowId(id);
-    setIsDrawerInEdit(false);
+    setState(null);
+    console.log('handleViewClick');
   };
 
   const handleEditClick = () => {
     setActiveTable('items');
     setActiveRowId(id);
-    setIsDrawerInEdit(true);
+    setState('inEdit');
   };
 
   const handleDeleteClick = () => {
@@ -83,11 +85,11 @@ const ActionDropdown = ({ position, id }: Props) => {
       >
         <li>
           <label
-            onClick={handleViewClick}
             htmlFor="my-drawer"
+            onClick={handleViewClick}
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
           >
-            <div className=" h-[13px]">View</div>
+            <div className="h-[13px]">View</div>
             <img src={fullscreenIcon} />
           </label>
         </li>
