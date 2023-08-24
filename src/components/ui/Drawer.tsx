@@ -27,9 +27,6 @@ const Drawer = ({ body }: Props) => {
   const {
     activeTable,
     setDrawerRef,
-    //  state,
-    setState,
-    drawerRef
   } = useDrawer()!;
 
   const drawerCheckboxRef = useRef<HTMLInputElement>(null);

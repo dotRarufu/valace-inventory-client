@@ -32,13 +32,15 @@ const ActionDropdown = ({ position, id }: Props) => {
     setActiveTable('items');
     setActiveRowId(id);
     setState(null);
-    console.log('handleViewClick');
+    drawerRef!.current!.click();
   };
 
   const handleEditClick = () => {
     setActiveTable('items');
+    console.log("edit clicked | id:", id)
     setActiveRowId(id);
     setState('inEdit');
+    drawerRef!.current!.click();
   };
 
   const handleDeleteClick = () => {
@@ -85,7 +87,7 @@ const ActionDropdown = ({ position, id }: Props) => {
       >
         <li>
           <label
-            htmlFor="my-drawer"
+            // htmlFor="my-drawer"
             onClick={handleViewClick}
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
           >
@@ -96,7 +98,7 @@ const ActionDropdown = ({ position, id }: Props) => {
         <li>
           <label
             onClick={handleEditClick}
-            htmlFor="my-drawer"
+            // htmlFor="my-drawer"
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
           >
             <div className=" h-[13px]">Edit</div>

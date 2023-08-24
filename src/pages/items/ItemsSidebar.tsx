@@ -4,7 +4,7 @@ import SelectField from '../../components/field/SelectField';
 import ToggleField from '../../components/field/ToggleField';
 import Carousel from '../../components/carousel/Carousel';
 import { useDrawer } from '../../hooks/useDrawer';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import {
   ActivityActionOptions,
   ItemRecord,
@@ -73,9 +73,12 @@ const ItemsSidebar = () => {
     type,
   } = fields;
 
+  const [shouldRefetchData, setShouldRefetchData] = useState(false);
+
   // for recording changed fields
   const [initialFields, setInitialFields] = useState<Fields | null>(null);
   const [itemResponse, setItemResponse] = useState<ItemResponse | null>(null);
+  // for carousel
   const [shouldUpdateItemResponse, setShouldUpdateItemResponse] =
     useState(true);
 
@@ -176,6 +179,7 @@ const ItemsSidebar = () => {
   };
 
   // Get accounts row
+  // might be unnecessary duplicate
   useEffect(() => {
     const getAccountRow = async () => {
       // fixes the bug, try removing this when accounts is all done
@@ -205,13 +209,14 @@ const ItemsSidebar = () => {
     };
 
     void getAccountRow();
+    // this should not only run when activeRowId change
+    // what if a row is clicked on view first, then set to edit?
   }, [activeRowId]);
 
   // Get accounts row on shouldUpdateData
   useEffect(() => {
-    if (!shouldUpdateItemResponse) return;
-
     const getAccountRow = async () => {
+      console.log('runs update data');
       // fixes the bug, try removing this when accounts is all done
       // like in accounts sidebar
       if (activeRowId === '') return;
@@ -238,19 +243,28 @@ const ItemsSidebar = () => {
       setInitialFields({
         type: res.type,
         isAvailable: res.is_available,
-        dateAdded,
         name: res.name,
         quantity: res.quantity,
         location: res.location,
         supplier: res.supplier,
-        serialNumber,
+        dateAdded: res.created,
+        serialNumber: res.serial_number,
         propertyNumber: res.property_number,
         remarks: res.remarks,
       });
+      setShouldRefetchData(false);
     };
 
-    void getAccountRow();
-  }, [activeRowId, dateAdded, serialNumber, shouldUpdateItemResponse]);
+    console.log("shouldRefetchData:", shouldRefetchData)
+    console.log("shouldUpdateItemResponse:", shouldUpdateItemResponse)
+    if (shouldUpdateItemResponse || shouldRefetchData) {
+      void getAccountRow();
+    }
+  }, [activeRowId, shouldRefetchData, shouldUpdateItemResponse]);
+
+  useEffect(() => {
+    console.log('activeRowId:', activeRowId);
+  }, [activeRowId]);
 
   const handleUpdateItem = () => {
     const data: ItemUpdate = {
@@ -275,7 +289,7 @@ const ItemsSidebar = () => {
       });
   };
 
-  const clearData = () => {
+  const clearData = useCallback(() => {
     setItemResponse(null);
 
     const empty = {
@@ -293,8 +307,20 @@ const ItemsSidebar = () => {
 
     setFields(empty);
     setInitialFields(empty);
-    setState(null);
-  };
+  }, []);
+
+  // When to clear data
+  useEffect(() => {
+    if (activeRowId === '') return;
+
+    if (state === 'inAdd') {
+      clearData();
+      console.log('cleardata deps:', state);
+
+      return;
+    }
+    // clearData();
+  }, [activeRowId, clearData, state]);
 
   const addItem = async () => {
     try {
@@ -344,19 +370,14 @@ const ItemsSidebar = () => {
     <div className="drawer-side z-[9999]">
       <label
         onClick={() => {
-          // setState(null);
-          // drawerRef!.current!.checked = false;
-          console.log('overlay clicked');
-          // drawerRef!.current!.click();
-          //  if (!e.target.checked) {
-          //   console.log("checked set to false")
-          //   setState(null);
-          //   e.target.checked = false;
-          //   console.log("checked set to false")
-          // }
-          clearData();
+         
+          drawerRef!.current!.click();
+
+          if (state === 'inAdd') {
+            setShouldRefetchData(true);
+          }
         }}
-        htmlFor="my-drawer"
+        // htmlFor="my-drawer"
         className="drawer-overlay"
       />
       <div className="flex h-full w-[723px] flex-col gap-[8px] overflow-y-scroll bg-secondary px-[32px] pt-0 font-khula text-secondary-content">
@@ -507,10 +528,14 @@ const ItemsSidebar = () => {
             </span>
           </button>
           <label
-            htmlFor="my-drawer"
+            // htmlFor="my-drawer"
             className="btn-outline btn px-[16px] text-[20px] font-semibold  hover:btn-error"
             onClick={() => {
-              clearData();
+              drawerRef!.current!.click();
+
+              if (state === 'inAdd') {
+                setShouldRefetchData(true);
+              }
             }}
           >
             <span className="h-[13px] ">

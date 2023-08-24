@@ -27,6 +27,7 @@ const Items = () => {
     setShouldUpdateTable,
     setState,
     setSelectedRows,
+    drawerRef,
   } = useDrawer()!;
   const { user } = useUser()!;
   const [globalFilter, setGlobalFilter] = useState('');
@@ -150,8 +151,9 @@ const Items = () => {
             onClick={() => {
               setActiveTable('items');
               setState('inAdd');
+              drawerRef!.current!.click();
             }}
-            htmlFor="my-drawer"
+            // htmlFor="my-drawer"
             tabIndex={0}
             className="btn-primary btn-circle btn-lg btn px-[16px]"
           >
