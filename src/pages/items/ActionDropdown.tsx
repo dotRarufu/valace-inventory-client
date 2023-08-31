@@ -37,7 +37,7 @@ const ActionDropdown = ({ position, id }: Props) => {
 
   const handleEditClick = () => {
     setActiveTable('items');
-    console.log("edit clicked | id:", id)
+    
     setActiveRowId(id);
     setState('inEdit');
     drawerRef!.current!.click();

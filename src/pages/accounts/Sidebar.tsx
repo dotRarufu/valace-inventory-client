@@ -2,7 +2,7 @@ import SelectField from '../../components/field/SelectField';
 import TextInputField from '../../components/field/TextInputField';
 import PasswordField from '../../components/field/PasswordField';
 import ToggleField from '../../components/field/ToggleField';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { ActivityActionOptions } from '../../../pocketbase-types';
 import { useDrawer } from '../../hooks/useDrawer';
 import { UserContext } from '../../contexts/UserContext';
@@ -11,23 +11,22 @@ import { addAccount, getAccount, updateAccount } from '../../services/accounts';
 import { toastSettings } from '../../data/toastSettings';
 import { recordActivity } from '../../services/logger';
 
-const Sidebar = () => {
-  const {
-    isDrawerInEdit,
-    setIsDrawerInEdit,
-    activeRowId,
-    setShouldUpdateTable,
-    isDrawerInAdd,
-    setIsDrawerInAdd,
-    drawerRef,
-  } = useDrawer()!;
+const initialFieldValues = {
+  username: 'test',
+  isAdmin: false,
+  password: 'mypassword',
+  isActive: false,
+};
 
+const Sidebar = () => {
+  const { state, activeRowId, setShouldUpdateTable, drawerRef, setState } =
+    useDrawer()!;
   const { user } = useContext(UserContext)!;
-  const [username, setUsername] = useState('test');
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [password, setPassword] = useState('mypassword');
-  const [isActive, setIsActive] = useState(false);
+
   const [id, setId] = useState('');
+  const [fields, setfields] = useState(initialFieldValues);
+  const { username, isAdmin, password, isActive } = fields;
+  const [shouldRefetchData, setShouldRefetchData] = useState(false);
 
   const [initialFields, setInitialFields] = useState<{
     username: string | null;
@@ -38,24 +37,43 @@ const Sidebar = () => {
 
   // Get account
   useEffect(() => {
-    void getAccount(activeRowId, res => {
-      setInitialFields({
+    getAccount(activeRowId, res => {
+      const newFields = {
         isActive: res.is_active,
         isAdmin: res.is_admin,
         password: res.plain_password,
         username: res.username,
-      });
-      setUsername(res.username);
-      setIsAdmin(res.is_admin);
-      setPassword(res.plain_password);
-      setIsActive(res.is_active);
+      };
+      setInitialFields(newFields);
+      setfields(newFields);
+
       setId(res.id);
-    }).catch(() => {
-      toast.error('Failed to load account data', toastSettings);
-    });
+    }).catch(() => toast.error('Failed to load account data', toastSettings));
   }, [activeRowId]);
 
+  // important to be separated
+  // Get account on update
+  useEffect(() => {
+    if (!shouldRefetchData) return;
+
+    getAccount(activeRowId, res => {
+      const newFields = {
+        isActive: res.is_active,
+        isAdmin: res.is_admin,
+        password: res.plain_password,
+        username: res.username,
+      };
+      setInitialFields(newFields);
+      setfields(newFields);
+      setId(res.id);
+
+      setShouldRefetchData(false);
+    }).catch(() => toast.error('Failed to load account data', toastSettings));
+  }, [activeRowId, shouldRefetchData]);
+
   const recordChangedFields = async () => {
+    const { username, isActive, isAdmin, password } = fields;
+
     if (initialFields && initialFields.username !== username) {
       await recordActivity(ActivityActionOptions['EDIT ACCOUNT USERNAME'], {
         userId: user!.id,
@@ -109,30 +127,47 @@ const Sidebar = () => {
       is_active: isActive,
     };
 
-    void updateAccount(activeRowId, data, () => {
+    updateAccount(activeRowId, data, () => {
       toast.success(`Account ${username} updated`, toastSettings);
 
       void recordChangedFields();
       setShouldUpdateTable(true);
-    }).catch(() => {
-      toast.error(`Account not updated`, toastSettings);
-    });
+    }).catch(() => toast.error(`Account not updated`, toastSettings));
   };
 
-  const handleAddAccount = () => {
-    const data = {
-      username,
-      is_admin: isAdmin,
-      is_active: isActive,
-      plain_password: password,
-      password,
-      passwordConfirm: password,
+  const clearData = useCallback(() => {
+    setInitialFields({
+      isActive: false,
+      isAdmin: false,
+      password: '',
+      username: '',
+    });
+
+    const defaultFields = {
+      username: '',
+      isAdmin: false,
+      password: '',
+      isActive: false,
     };
 
-    addAccount(data, res => {
+    setfields(defaultFields);
+    setId('');
+  }, []);
+
+  const handleAddAccount = async () => {
+    try {
+      const data = {
+        username,
+        is_admin: isAdmin,
+        is_active: isActive,
+        plain_password: password,
+        password,
+        passwordConfirm: password,
+      };
+
+      const res = await addAccount(data);
       toast.success(`Account ${username} added`, toastSettings);
 
-      setIsDrawerInAdd(false);
       setShouldUpdateTable(true);
 
       // This should never fail
@@ -140,28 +175,29 @@ const Sidebar = () => {
         userId: user!.id,
         targetUserId: res.id,
       });
-    }).catch(() => {
+      clearData();
+    } catch (_) {
       toast.error(`Account not added`, toastSettings);
-    });
+    }
   };
 
-  const clearData = () => {
-    setInitialFields({
-      isActive: false,
-      isAdmin: false,
-      password: '',
-      username: '',
-    });
-    setUsername('');
-    setIsAdmin(false);
-    setPassword('');
-    setIsActive(false);
-    setId('');
-  };
+  // When to clear data
+  useEffect(() => {
+    if (activeRowId === '') return;
+
+    if (state === 'inAdd') clearData();
+  }, [activeRowId, clearData, state]);
 
   return (
     <div className="drawer-side z-[9999]">
-      <label htmlFor="my-drawer" className="drawer-overlay"></label>
+      <label
+        onClick={() => {
+          drawerRef!.current!.click();
+
+          if (state === 'inAdd') setShouldRefetchData(true);
+        }}
+        className="drawer-overlay"
+      />
       <div className="flex h-full w-[723px] flex-col gap-[8px] overflow-y-scroll bg-secondary px-[32px] pt-0 font-khula text-secondary-content">
         <div className="flex items-center justify-start pb-[16px]  pt-[32px]">
           <span className="h-[21px] text-[32px] font-semibold leading-none text-primary">
@@ -174,31 +210,35 @@ const Sidebar = () => {
             label="Username"
             value={username}
             // todo: update the prop name
-            isUpdate={isDrawerInEdit || isDrawerInAdd}
-            handleChange={setUsername}
+            isUpdate={state !== null}
+            handleChange={username => setfields(old => ({ ...old, username }))}
           />
           <SelectField
             label="Role"
             value={isAdmin ? 'Admin' : 'Staff'}
             dropdown={[
-              { label: 'Admin', callback: () => setIsAdmin(true) },
-              { label: 'Staff', callback: () => setIsAdmin(false) },
+              {
+                label: 'Admin',
+                callback: () => setfields(old => ({ ...old, isAdmin: true })),
+              },
+              {
+                label: 'Staff',
+                callback: () => setfields(old => ({ ...old, isAdmin: false })),
+              },
             ]}
-            isUpdate={isDrawerInEdit || isDrawerInAdd}
+            isUpdate={state !== null}
           />
-          {!isDrawerInEdit && !isDrawerInAdd && (
+          {state === 'inEdit' && (
             <TextInputField label="Created At" value="07/23/2023" />
           )}
           <PasswordField
             label="Password"
             value={password}
-            isUpdate={isDrawerInEdit || isDrawerInAdd}
-            handleChange={setPassword}
+            isUpdate={state !== null}
+            handleChange={password => setfields(old => ({ ...old, password }))}
           />
 
-          {!isDrawerInEdit && !isDrawerInAdd && (
-            <TextInputField label="UID" value={id} />
-          )}
+          {state === 'inAdd' && <TextInputField label="UID" value={id} />}
 
           <ToggleField
             label="Status"
@@ -207,8 +247,8 @@ const Sidebar = () => {
               checked: 'ACTIVE',
               unchecked: 'INACTIVE',
             }}
-            isUpdate={isDrawerInEdit || isDrawerInAdd}
-            handleChange={setIsActive}
+            isUpdate={state !== null}
+            handleChange={isActive => setfields(old => ({ ...old, isActive }))}
           />
         </ul>
 
@@ -217,48 +257,46 @@ const Sidebar = () => {
         <div className="flex items-center justify-end gap-[16px] py-[32px]">
           <button
             onClick={() => {
-              if (!isDrawerInEdit) {
-                setIsDrawerInEdit(true);
-              }
+              if (state === 'inEdit') {
+                drawerRef!.current!.checked = false;
 
-              if (isDrawerInEdit) {
-                if (drawerRef && drawerRef.current) {
-                  drawerRef.current.checked = false;
-                }
-
-                setIsDrawerInAdd(false);
+                setState(null);
                 handleUpdateAccount();
+
+                return;
               }
 
-              if (isDrawerInAdd) {
-                if (drawerRef && drawerRef.current) {
-                  drawerRef.current.checked = false;
-                }
-                setIsDrawerInAdd(false);
-                handleAddAccount();
+              if (state === 'inAdd') {
+                drawerRef!.current!.checked = false;
+
+                setState(null);
+                void handleAddAccount();
+
+                return;
               }
+
+              setState('inEdit');
             }}
             className="btn-primary btn px-[16px] text-[20px]  font-semibold"
           >
             <span className="h-[13px] ">
-              {isDrawerInEdit
+              {state === 'inEdit'
                 ? 'Save Changes'
-                : isDrawerInAdd
+                : state === 'inAdd'
                 ? 'Add Account'
                 : 'Update'}
             </span>
           </button>
           <label
-            htmlFor="my-drawer"
             className="btn-outline btn px-[16px] text-[20px] font-semibold  hover:btn-error"
             onClick={() => {
-              clearData();
-              setIsDrawerInEdit(false);
-              setIsDrawerInAdd(false);
+              drawerRef!.current!.click();
+
+              if (state === 'inAdd') setShouldRefetchData(true);
             }}
           >
             <span className="h-[13px] ">
-              {!isDrawerInEdit ? 'Close' : 'Cancel'}
+              {state !== 'inEdit' ? 'Close' : 'Cancel'}
             </span>
           </label>
         </div>

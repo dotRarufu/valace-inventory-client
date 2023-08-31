@@ -3,7 +3,6 @@ import Add from '../../components/icons/Add';
 import { UserResponse } from '../../../pocketbase-types';
 import Table from './Table';
 import { useDrawer } from '../../hooks/useDrawer';
-import Fab from '../../components/ui/Fab';
 import { getAccounts } from '../../services/accounts';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
@@ -18,8 +17,8 @@ const Accounts = () => {
     setActiveTable,
     shouldUpdateTable,
     setShouldUpdateTable,
-    setIsDrawerInAdd,
-    isDrawerInAdd,
+    setState,
+    drawerRef,
   } = useDrawer()!;
 
   // Initial fetch
@@ -52,11 +51,23 @@ const Accounts = () => {
         <Table data={rowData} setData={setRowData} />
       </div>
 
-      <Fab
-        handleClick={() => setIsDrawerInAdd(!isDrawerInAdd)}
-        label={<Add />}
-        tooltip="Account"
-      />
+      <div
+        className="tooltip-primary tooltip tooltip-left  absolute bottom-[16px] right-[16px] z-[1]"
+        data-tip="Account"
+      >
+        <label
+          onClick={() => {
+            setActiveTable('accounts');
+            setState('inAdd');
+            drawerRef!.current!.click();
+          }}
+          // htmlFor="my-drawer"
+          tabIndex={0}
+          className="btn-primary btn-circle btn-lg btn px-[16px]"
+        >
+          <Add />
+        </label>
+      </div>
     </div>
   );
 };

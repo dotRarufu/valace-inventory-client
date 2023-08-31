@@ -145,25 +145,22 @@ const Items = () => {
         />
       </div>
 
-      <div className="dropdown-top dropdown-end dropdown  absolute bottom-[16px] right-[16px] z-[1]">
-        <div className="tooltip-primary tooltip tooltip-left " data-tip="Item">
-          <label
-            onClick={() => {
-              setActiveTable('items');
-              setState('inAdd');
-              drawerRef!.current!.click();
-            }}
-            // htmlFor="my-drawer"
-            tabIndex={0}
-            className="btn-primary btn-circle btn-lg btn px-[16px]"
-          >
-            <Add />
-          </label>
-        </div>
-        <div
+      <div
+        className="tooltip-primary tooltip tooltip-left  absolute bottom-[16px] right-[16px] z-[1]"
+        data-tip="Item"
+      >
+        <label
+          onClick={() => {
+            setActiveTable('items');
+            setState('inAdd');
+            drawerRef!.current!.click();
+          }}
+          // htmlFor="my-drawer"
           tabIndex={0}
-          className="bg-base-secondary dropdown-content z-[1] w-fit rounded-[5px] "
-        ></div>
+          className="btn-primary btn-circle btn-lg btn px-[16px]"
+        >
+          <Add />
+        </label>
       </div>
     </div>
   );

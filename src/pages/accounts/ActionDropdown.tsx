@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import { ActivityActionOptions } from '../../../pocketbase-types';
 import { UserContext } from '../../contexts/UserContext';
 import { toast } from 'react-hot-toast';
-import { updateAccount } from '../../services/accounts';
+import { removeAccount } from '../../services/accounts';
 import { toastSettings } from '../../data/toastSettings';
 import { recordActivity } from '../../services/logger';
 
@@ -18,33 +18,42 @@ type Props = {
 
 const ActionDropdown = ({ position, id }: Props) => {
   const { user } = useContext(UserContext)!;
-  const { setIsDrawerInEdit, setActiveRowId, setShouldUpdateTable } =
-    useDrawer()!;
+  const {
+    setActiveTable,
+    setState,
+    drawerRef,
+    setActiveRowId,
+    setShouldUpdateTable,
+  } = useDrawer()!;
 
   const handleViewClick = () => {
+    console.log('!!! id:', id);
+    setActiveTable('accounts');
     setActiveRowId(id);
-    setIsDrawerInEdit(false);
+    setState(null);
+    drawerRef!.current!.click();
   };
 
   const handleEditClick = () => {
+    setActiveTable('accounts');
     setActiveRowId(id);
-    setIsDrawerInEdit(true);
+    setState('inEdit');
+    drawerRef!.current!.click();
   };
 
-  const handleRemoveAccount = () => {
-    updateAccount(id, { is_removed: true }, () => {
-      toast.success(`Account removed`, toastSettings);
-
-      setShouldUpdateTable(true);
-
-      // This should never fail
-      void recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
-        userId: user!.id,
-        targetUserId: id,
-      });
-    }).catch(() => {
+  const handleRemoveAccount = async () => {
+    await removeAccount(id).catch(() => {
       toast.error(`Account not removed`, toastSettings);
     });
+
+    // Should never fail
+    await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
+      userId: user!.id,
+      targetUserId: id,
+    });
+
+    toast.success(`Account removed`, toastSettings);
+    setShouldUpdateTable(true);
   };
 
   return (
@@ -67,7 +76,6 @@ const ActionDropdown = ({ position, id }: Props) => {
         <li>
           <label
             onClick={handleViewClick}
-            htmlFor="my-drawer"
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
           >
             <div className="h-[13px]">View</div>
@@ -77,7 +85,6 @@ const ActionDropdown = ({ position, id }: Props) => {
         <li>
           <label
             onClick={handleEditClick}
-            htmlFor="my-drawer"
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px] "
           >
             <div className="h-[13px]">Edit</div>
@@ -86,7 +93,7 @@ const ActionDropdown = ({ position, id }: Props) => {
         </li>
         <li>
           <label
-            onClick={handleRemoveAccount}
+            onClick={() => void handleRemoveAccount()}
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
           >
             <div className="h-[13px]">Delete</div>

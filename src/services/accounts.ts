@@ -20,11 +20,11 @@ export const getAccounts = async (
 export const updateAccount = async (
   id: string,
   data: Partial<UserRecord>,
-  callback: () => void
+  callback?: () => void
 ) => {
   await pb.collection(Collections.User).update(id, data);
 
-  callback();
+  callback && callback();
 };
 
 export const getAccount = async (
@@ -38,9 +38,12 @@ export const getAccount = async (
 
 export const addAccount = async (
   data: UserRecord,
-  callback: (res: UserResponse) => void
 ) => {
   const res = await pb.collection(Collections.User).create<UserResponse>(data);
 
-  callback(res);
+  return res;
+};
+
+export const removeAccount = async (id: string) => {
+  await updateAccount(id, { is_removed: true });
 };

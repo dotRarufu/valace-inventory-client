@@ -179,7 +179,6 @@ const ItemsSidebar = () => {
   };
 
   // Get accounts row
-  // might be unnecessary duplicate
   useEffect(() => {
     const getAccountRow = async () => {
       // fixes the bug, try removing this when accounts is all done
@@ -209,14 +208,12 @@ const ItemsSidebar = () => {
     };
 
     void getAccountRow();
-    // this should not only run when activeRowId change
-    // what if a row is clicked on view first, then set to edit?
   }, [activeRowId]);
 
-  // Get accounts row on shouldUpdateData
+  // Get item row on shouldUpdateData
+  // important to be separated
   useEffect(() => {
-    const getAccountRow = async () => {
-      console.log('runs update data');
+    const getItemRow = async () => {
       // fixes the bug, try removing this when accounts is all done
       // like in accounts sidebar
       if (activeRowId === '') return;
@@ -255,16 +252,10 @@ const ItemsSidebar = () => {
       setShouldRefetchData(false);
     };
 
-    console.log("shouldRefetchData:", shouldRefetchData)
-    console.log("shouldUpdateItemResponse:", shouldUpdateItemResponse)
     if (shouldUpdateItemResponse || shouldRefetchData) {
-      void getAccountRow();
+      void getItemRow();
     }
   }, [activeRowId, shouldRefetchData, shouldUpdateItemResponse]);
-
-  useEffect(() => {
-    console.log('activeRowId:', activeRowId);
-  }, [activeRowId]);
 
   const handleUpdateItem = () => {
     const data: ItemUpdate = {
@@ -319,7 +310,6 @@ const ItemsSidebar = () => {
 
       return;
     }
-    // clearData();
   }, [activeRowId, clearData, state]);
 
   const addItem = async () => {
@@ -370,7 +360,6 @@ const ItemsSidebar = () => {
     <div className="drawer-side z-[9999]">
       <label
         onClick={() => {
-         
           drawerRef!.current!.click();
 
           if (state === 'inAdd') {
