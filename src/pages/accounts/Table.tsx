@@ -1,12 +1,16 @@
 import {
+  SortingState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 import ActionDropdown from './ActionDropdown';
 import { AccountDataRow } from '.';
 import Pagination, { PaginationProps } from '../../components/ui/Pagination';
+import { useState } from 'react';
 
 const columnHelper = createColumnHelper<AccountDataRow>();
 
@@ -82,10 +86,24 @@ const columns = [
 ];
 
 const Table = ({ data }: Props) => {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   const table = useReactTable({
     data,
     columns,
+    initialState: {
+      pagination: {
+        pageSize: 8,
+      },
+    },
+    state: {
+      sorting,
+    },
+    autoResetPageIndex: false,
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   const paginationProps: PaginationProps = {
@@ -102,6 +120,7 @@ const Table = ({ data }: Props) => {
     handleChangePage: (page: number) => {
       table.setPageIndex(page - 1);
     },
+    totalItemCount: data.length,
   };
 
   return (

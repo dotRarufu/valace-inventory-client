@@ -56,7 +56,7 @@ const Pagination = ({
   const totalCount = totalItemCount;
   const currentPageStartItemCount = (currentPage - 1) * 8 || 1;
   const currentPageLastItemCount = isInLastPage
-    ? (currentPage - 1) * 8 + 8 - (totalCount % 8)
+    ? (currentPage - 1) * 8 + (totalCount % 8)
     : (currentPage - 1) * 8 + 8;
 
   return (

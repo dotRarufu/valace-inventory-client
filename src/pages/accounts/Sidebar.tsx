@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { addAccount, getAccount, updateAccount } from '../../services/accounts';
 import { toastSettings } from '../../data/toastSettings';
 import { recordActivity } from '../../services/logger';
+import { PocketbaseError } from '../../types/PocketbaseError';
 
 const initialFieldValues = {
   username: 'test',
@@ -176,8 +177,11 @@ const Sidebar = () => {
         targetUserId: res.id,
       });
       clearData();
-    } catch (_) {
-      toast.error(`Account not added`, toastSettings);
+    } catch (e) {
+      toast.error(
+        `Account not added: ${(e as PocketbaseError).message}`,
+        toastSettings
+      );
     }
   };
 
@@ -238,7 +242,7 @@ const Sidebar = () => {
             handleChange={password => setfields(old => ({ ...old, password }))}
           />
 
-          {state === 'inAdd' && <TextInputField label="UID" value={id} />}
+          {state === 'inEdit' && <TextInputField label="UID" value={id} />}
 
           <ToggleField
             label="Status"
