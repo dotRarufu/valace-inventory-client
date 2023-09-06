@@ -177,6 +177,7 @@ const Table = ({ setData, data, setGlobalFilter, globalFilter }: Props) => {
     handleChangePage: (page: number) => {
       table.setPageIndex(page - 1);
     },
+    totalItemCount: data.length,
   };
 
   return (

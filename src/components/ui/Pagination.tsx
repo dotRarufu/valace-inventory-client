@@ -12,6 +12,7 @@ export type PaginationProps = {
   currentPage: number;
   totalPage: number;
   handleChangePage: (page: number) => void;
+  totalItemCount: number;
 };
 
 const Pagination = ({
@@ -26,6 +27,7 @@ const Pagination = ({
   totalPage,
   currentPage,
   handleChangePage,
+  totalItemCount,
 }: PaginationProps) => {
   const [inputValue, setInputValue] = useState<string>(currentPage.toString());
 
@@ -36,8 +38,6 @@ const Pagination = ({
   const handleInputChange = (value: string) => {
     const re = /^[0-9\b]+$/;
 
-    console.log('val:', value);
-
     if (value === '') {
       setInputValue('');
       handleChangePage(1);
@@ -46,26 +46,31 @@ const Pagination = ({
 
     if (re.test(value)) {
       if (Number(value) > totalPage) return;
-      console.log('change page!');
+
       setInputValue(value);
       handleChangePage(Number(value));
     }
   };
 
+  const isInLastPage = currentPage === totalPage;
+  const totalCount = totalItemCount;
+  const currentPageStartItemCount = (currentPage - 1) * 8 || 1;
+  const currentPageLastItemCount = isInLastPage
+    ? (currentPage - 1) * 8 + 8 - (totalCount % 8)
+    : (currentPage - 1) * 8 + 8;
+
   return (
-    <div className="sticky  flex items-center gap-[16px] rounded-[5px]  text-[20px] px-[16px] h-[32px] p-[2px] w-full ">
+    <div className="sticky  flex h-[32px] w-full items-center  gap-[16px] rounded-[5px] p-[2px] px-[16px] text-[20px] ">
       <div className="text-base text-base-content/75">
-        {/* todo: fix for pages with non 8 rows */}
-        {(currentPage - 1) * 8 || 1} - {(currentPage - 1) * 8 + 8} of{' '}
-        {totalPage * 8} items
+        {currentPageStartItemCount} - {currentPageLastItemCount} of {totalCount}{' '}
+        items
       </div>
       <div className="text-base">
         <input
           onInput={e => handleInputChange(e.currentTarget.value)}
           pattern="[0-9]*"
-        
           value={inputValue}
-          className="input input-sm input-bordered w-[32px] aspect-square p-1 text-center bg-secondary rounded-[5px]"
+          className="input-bordered input input-sm aspect-square w-[32px] rounded-[5px] bg-secondary p-1 text-center"
         />
         {' of '}
         {totalPage}
@@ -74,28 +79,28 @@ const Pagination = ({
         <button
           onClick={handleStartClick}
           disabled={!isStartEnabled}
-          className=" p-[8px] basis-[27px] join-item btn btn-sm btn-ghost btn-outline border-r-0 border-primary"
+          className=" btn-ghost btn-outline btn-sm join-item btn basis-[27px] border-r-0 border-primary p-[8px]"
         >
           {'<<'}
         </button>
         <button
           onClick={handlePreviousClick}
           disabled={!isPreviousEnabled}
-          className="join-item basis-[27px] p-[8px] btn btn-sm border-x-0 btn-outline border-primary "
+          className="btn-outline btn-sm join-item btn basis-[27px] border-x-0 border-primary p-[8px] "
         >
           {'<'}
         </button>
         <button
           onClick={handleNextClick}
           disabled={!isNextEnabled}
-          className="join-item basis-[27px] p-[8px] btn btn-sm border-x-0 btn-outline border-primary"
+          className="btn-outline btn-sm join-item btn basis-[27px] border-x-0 border-primary p-[8px]"
         >
           {'>'}
         </button>
         <button
           onClick={handleEndClick}
           disabled={!isEndEnabled}
-          className="join-item basis-[27px] p-[8px] btn btn-sm btn-outline border-l-0 border-primary"
+          className="btn-outline btn-sm join-item btn basis-[27px] border-l-0 border-primary p-[8px]"
         >
           {'>>'}
         </button>
