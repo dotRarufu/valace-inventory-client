@@ -9,6 +9,7 @@ import { addItemImages } from '../../services/item';
 import { toastSettings } from '../../data/toastSettings';
 import { toast } from 'react-hot-toast';
 import { recordActivity } from '../../services/logger';
+import { PocketbaseError } from '../../types/PocketbaseError';
 
 const fileTypes = ['JPG', 'PNG', 'GIF'];
 
@@ -54,7 +55,7 @@ const AddImage = ({ setShouldUpdateData }: Props) => {
   const addImages = async () => {
     try {
       await addItemImages(activeRowId, formData);
-      toast.error('Images added successfully', toastSettings);
+      toast.success('Images added successfully', toastSettings);
 
       setShouldUpdateData(true);
       setFiles([]);
@@ -64,7 +65,13 @@ const AddImage = ({ setShouldUpdateData }: Props) => {
         itemId: activeRowId,
       });
     } catch (err) {
-      toast.error('Failed to add images', toastSettings);
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     }
   };
 

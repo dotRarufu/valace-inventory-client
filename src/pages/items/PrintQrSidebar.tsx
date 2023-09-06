@@ -3,6 +3,8 @@ import { useDrawer } from '../../hooks/useDrawer';
 import PrintQrCodeItem from './PrintQrCodeItem';
 import { generateCoutout } from './utils/generateCutout';
 import toast from 'react-hot-toast';
+import { PocketbaseError } from '../../types/PocketbaseError';
+import { toastSettings } from '../../data/toastSettings';
 
 export type PrintItemRequest = {
   id: string;
@@ -31,7 +33,13 @@ const PrintQrSidebar = () => {
       anchorDownloadRef.current!.download = 'qrcodes.pdf';
       anchorDownloadRef.current!.click();
     } catch (err) {
-      toast.error('Failed to prepare QR Code cutout');
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     }
   };
 

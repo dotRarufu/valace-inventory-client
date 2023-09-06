@@ -4,6 +4,7 @@ import { PrintItemRequest } from './PrintQrSidebar';
 import { getImageUrlTokenized } from '../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
+import { PocketbaseError } from '../../types/PocketbaseError';
 
 type Props = {
   row: ItemDataRow;
@@ -33,8 +34,14 @@ const PrintQrCodeItem = ({ row, setPrintItems }: Props) => {
       .then(url => {
         setQrCodeUrl(url);
       })
-      .catch(() => {
-        toast.error('Failed to set QR Code URL', toastSettings);
+      .catch(err => {
+        const error = err as PocketbaseError;
+        const errorFields = Object.keys(error.data.data);
+        const field =
+          errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+        const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+        toast.error(message, toastSettings);
       });
   }, [qrCodeUrl, row]);
 

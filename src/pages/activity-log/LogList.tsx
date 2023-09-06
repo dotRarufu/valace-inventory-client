@@ -5,6 +5,7 @@ import { getActivityData, getPaginatedActivities } from '../../services/logger';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
 import { dateToDateFilterString } from './utils/dateToDateFilterString';
+import { PocketbaseError } from '../../types/PocketbaseError';
 
 type Props = {
   date: Date;
@@ -35,8 +36,14 @@ const LogList = ({ date }: Props) => {
       setActivitiesData(data);
     };
 
-    getActivitiesData().catch(() => {
-      toast.error('Failed to get activities data', toastSettings);
+    getActivitiesData().catch(err => {
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     });
   }, [activities, maxPage]);
 
@@ -56,8 +63,14 @@ const LogList = ({ date }: Props) => {
       setActivities(resActivities.items);
     };
 
-    getActivities().catch(() => {
-      toast.error('Failed to get activities', toastSettings);
+    getActivities().catch(err => {
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     });
   }, [date, maxPage]);
 
@@ -85,8 +98,14 @@ const LogList = ({ date }: Props) => {
       setActivities(old => [...old, ...resActivities.items]);
     };
 
-    getActivities().catch(() => {
-      toast.error('Failed to get activities', toastSettings);
+    getActivities().catch(err => {
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     });
   }, [currentPage, date, maxPage, reachedLastPage]);
 

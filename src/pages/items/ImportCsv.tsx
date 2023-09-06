@@ -8,6 +8,7 @@ import { toastSettings } from '../../data/toastSettings';
 import { createItem } from '../../services/item';
 import generateSerialNumber from './utils/generateSerialNumber';
 import { increaseRowCount } from './utils/increaseRowCount';
+import { PocketbaseError } from '../../types/PocketbaseError';
 
 type ItemImport = Required<
   Omit<ItemRecord, 'images' | 'serial_number' | 'is_removed'>
@@ -43,7 +44,13 @@ const ImportCsv = () => {
         setShouldUpdateTable(true);
         toast.success(`CSV file imported`, toastSettings);
       } catch (err) {
-        toast.error(`CSV file not imported`, toastSettings);
+        const error = err as PocketbaseError;
+        const errorFields = Object.keys(error.data.data);
+        const field =
+          errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+        const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+        toast.error(message, toastSettings);
       }
     };
 

@@ -14,6 +14,7 @@ import ImportCsv from './ImportCsv';
 import { getAllItems, removeItem } from '../../services/item';
 import { toastSettings } from '../../data/toastSettings';
 import { recordActivity } from '../../services/logger';
+import { PocketbaseError } from '../../types/PocketbaseError';
 
 export interface ItemDataRow extends ItemResponse {
   selected: boolean;
@@ -39,8 +40,14 @@ const Items = () => {
       .then(res => {
         setData(res.items.map(d => ({ selected: false, ...d })));
       })
-      .catch(() => {
-        toast.error('Faield to load items', toastSettings);
+      .catch(err => {
+        const error = err as PocketbaseError;
+        const errorFields = Object.keys(error.data.data);
+        const field =
+          errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+        const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+        toast.error(message, toastSettings);
       });
   }, []);
 
@@ -60,8 +67,14 @@ const Items = () => {
         setData(res.items.map(d => ({ selected: false, ...d })));
         setShouldUpdateTable(false);
       })
-      .catch(() => {
-        toast.error('Failed to load items', toastSettings);
+      .catch(err => {
+        const error = err as PocketbaseError;
+        const errorFields = Object.keys(error.data.data);
+        const field =
+          errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+        const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+        toast.error(message, toastSettings);
       });
   }, [setShouldUpdateTable, shouldUpdateTable]);
 
@@ -88,7 +101,13 @@ const Items = () => {
       setShouldUpdateTable(true);
       toast.success(`Items deleted`, toastSettings);
     } catch (err) {
-      toast.error(`Item not deleted`, toastSettings);
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     }
   };
 

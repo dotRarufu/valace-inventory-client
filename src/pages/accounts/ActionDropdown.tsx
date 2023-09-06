@@ -10,6 +10,7 @@ import { toast } from 'react-hot-toast';
 import { removeAccount } from '../../services/accounts';
 import { toastSettings } from '../../data/toastSettings';
 import { recordActivity } from '../../services/logger';
+import { PocketbaseError } from '../../types/PocketbaseError';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -42,8 +43,14 @@ const ActionDropdown = ({ position, id }: Props) => {
   };
 
   const handleRemoveAccount = async () => {
-    await removeAccount(id).catch(() => {
-      toast.error(`Account not removed`, toastSettings);
+    await removeAccount(id).catch((err) => {
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     });
 
     // Should never fail

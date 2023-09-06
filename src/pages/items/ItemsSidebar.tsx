@@ -26,6 +26,7 @@ import {
 import generateSerialNumber from './utils/generateSerialNumber';
 import { increaseRowCount } from './utils/increaseRowCount';
 import { toastSettings } from '../../data/toastSettings';
+import { PocketbaseError } from '../../types/PocketbaseError';
 
 type Fields = {
   type: ItemTypeOptions;
@@ -275,8 +276,14 @@ const ItemsSidebar = () => {
 
         toast.success(`Item ${name} updated`, toastSettings);
       })
-      .catch(() => {
-        toast.error(`Item ${name} not updated`, toastSettings);
+      .catch(err => {
+        const error = err as PocketbaseError;
+        const errorFields = Object.keys(error.data.data);
+        const field =
+          errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+        const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+        toast.error(message, toastSettings);
       });
   };
 
@@ -352,7 +359,13 @@ const ItemsSidebar = () => {
       clearData();
       toast.success(`Item ${name} added`, toastSettings);
     } catch (err) {
-      toast.error(`Item ${name} not added`, toastSettings);
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     }
   };
 

@@ -129,18 +129,27 @@ const Table = ({ data }: Props) => {
         className="table-zebra table overflow-x-clip rounded-[5px]
       bg-secondary"
       >
-        <thead className="rounded-[5px] bg-primary font-khula text-base text-secondary">
+        <thead className="bg-primary font-khula text-base text-secondary ">
           {table.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map(header => (
                 <th key={header.id} className="text-center">
-                  <div className="pt-[4px]">
+                  <div
+                    className={`pt-[4px] ${
+                      header.column.getCanSort() ? 'cursor-pointer' : ''
+                    }`}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
+                    {{
+                      asc: ' 🔼',
+                      desc: ' 🔽',
+                    }[header.column.getIsSorted() as string] ?? null}
                   </div>
                 </th>
               ))}

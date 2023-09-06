@@ -6,6 +6,7 @@ import { useDrawer } from '../../hooks/useDrawer';
 import { getAccounts } from '../../services/accounts';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
+import { PocketbaseError } from '../../types/PocketbaseError';
 
 export interface AccountDataRow extends UserResponse {
   actions?: ReactNode;
@@ -23,8 +24,14 @@ const Accounts = () => {
 
   // Initial fetch
   useEffect(() => {
-    getAccounts(({ items }) => setRowData(items)).catch(() => {
-      toast.error('Failed to load accounts', toastSettings);
+    getAccounts(({ items }) => setRowData(items)).catch(err => {
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     });
   }, []);
 
@@ -35,9 +42,15 @@ const Accounts = () => {
     getAccounts(({ items }) => {
       setRowData(items);
       setShouldUpdateTable(false);
-    }).catch(() =>
-      toast.error('Failed to update accounts table', toastSettings)
-    );
+    }).catch(err => {
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
+    });
   }, [setShouldUpdateTable, shouldUpdateTable]);
 
   // Set sidebar

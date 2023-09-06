@@ -49,7 +49,15 @@ const Sidebar = () => {
       setfields(newFields);
 
       setId(res.id);
-    }).catch(() => toast.error('Failed to load account data', toastSettings));
+    }).catch(err => {
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
+    });
   }, [activeRowId]);
 
   // important to be separated
@@ -69,7 +77,15 @@ const Sidebar = () => {
       setId(res.id);
 
       setShouldRefetchData(false);
-    }).catch(() => toast.error('Failed to load account data', toastSettings));
+    }).catch(err => {
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
+    });
   }, [activeRowId, shouldRefetchData]);
 
   const recordChangedFields = async () => {
@@ -133,7 +149,15 @@ const Sidebar = () => {
 
       void recordChangedFields();
       setShouldUpdateTable(true);
-    }).catch(() => toast.error(`Account not updated`, toastSettings));
+    }).catch(err => {
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
+    });
   };
 
   const clearData = useCallback(() => {
@@ -177,11 +201,14 @@ const Sidebar = () => {
         targetUserId: res.id,
       });
       clearData();
-    } catch (e) {
-      toast.error(
-        `Account not added: ${(e as PocketbaseError).message}`,
-        toastSettings
-      );
+    } catch (err) {
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     }
   };
 

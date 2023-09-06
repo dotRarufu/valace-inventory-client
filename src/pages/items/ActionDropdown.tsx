@@ -11,6 +11,7 @@ import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
 import { removeItem } from '../../services/item';
 import { recordActivity } from '../../services/logger';
+import { PocketbaseError } from '../../types/PocketbaseError';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -64,7 +65,13 @@ const ActionDropdown = ({ position, id }: Props) => {
 
       toast.success(`Item deleted`, toastSettings);
     } catch (err) {
-      toast.error(`Item not deleted`, toastSettings);
+      const error = err as PocketbaseError;
+        const errorFields = Object.keys(error.data.data);
+        const field =
+          errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+        const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+  
+        toast.error(message, toastSettings);
     }
   };
 
