@@ -30,7 +30,7 @@ import { PocketbaseError } from '../../types/PocketbaseError';
 
 type Fields = {
   type: ItemTypeOptions;
-  isAvailable: boolean;
+
   propertyNumber: string;
   name: string;
   quantity: number;
@@ -62,7 +62,6 @@ const ItemsSidebar = () => {
   const [fields, setFields] = useState<Fields>(initialFieldValues);
 
   const {
-    isAvailable,
     dateAdded,
     location,
     name,
@@ -87,7 +86,6 @@ const ItemsSidebar = () => {
   const recordChangedFields = async () => {
     // Does not destructure the state in dependency array
     const {
-      isAvailable,
       dateAdded,
       location,
       name,
@@ -155,19 +153,11 @@ const ItemsSidebar = () => {
         newValue: remarks,
       });
     }
-    if (initialFields && initialFields.isAvailable !== isAvailable) {
-      await recordActivity(ActivityActionOptions['EDIT ACCOUNT STATUS'], {
-        userId: user!.id,
-        itemId: activeRowId,
-        oldValue: initialFields.isAvailable ? 'Available' : 'Unavailable',
-        newValue: initialFields.isAvailable ? 'Available' : 'Unavailable',
-      });
-    }
 
     // In case user does not change row id
     setInitialFields({
       type,
-      isAvailable,
+
       name,
       quantity,
       location,
@@ -200,7 +190,6 @@ const ItemsSidebar = () => {
         serialNumber: res.serial_number,
         remarks: res.remarks,
         type: res.type,
-        isAvailable: res.is_available,
       };
 
       setFields(newFields);
@@ -233,14 +222,13 @@ const ItemsSidebar = () => {
         serialNumber: res.serial_number,
         remarks: res.remarks,
         type: res.type,
-        isAvailable: res.is_available,
       };
 
       setFields(newFields);
       setShouldUpdateItemResponse(false);
       setInitialFields({
         type: res.type,
-        isAvailable: res.is_available,
+
         name: res.name,
         quantity: res.quantity,
         location: res.location,
@@ -264,7 +252,7 @@ const ItemsSidebar = () => {
       name,
       quantity,
       type,
-      is_available: isAvailable,
+
       location,
       supplier,
       remarks,
@@ -326,7 +314,7 @@ const ItemsSidebar = () => {
         name,
         quantity,
         type,
-        is_available: isAvailable,
+
         location,
         supplier,
         remarks,
@@ -445,18 +433,20 @@ const ItemsSidebar = () => {
             ]}
             isUpdate={state !== null}
           />
-          <ToggleField
-            label="Status"
-            value={isAvailable}
-            labelValues={{
-              checked: 'AVAILABLE',
-              unchecked: 'UNAVAILABLE',
-            }}
-            isUpdate={state !== null}
-            handleChange={v => {
-              setFields(old => ({ ...old, isAvailable: v }));
-            }}
-          />
+          {state === null && (
+            <ToggleField
+              label="Status"
+              value={quantity > 0}
+              labelValues={{
+                checked: 'AVAILABLE',
+                unchecked: 'UNAVAILABLE',
+              }}
+              isUpdate={state !== null}
+              handleChange={v => {
+                setFields(old => ({ ...old, isAvailable: v }));
+              }}
+            />
+          )}
           <TextInputField
             label="Location"
             value={location}

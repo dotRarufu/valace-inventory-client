@@ -80,18 +80,20 @@ const getColumns = (
     header: 'Supplier',
     footer: info => info.column.id,
   }),
-  columnHelper.accessor('is_available', {
+  columnHelper.display({
+    id: 'is_available',
     header: () => 'Status',
     cell: info => (
       <span
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        className={`${info.renderValue() ? 'text-success' : 'text-error'}`}
+        className={`${
+          info.row.original.quantity > 0 ? 'text-success' : 'text-error'
+        }`}
       >
-        {info.renderValue() ? 'AVAILABLE' : 'UNAVAILABLE'}
+        {info.row.original.quantity > 0 ? 'AVAILABLE' : 'UNAVAILABLE'}
       </span>
     ),
-    footer: info => info.column.id,
   }),
   columnHelper.accessor('remarks', {
     header: () => 'Remarks',

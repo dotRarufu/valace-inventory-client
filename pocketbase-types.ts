@@ -82,7 +82,6 @@ export type ItemRecord = {
 	quantity?: number
 	location: string
 	supplier?: string
-	is_available?: boolean
 	remarks?: string
 	type: ItemTypeOptions
 	images?: string[]

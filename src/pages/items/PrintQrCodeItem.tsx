@@ -74,10 +74,10 @@ const PrintQrCodeItem = ({ row, setPrintItems }: Props) => {
 
           <span
             className={`badge ${
-              row.is_available ? 'badge-success' : 'badge-error'
+              row.quantity > 0 ? 'badge-success' : 'badge-error'
             }`}
           >
-            {row.is_available ? 'AVAILABLE' : 'UNAVAILABLE'}
+            {row.quantity > 0 ? 'AVAILABLE' : 'UNAVAILABLE'}
           </span>
         </div>
       </div>

@@ -31,7 +31,7 @@ const UserDataDisplay = () => {
     const itemId = searchParams.get('id');
 
     if (itemId === null) return;
-
+    console.log('itemId:', itemId);
     getData(itemId)
       .then(res => {
         setData(res);
@@ -143,10 +143,10 @@ const UserDataDisplay = () => {
 
           <a
             className={`${
-              data?.is_available ? 'text-success' : 'text-error'
+              data !== null && data.quantity > 0 ? 'text-success' : 'text-error'
             } h-[16px] text-base font-semibold uppercase leading-[22px]`}
           >
-            {data?.is_available ? 'AVAILABLE' : 'UNAVAILABLE'}
+            {data !== null && data.quantity > 0 ? 'AVAILABLE' : 'UNAVAILABLE'}
           </a>
 
           <span className=" h-[16px] text-primary/50 ">Location:</span>
