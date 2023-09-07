@@ -150,7 +150,7 @@ const Items = () => {
         <div className="flex gap-[16px]">
           <SearchBar
             handleOnChange={setGlobalFilter}
-            globalFilter={globalFilter}
+            searchTerm={globalFilter}
           />
         </div>
       </div>

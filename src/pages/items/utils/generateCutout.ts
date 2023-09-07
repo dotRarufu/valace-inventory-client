@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { GenerateCutoutRequest } from '../../../types/GenerateCutoutRequest';
 
 export const generateCoutout = async (items: GenerateCutoutRequest) => {
@@ -12,8 +12,10 @@ export const generateCoutout = async (items: GenerateCutoutRequest) => {
 
     return directDownload;
   } catch (err) {
-    console.log('req erred:', err);
-
-    throw new Error('errs: ');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const error = new AxiosError(err);
+    console.log("errs here:", error)
+    throw error;
   }
 };

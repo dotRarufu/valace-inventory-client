@@ -15,6 +15,7 @@
     "@json2csv/plainjs": "^7.0.1",
     "@tanstack/react-table": "^8.9.3",
     "axios": "^1.4.0",
+    "axios-error": "^1.0.4",
     "browserify-fs": "^1.0.0",
     "csv-parser": "^3.0.0",
     "docx": "^8.2.0",

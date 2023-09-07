@@ -12,6 +12,7 @@ import { toastSettings } from '../../data/toastSettings';
 import { removeItem } from '../../services/item';
 import { recordActivity } from '../../services/logger';
 import { PocketbaseError } from '../../types/PocketbaseError';
+import { generateCoutout } from './utils/generateCutout';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -27,7 +28,7 @@ const ActionDropdown = ({ position, id }: Props) => {
     drawerRef,
     setState,
   } = useDrawer()!;
-  const donwloadRef = useRef<HTMLAnchorElement>(null);
+  const downloadRef = useRef<HTMLAnchorElement>(null);
 
   const handleViewClick = () => {
     setActiveTable('items');
@@ -38,7 +39,7 @@ const ActionDropdown = ({ position, id }: Props) => {
 
   const handleEditClick = () => {
     setActiveTable('items');
-    
+
     setActiveRowId(id);
     setState('inEdit');
     drawerRef!.current!.click();
@@ -48,9 +49,25 @@ const ActionDropdown = ({ position, id }: Props) => {
     void deleteRow();
   };
 
-  const handlePrintClick = () => {
-    console.log('handle print click');
-    // setShouldGenerateCutout(true);
+  const handlePrintClick = async () => {
+    try {
+      const res = await generateCoutout({
+        items: [{ id, amount: 1 }],
+      });
+
+      downloadRef.current!.href = res;
+      downloadRef.current!.download = `qr-code-${id}.pdf`;
+      downloadRef.current!.click();
+    } catch (err) {
+      console.log(err)
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
+    }
   };
 
   const deleteRow = async () => {
@@ -66,12 +83,12 @@ const ActionDropdown = ({ position, id }: Props) => {
       toast.success(`Item deleted`, toastSettings);
     } catch (err) {
       const error = err as PocketbaseError;
-        const errorFields = Object.keys(error.data.data);
-        const field =
-          errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
-        const message = `${field} - ${error.data.data[errorFields[0]].message}`;
-  
-        toast.error(message, toastSettings);
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     }
   };
 
@@ -81,7 +98,7 @@ const ActionDropdown = ({ position, id }: Props) => {
         position === 'top' ? 'dropdown-top' : 'dropdown-bottom'
       }`}
     >
-      <a ref={donwloadRef} className="hidden" />
+      <a ref={downloadRef} className="hidden" />
       <label
         tabIndex={0}
         className="btn-ghost btn-outline btn h-[48px] w-[48px] p-[12px] hover:bg-primary/80"
@@ -123,7 +140,7 @@ const ActionDropdown = ({ position, id }: Props) => {
         </li>
         <li>
           <label
-            onClick={handlePrintClick}
+            onClick={() => void handlePrintClick()}
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
           >
             <div className=" h-[13px]">Print</div>
