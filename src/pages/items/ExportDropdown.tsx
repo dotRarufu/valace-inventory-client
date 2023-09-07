@@ -7,6 +7,7 @@ import { ItemDataRow } from '.';
 import TableExport from '../../components/icons/TableExport';
 import Button from '../../components/ui/Button';
 import { ItemRecord } from '../../../pocketbase-types';
+import { generateXlsx } from './utils/generateXlsx';
 
 type Props = {
   data: ItemDataRow[];
@@ -16,6 +17,7 @@ const ExportDropdown = ({ data }: Props) => {
   const [csvFileName, setCsvFileName] = useState('csv_test');
   const csvAnchor = useRef<HTMLAnchorElement>(null);
   const pdfAnchor = useRef<HTMLAnchorElement>(null);
+  const downloadAnchor = useRef<HTMLAnchorElement>(null);
   const [shouldDownloadCsv, setShouldDownloadCsv] = useState(false);
 
   // Export CSV
@@ -47,12 +49,27 @@ const ExportDropdown = ({ data }: Props) => {
     setShouldDownloadCsv(true);
   };
 
-  const handlePdfClick = () => {
-    console.log('pdf download click');
+  const handleXlsxClick = async () => {
+    const ids = data.map(d => d.id);
+    console.log('ids:', ids);
+    const directDownload = await generateXlsx(ids);
+
+    console.log('directDownload:', directDownload);
+
+    if (downloadAnchor.current === null) {
+      console.log('still null');
+      return;
+    }
+
+    downloadAnchor.current.href = directDownload;
+    downloadAnchor.current.download = 'spreadsheet.xlsx';
+    downloadAnchor.current.click();
   };
 
   return (
     <div className="dropdown ">
+      <a ref={downloadAnchor} className="hidden" />
+
       <label tabIndex={0}>
         <Button label="Export" icon={<TableExport />} />
       </label>
@@ -72,11 +89,11 @@ const ExportDropdown = ({ data }: Props) => {
           </li>
           <li>
             <a
-              onClick={handlePdfClick}
+              onClick={() => void handleXlsxClick()}
               ref={pdfAnchor}
               className="justify-between rounded-none px-[24px]"
             >
-              <span className="h-[16px]">PDF</span> <img src={pdfIcon} />
+              <span className="h-[16px]">XLSX</span> <img src={pdfIcon} />
             </a>
           </li>
         </ul>
