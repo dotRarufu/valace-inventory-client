@@ -60,11 +60,26 @@ const PrintQrCodeItem = ({ row, setPrintItems }: Props) => {
 
   return (
     <li className="flex gap-3 pr-2">
-      <img src={qrCodeUrl || ''} className="aspect-square w-24 bg-red-500" />
+      <img
+        src={qrCodeUrl || ''}
+        className="aspect-square w-24 bg-base-100"
+        alt="qr code"
+      />
       <div className="flex flex-1 flex-col justify-between">
-        {row.id}
-        <span>anong dapat na makita na dito</span>
-        <span className="badge">{row.type}</span>
+        <span className="font-bold">{row.name}</span>
+        <span>{row.property_number}</span>
+        <div className="flex gap-2">
+          <span className="badge">{row.type}</span>
+          <span className="badge">{row.location}</span>
+
+          <span
+            className={`badge ${
+              row.is_available ? 'badge-success' : 'badge-error'
+            }`}
+          >
+            {row.is_available ? 'AVAILABLE' : 'UNAVAILABLE'}
+          </span>
+        </div>
       </div>
       <div className="join-vertical join">
         <button
