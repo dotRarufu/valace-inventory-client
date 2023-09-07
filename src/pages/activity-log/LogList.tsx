@@ -6,9 +6,11 @@ import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
 import { dateToDateFilterString } from './utils/dateToDateFilterString';
 import { PocketbaseError } from '../../types/PocketbaseError';
+import useFuse from 'use-fuse';
 
 type Props = {
   date: Date;
+  searchTerm: string;
 };
 
 export type ActivityData = {
@@ -19,12 +21,18 @@ export type ActivityData = {
   icon?: ReactNode;
 };
 
-const LogList = ({ date }: Props) => {
+const fuseOptions = {
+  keys: ['name', 'action', 'date'],
+  threshold: 0.6,
+};
+
+const LogList = ({ date, searchTerm }: Props) => {
   const [activitiesData, setActivitiesData] = useState<ActivityData[]>([]);
   const [activities, setActivities] = useState<ActivityResponse[]>([]);
   const [maxPage, setMaxPage] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [reachedLastPage, setReachedLastPage] = useState(false);
+
+  const filteredList = useFuse(activitiesData, searchTerm, fuseOptions);
 
   // Get activities data
   useEffect(() => {
@@ -35,7 +43,7 @@ const LogList = ({ date }: Props) => {
 
       setActivitiesData(data);
     };
-
+    console.log('runs 1');
     getActivitiesData().catch(err => {
       const error = err as PocketbaseError;
       const errorFields = Object.keys(error.data.data);
@@ -74,13 +82,10 @@ const LogList = ({ date }: Props) => {
     });
   }, [date, maxPage]);
 
-  // Get date activities, per current page change
-  useEffect(() => {
-    if (currentPage === 1) return;
-    if (reachedLastPage) return;
-    if (maxPage !== null && currentPage > maxPage) return;
+  const handleClick = async () => {
+    try {
+      const newCurrentPage = currentPage + 1;
 
-    const getActivities = async () => {
       const min = dateToDateFilterString(date);
       const limitDate = new Date(date);
       limitDate.setDate(date.getDate() + 1);
@@ -89,16 +94,15 @@ const LogList = ({ date }: Props) => {
       const resActivities = await getPaginatedActivities(
         min,
         max,
-        currentPage,
+        newCurrentPage,
         3
       );
 
-      setReachedLastPage(maxPage !== null && currentPage >= maxPage);
       setCurrentPage(resActivities.page);
       setActivities(old => [...old, ...resActivities.items]);
-    };
 
-    getActivities().catch(err => {
+      setCurrentPage(newCurrentPage);
+    } catch (err) {
       const error = err as PocketbaseError;
       const errorFields = Object.keys(error.data.data);
       const field =
@@ -106,13 +110,7 @@ const LogList = ({ date }: Props) => {
       const message = `${field} - ${error.data.data[errorFields[0]].message}`;
 
       toast.error(message, toastSettings);
-    });
-  }, [currentPage, date, maxPage, reachedLastPage]);
-
-  const handleClick = () => {
-    if (maxPage !== null && currentPage > maxPage) return;
-
-    setCurrentPage(currentPage + 1);
+    }
   };
 
   return (
@@ -125,8 +123,8 @@ const LogList = ({ date }: Props) => {
         })}
       </div>
 
-      {activitiesData.map((d, index) => (
-        <div key={index}>
+      {(searchTerm ? filteredList : activitiesData).map((d, index) => (
+        <div key={d.date}>
           <LogItem data={d} />
           {index !== activitiesData.length - 1 && (
             <div className="h-[1px] w-full bg-primary/20" />
@@ -140,8 +138,8 @@ const LogList = ({ date }: Props) => {
         </div>
       )}
 
-      {maxPage !== null && currentPage < maxPage && (
-        <button onClick={handleClick} className="btn-ghost btn">
+      {maxPage !== null && currentPage < maxPage && searchTerm === '' && (
+        <button onClick={() => void handleClick()} className="btn-ghost btn">
           Show more
         </button>
       )}

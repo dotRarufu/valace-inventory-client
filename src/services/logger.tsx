@@ -71,6 +71,7 @@ export const getPaginatedActivities = async (
   page: number,
   amount: number
 ) => {
+  // console.log('filter:', `created >= "${min}" && created < "${max}"`);
   const res = await pb
     .collection(Collections.Activity)
     .getList<ActivityResponse>(page, amount, {

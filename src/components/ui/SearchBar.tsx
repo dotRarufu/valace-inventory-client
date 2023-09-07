@@ -1,17 +1,17 @@
 import magnifier from '../../assets/magnifier.svg';
 
 type Props = {
-  handleOnChange: React.Dispatch<React.SetStateAction<string>>;
-  globalFilter: string;
+  handleOnChange: (text: string) => void;
+  searchTerm: string;
 };
 
-const SearchBar = ({ handleOnChange, globalFilter }: Props) => {
+const SearchBar = ({ handleOnChange, searchTerm }: Props) => {
   return (
     <div className="join">
       <input
         type="text"
         placeholder="Search"
-        value={globalFilter ?? ''}
+        value={searchTerm ?? ''}
         onChange={e => handleOnChange(e.target.value)}
         className="input-bordered input join-item w-full max-w-xs rounded-br-[0px] rounded-tr-[0px] border border-secondary bg-secondary pt-[6px]
     font-khula text-[20px] font-semibold 

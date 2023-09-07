@@ -19,6 +19,13 @@ const initialFieldValues = {
   isActive: false,
 };
 
+type Fields = {
+  username: string;
+  isAdmin: boolean;
+  password: string;
+  isActive: boolean;
+};
+
 const Sidebar = () => {
   const { state, activeRowId, setShouldUpdateTable, drawerRef, setState } =
     useDrawer()!;
@@ -28,13 +35,7 @@ const Sidebar = () => {
   const [fields, setfields] = useState(initialFieldValues);
   const { username, isAdmin, password, isActive } = fields;
   const [shouldRefetchData, setShouldRefetchData] = useState(false);
-
-  const [initialFields, setInitialFields] = useState<{
-    username: string | null;
-    isAdmin: boolean | null;
-    password: string | null;
-    isActive: boolean | null;
-  } | null>(null);
+  const [initialFields, setInitialFields] = useState<Fields | null>(null);
 
   // Get account
   useEffect(() => {
