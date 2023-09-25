@@ -12,6 +12,11 @@ import SidebarWrapper from './components/ui/SidebarWrapper';
 import Landing from './pages/landing/Landing';
 import Reports from './pages/reports/Reports';
 import Unauthorized from './pages/unauthorized/unauthorized';
+import Shipment from './pages/officer/shipment/Shipment';
+import Stocks from './pages/officer/stocks/Stocks';
+import Utilize from './pages/officer/utilize/Utilize';
+import MobileAppWrapper from './components/ui/MobileAppWrapper';
+import ShipmentItemInfo from './pages/officer/shipment/ShipmentItemInfo';
 
 const App = () => {
   const { user, setShouldGetUser } = useUser();
@@ -58,6 +63,27 @@ const App = () => {
           <Route index element={<Navigate to="items" />} />
           <Route path="reports" element={<Reports />} />
           <Route path="items" element={<Items />} />
+        </Route>
+        <Route
+          path="officer"
+          element={
+            <ProtectedRoute
+              // redirectPath={
+              //   user === null ? '/login' : user.role
+              // }
+              // isAllowed={!!user && !user.is_admin}
+              redirectPath={''}
+              isAllowed={true}
+              children={<MobileAppWrapper />}
+            />
+          }
+        >
+          <Route index element={<Navigate to="shipments" />} />
+          <Route path="shipments" element={<Shipment />}>
+            <Route path=":id" element={<ShipmentItemInfo />} />
+          </Route>
+          <Route path="stocks" element={<Stocks />} />
+          <Route path="utilize" element={<Utilize />} />
         </Route>
 
         <Route path="user" element={<UserDataDisplay />} />
