@@ -17,6 +17,8 @@ import Stocks from './pages/officer/stocks/Stocks';
 import Utilize from './pages/officer/utilize/Utilize';
 import MobileAppWrapper from './components/ui/MobileAppWrapper';
 import ShipmentItemInfo from './pages/officer/shipment/ShipmentItemInfo';
+import StockItemInfo from './pages/officer/stocks/StocktemInfo';
+import StockItemHistory from './pages/officer/stocks/StockItemHistory';
 
 const App = () => {
   const { user, setShouldGetUser } = useUser();
@@ -82,7 +84,13 @@ const App = () => {
           <Route path="shipments" element={<Shipment />}>
             <Route path=":id" element={<ShipmentItemInfo />} />
           </Route>
-          <Route path="stocks" element={<Stocks />} />
+          <Route path="stocks" element={<Stocks />}>
+            <Route path=":id" element={<StockItemInfo />}>
+              <Route path="history">
+                <Route path=":id" element={<StockItemHistory />} />
+              </Route>
+            </Route>
+          </Route>
           <Route path="utilize" element={<Utilize />} />
         </Route>
 

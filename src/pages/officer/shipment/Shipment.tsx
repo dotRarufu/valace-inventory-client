@@ -48,39 +48,33 @@ const Shipment = () => {
   const outlet = useOutlet();
 
   return (
-    <div>
-      {outlet || (
-        <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] font-khula">
-          {items.length > 0 ? (
-            <div className="w-full ">
-              <div className="text-lg font-bold">{activeShipment} Shipment</div>
+    outlet || (
+      <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] font-khula">
+        {items.length > 0 ? (
+          <div className="w-full ">
+            <div className="text-lg font-bold">{activeShipment} Shipment</div>
 
-              <ul className="flex flex-col overflow-clip rounded-[5px] ">
-                {items.map(item => (
-                  <li className="flex items-center justify-between p-2 odd:bg-base-100   even:bg-base-100/40">
-                    {item.name}
-                    <span className="badge badge-success">{item.tag}</span>
-
-                    <button
-                      onClick={navigateTo(item.id.toString())}
-                      className="btn-square btn-sm btn"
-                    >
-                      <FiArrowRight />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <div className="flex h-full items-center justify-center">
-              <span className=" w-[75%] text-center font-khula text-lg font-semibold">
-                There is currently no expected shipment
-              </span>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+            <ul className="flex flex-col overflow-clip rounded-[5px] ">
+              {items.map(item => (
+                <li
+                  className="flex items-center justify-between p-2 odd:bg-base-100 cursor-pointer  even:bg-base-100/40"
+                  onClick={navigateTo(item.id.toString())}
+                >
+                  {item.name}
+                  <span className="badge badge-success">{item.tag}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className="flex h-full items-center justify-center">
+            <span className=" w-[75%] text-center font-khula text-lg font-semibold">
+              There is currently no expected shipment
+            </span>
+          </div>
+        )}
+      </div>
+    )
   );
 };
 
