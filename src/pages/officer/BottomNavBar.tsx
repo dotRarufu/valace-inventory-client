@@ -3,7 +3,7 @@ import { FiBox, FiSend, FiTruck } from 'react-icons/fi';
 
 const BottomNavBar = () => {
   return (
-    <div className="px-2 py-1">
+    <div className="">
       <div className="join w-full rounded-[5px] bg-primary">
         <NavLink
           to="stocks"
