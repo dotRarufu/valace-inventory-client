@@ -57,7 +57,8 @@ const Shipment = () => {
             <ul className="flex flex-col overflow-clip rounded-[5px] ">
               {items.map(item => (
                 <li
-                  className="flex items-center justify-between p-2 odd:bg-base-100 cursor-pointer  even:bg-base-100/40"
+                  key={item.id}
+                  className="flex cursor-pointer items-center justify-between p-2 odd:bg-base-100  even:bg-base-100/40"
                   onClick={navigateTo(item.id.toString())}
                 >
                   {item.name}

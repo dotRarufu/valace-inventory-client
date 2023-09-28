@@ -70,6 +70,7 @@ const Stocks = () => {
             <ul className="flex flex-col overflow-clip rounded-[5px]">
               {items.map(item => (
                 <li
+                  key={item.id}
                   onClick={navigateTo(item.id.toString())}
                   className="flex cursor-pointer items-center justify-between p-2 odd:bg-base-100 even:bg-base-100/40"
                 >

@@ -9,7 +9,7 @@ const MobileAppWrapper = () => {
     <div className="mx-auto flex h-screen w-full max-w-[480px] flex-col bg-secondary">
       <TopAppBar />
 
-      <div className="relative  flex h-full flex-col overflow-y-scroll border py-[16px] font-khula text-secondary-content ">
+      <div className="relative  flex h-full flex-col overflow-y-scroll py-[16px] font-khula text-secondary-content ">
         <Outlet />
       </div>
 

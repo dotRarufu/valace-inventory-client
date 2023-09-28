@@ -19,6 +19,7 @@ import MobileAppWrapper from './components/ui/MobileAppWrapper';
 import ShipmentItemInfo from './pages/officer/shipment/ShipmentItemInfo';
 import StockItemInfo from './pages/officer/stocks/StocktemInfo';
 import StockItemHistory from './pages/officer/stocks/StockItemHistory';
+import UtilizeRequest from './pages/officer/utilize/UtilizeRequest';
 
 const App = () => {
   const { user, setShouldGetUser } = useUser();
@@ -91,7 +92,9 @@ const App = () => {
               </Route>
             </Route>
           </Route>
-          <Route path="utilize" element={<Utilize />} />
+          <Route path="utilize" element={<Utilize />}>
+            <Route path=":id" element={<UtilizeRequest />} />
+          </Route>
         </Route>
 
         <Route path="user" element={<UserDataDisplay />} />
