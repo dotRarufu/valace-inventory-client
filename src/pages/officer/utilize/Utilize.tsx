@@ -15,7 +15,7 @@ const Utilize = () => {
 
   return (
     outlet || (
-      <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] font-khula">
+      <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] pb-[8px] font-khula">
         <div className="flex h-full flex-col items-center justify-center gap-4">
           <span className=" w-full max-w-[286px] text-center font-khula text-lg font-semibold leading-tight">
             Scan a QR code from a requester, or enter their requests ID

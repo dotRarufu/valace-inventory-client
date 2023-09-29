@@ -27,6 +27,8 @@ import OfficeBottomNavBar from './pages/office/BottomNavBar';
 import OfficeUtilize from './pages/office/utilize/Utilize';
 import RequestInfo from './pages/office/requests/RequestInfo';
 import CreateRequest from './pages/office/requests/CreateRequest';
+import UtilizeItem from './pages/office/utilize/UtilizeItem';
+import UtilizeReceipt from './pages/officer/utilize/UtilizeReceipt';
 
 const App = () => {
   const { user, setShouldGetUser } = useUser();
@@ -123,8 +125,8 @@ const App = () => {
           <Route index element={<Navigate to="utilize" />} />
           <Route path="profile" element={<Profile />} />
           <Route path="utilize" element={<OfficeUtilize />}>
-            <Route path=":id" element={<StockItemInfo />}>
-              <Route path="receipt" />
+            <Route path=":id" element={<UtilizeItem />}>
+              <Route path="receipt" element={<UtilizeReceipt />} />
             </Route>
           </Route>
           <Route path="requests" element={<Requests />}>

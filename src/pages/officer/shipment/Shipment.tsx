@@ -49,7 +49,7 @@ const Shipment = () => {
 
   return (
     outlet || (
-      <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] font-khula">
+      <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] pb-[8px] font-khula">
         {items.length > 0 ? (
           <div className="w-full ">
             <div className="text-lg font-bold">{activeShipment} Shipment</div>

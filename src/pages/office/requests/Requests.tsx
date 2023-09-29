@@ -75,7 +75,7 @@ const Requests = () => {
 
   return (
     outlet || (
-      <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] font-khula">
+      <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] pb-[8px] font-khula">
         {items.length > 0 ? (
           <div className="flex w-full flex-col gap-4">
             <div className="flex flex-col gap-2">

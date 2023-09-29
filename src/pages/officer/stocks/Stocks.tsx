@@ -53,14 +53,14 @@ const Stocks = () => {
 
   return (
     outlet || (
-      <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] font-khula">
+      <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] pb-[8px] font-khula">
         {items.length > 0 ? (
           <div className="flex w-full flex-col gap-4">
             <div className="join">
               <input
                 type="text"
                 placeholder="Type here"
-                className="input-bordered input-primary input join-item w-full max-w-xs"
+                className="input-bordered input-primary input join-item w-full"
               />
               <button className=" btn-primary join-item  btn">
                 <FiSearch className="h-[20px] w-[20px]  text-primary-content" />
