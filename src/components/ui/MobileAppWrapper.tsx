@@ -4,7 +4,11 @@ import BottomNavBar from '../../pages/officer/BottomNavBar';
 import { Outlet } from 'react-router-dom';
 import TopAppBar from '../../pages/officer/TopAppBar';
 
-const MobileAppWrapper = () => {
+type Props = {
+  bottomNavBar: ReactNode;
+};
+
+const MobileAppWrapper = ({ bottomNavBar }: Props) => {
   return (
     <div className="mx-auto flex h-screen w-full max-w-[480px] flex-col bg-secondary">
       <TopAppBar />
@@ -13,7 +17,7 @@ const MobileAppWrapper = () => {
         <Outlet />
       </div>
 
-      <BottomNavBar />
+      {bottomNavBar}
     </div>
   );
 };

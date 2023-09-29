@@ -20,6 +20,13 @@ import ShipmentItemInfo from './pages/officer/shipment/ShipmentItemInfo';
 import StockItemInfo from './pages/officer/stocks/StocktemInfo';
 import StockItemHistory from './pages/officer/stocks/StockItemHistory';
 import UtilizeRequest from './pages/officer/utilize/UtilizeRequest';
+import Profile from './pages/office/profile/Profile';
+import Requests from './pages/office/requests/Requests';
+import BottomNavBar from './pages/officer/BottomNavBar';
+import OfficeBottomNavBar from './pages/office/BottomNavBar';
+import OfficeUtilize from './pages/office/utilize/Utilize';
+import RequestInfo from './pages/office/requests/RequestInfo';
+import CreateRequest from './pages/office/requests/CreateRequest';
 
 const App = () => {
   const { user, setShouldGetUser } = useUser();
@@ -77,7 +84,7 @@ const App = () => {
               // isAllowed={!!user && !user.is_admin}
               redirectPath={''}
               isAllowed={true}
-              children={<MobileAppWrapper />}
+              children={<MobileAppWrapper bottomNavBar={<BottomNavBar />} />}
             />
           }
         >
@@ -94,6 +101,35 @@ const App = () => {
           </Route>
           <Route path="utilize" element={<Utilize />}>
             <Route path=":id" element={<UtilizeRequest />} />
+          </Route>
+        </Route>
+
+        <Route
+          path="office"
+          element={
+            <ProtectedRoute
+              // redirectPath={
+              //   user === null ? '/login' : user.role
+              // }
+              // isAllowed={!!user && !user.is_admin}
+              redirectPath={''}
+              isAllowed={true}
+              children={
+                <MobileAppWrapper bottomNavBar={<OfficeBottomNavBar />} />
+              }
+            />
+          }
+        >
+          <Route index element={<Navigate to="utilize" />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="utilize" element={<OfficeUtilize />}>
+            <Route path=":id" element={<StockItemInfo />}>
+              <Route path="receipt" />
+            </Route>
+          </Route>
+          <Route path="requests" element={<Requests />}>
+            <Route path="create" element={<CreateRequest />} />
+            <Route path=":id" element={<RequestInfo />} />
           </Route>
         </Route>
 
