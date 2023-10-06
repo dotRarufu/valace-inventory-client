@@ -3,14 +3,14 @@ import Sidebar from '../../pages/accounts/Sidebar';
 import ItemsSidebar from '../../pages/items/ItemsSidebar';
 import { useDrawer } from '../../hooks/useDrawer';
 import PrintQrSidebar from '../../pages/items/PrintQrSidebar';
+import { Sidebars } from './SidebarWrapper';
+import SupplyFormSidebar from '../../pages/items/SupplyFormSidebar';
 
 type Props = {
   body: ReactNode;
 };
 
-const renderSidebar = (
-  activeTable: 'accounts' | 'items' | 'print-qr' | null
-) => {
+const renderSidebar = (activeTable: Sidebars | null) => {
   switch (activeTable) {
     case 'accounts':
       return <Sidebar />;
@@ -18,16 +18,15 @@ const renderSidebar = (
       return <ItemsSidebar />;
     case 'print-qr':
       return <PrintQrSidebar />;
+    case 'supply-form':
+      return <SupplyFormSidebar />;
 
     default:
       return '';
   }
 };
 const Drawer = ({ body }: Props) => {
-  const {
-    activeTable,
-    setDrawerRef,
-  } = useDrawer()!;
+  const { activeTable, setDrawerRef } = useDrawer()!;
 
   const drawerCheckboxRef = useRef<HTMLInputElement>(null);
 
@@ -44,7 +43,6 @@ const Drawer = ({ body }: Props) => {
         className="drawer-toggle"
         onChange={e => {
           console.log('checked:', e.target.checked);
-
         }}
       />
       <div className="drawer-content">{body}</div>

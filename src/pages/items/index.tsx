@@ -143,6 +143,16 @@ const Items = () => {
                 <Trash />
                 Print qr
               </label>
+              <label
+                onClick={() => {
+                  setActiveTable('supply-form');
+                }}
+                htmlFor="my-drawer"
+                className="btn-secondary btn px-[16px] text-[20px] font-semibold hover:btn-primary"
+              >
+                <Trash />
+                Supply form
+              </label>
             </>
           )}
         </div>

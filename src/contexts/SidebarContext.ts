@@ -1,16 +1,15 @@
 import { createContext } from 'react';
 import { ItemDataRow } from '../pages/items';
+import { Sidebars } from '../components/ui/SidebarWrapper';
 
 export const SidebarContext = createContext<{
   drawerRef: React.RefObject<HTMLInputElement> | null;
   setDrawerRef: React.Dispatch<
     React.SetStateAction<React.RefObject<HTMLInputElement> | null>
   >;
-  activeTable: 'accounts' | 'items' | 'print-qr' | null;
-  setActiveTable: React.Dispatch<
-    React.SetStateAction<'accounts' | 'items' | 'print-qr' | null>
-  >;
- 
+  activeTable: Sidebars | null;
+  setActiveTable: React.Dispatch<React.SetStateAction<Sidebars | null>>;
+
   activeRowId: string;
   setActiveRowId: React.Dispatch<React.SetStateAction<string>>;
   shouldUpdateTable: boolean;
@@ -19,8 +18,8 @@ export const SidebarContext = createContext<{
   setSelectedRows: React.Dispatch<React.SetStateAction<ItemDataRow[]>>;
   selectedRows: ItemDataRow[];
 
-  state: SidebarStates
+  state: SidebarStates;
   setState: React.Dispatch<React.SetStateAction<SidebarStates>>;
 } | null>(null);
 
-export type SidebarStates = "inAdd" | "inEdit" | null; 
+export type SidebarStates = 'inAdd' | 'inEdit' | null;
