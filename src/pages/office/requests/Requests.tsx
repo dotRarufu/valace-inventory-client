@@ -65,7 +65,7 @@ export const dummyRequestedItems: RequestedItem[] = [
   },
 ];
 
-const Requests = () => {
+const OfficeRequests = () => {
   const navigate = useNavigate();
   const [activeUser, setActiveUser] = useState('IT Office');
   const [items, setItems] = useState(dummyRequestedItems);
@@ -138,4 +138,4 @@ const Requests = () => {
   );
 };
 
-export default Requests;
+export default OfficeRequests;

@@ -21,7 +21,6 @@ import StockItemInfo from './pages/officer/stocks/StocktemInfo';
 import StockItemHistory from './pages/officer/stocks/StockItemHistory';
 import UtilizeRequest from './pages/officer/utilize/UtilizeRequest';
 import Profile from './pages/office/profile/Profile';
-import Requests from './pages/office/requests/Requests';
 import BottomNavBar from './pages/officer/BottomNavBar';
 import OfficeBottomNavBar from './pages/office/BottomNavBar';
 import OfficeUtilize from './pages/office/utilize/Utilize';
@@ -29,6 +28,8 @@ import RequestInfo from './pages/office/requests/RequestInfo';
 import CreateRequest from './pages/office/requests/CreateRequest';
 import UtilizeItem from './pages/office/utilize/UtilizeItem';
 import UtilizeReceipt from './pages/officer/utilize/UtilizeReceipt';
+import OfficeRequests from './pages/office/requests/Requests';
+import Requests from './pages/requests/Requests';
 
 const App = () => {
   const { user, setShouldGetUser } = useUser();
@@ -57,6 +58,7 @@ const App = () => {
           <Route path="items" element={<Items />} />
           <Route path="accounts" element={<Accounts />} />
           <Route path="activity-log" element={<ActivityLog />} />
+          <Route path="requests" element={<Requests />} />
         </Route>
         <Route path="unauthorized" element={<Unauthorized />} />
 
@@ -129,7 +131,7 @@ const App = () => {
               <Route path="receipt" element={<UtilizeReceipt />} />
             </Route>
           </Route>
-          <Route path="requests" element={<Requests />}>
+          <Route path="requests" element={<OfficeRequests />}>
             <Route path="create" element={<CreateRequest />} />
             <Route path=":id" element={<RequestInfo />} />
           </Route>

@@ -5,6 +5,7 @@ import { useDrawer } from '../../hooks/useDrawer';
 import PrintQrSidebar from '../../pages/items/PrintQrSidebar';
 import { Sidebars } from './SidebarWrapper';
 import SupplyFormSidebar from '../../pages/items/SupplyFormSidebar';
+import RequestsSidebar from '../../pages/requests/RequestsSidebar';
 
 type Props = {
   body: ReactNode;
@@ -20,6 +21,8 @@ const renderSidebar = (activeTable: Sidebars | null) => {
       return <PrintQrSidebar />;
     case 'supply-form':
       return <SupplyFormSidebar />;
+    case 'requests':
+      return <RequestsSidebar />;
 
     default:
       return '';
