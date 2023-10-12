@@ -2,7 +2,8 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { NavLink, useParams } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
-import { HistoryItem, dummyHistoryItems } from './StocktemInfo';
+import { HistoryItem } from './StocktemInfo';
+import { dummyHistoryItems } from '../../../data/dummyHistoryItems';
 
 const StockItemHistory = () => {
   const { id } = useParams();

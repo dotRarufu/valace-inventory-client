@@ -2,7 +2,9 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { NavLink, useNavigate, useOutlet, useParams } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
-import { StockItem, dummyStockItems } from './Stocks';
+import { StockItem } from './Stocks';
+import { dummyStockItems } from '../../../data/dummyStockItems';
+import { dummyHistoryItems } from '../../../data/dummyHistoryItems';
 
 export type HistoryItem = {
   utilizer: string;
@@ -12,30 +14,6 @@ export type HistoryItem = {
   description: string;
 };
 
-export const dummyHistoryItems: HistoryItem[] = [
-  {
-    id: 0,
-    date: '7/12/2023',
-    utilizer: 'Andrei',
-    amount: 5,
-    description: 'penge mouse',
-  },
-  {
-    id: 1,
-    date: '7/23/2023',
-    utilizer: 'Vendrick',
-    amount: 1,
-    description: 'gimme mouse',
-  },
-  {
-    id: 2,
-    date: '6/13/2023',
-    utilizer: 'Stolt',
-    amount: 2,
-    description: 'mouse me give',
-  },
-];
-
 const StockItemInfo = () => {
   const { id } = useParams();
   const [itemData, setItemData] = useState<StockItem | null>(null);
@@ -43,7 +21,7 @@ const StockItemInfo = () => {
     useState<HistoryItem[]>(dummyHistoryItems);
 
   useEffect(() => {
-    const data = dummyStockItems.filter(d => d.id === Number(id))[0];
+    const data = dummyStockItems.filter(d => d.id === id)[0];
 
     setItemData(data);
   }, [id]);

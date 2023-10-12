@@ -1,15 +1,46 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useOutlet } from 'react-router-dom';
-import { dummyStockItems } from '../../officer/stocks/Stocks';
+import { StockItem } from '../../officer/stocks/Stocks';
 import { FiSearch } from 'react-icons/fi';
+import { getAllRequests } from '../../../services/request';
+import { getAllItems } from '../../../services/item';
+import { toast } from 'react-hot-toast';
+import { toastSettings } from '../../../data/toastSettings';
+import { PocketbaseError } from '../../../types/PocketbaseError';
 
 const OfficeUtilize = () => {
-  const [items, setItems] = useState(dummyStockItems);
+  const [items, setItems] = useState<StockItem[]>([]);
   const navigate = useNavigate();
-
+  const outlet = useOutlet();
   const navigateTo = (path: string) => () => navigate(path);
 
-  const outlet = useOutlet();
+  useEffect(() => {
+    getAllItems()
+      .then(items => {
+        console.log();
+
+        const stockItems: StockItem[] = items.items.map(
+          (item): StockItem => ({
+            description: item.remarks,
+            name: item.name,
+            id: item.id,
+            remaining: item.quantity,
+            tag: item.type,
+            total: item.total,
+          })
+        );
+        setItems(stockItems);
+      })
+      .catch(err => {
+        const error = err as PocketbaseError;
+        const errorFields = Object.keys(error.data.data);
+        const field =
+          errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+        const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+        toast.error(message, toastSettings);
+      });
+  }, []);
 
   return (
     outlet || (
@@ -51,7 +82,7 @@ const OfficeUtilize = () => {
         ) : (
           <div className="flex h-full items-center justify-center">
             <span className=" w-[75%] text-center font-khula text-lg font-semibold">
-              There is no stocks
+              There are no stocks
             </span>
           </div>
         )}

@@ -2,14 +2,15 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { NavLink, useNavigate, useOutlet, useParams } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
-import { StockItem, dummyStockItems } from '../../officer/stocks/Stocks';
+import { StockItem } from '../../officer/stocks/Stocks';
+import { dummyStockItems } from '../../../data/dummyStockItems';
 
 const UtilizeItem = () => {
   const { id } = useParams();
   const [itemData, setItemData] = useState<StockItem | null>(null);
 
   useEffect(() => {
-    const data = dummyStockItems.filter(d => d.id === Number(id))[0];
+    const data = dummyStockItems.filter(d => d.id === id)[0];
 
     setItemData(data);
   }, [id]);

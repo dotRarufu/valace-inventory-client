@@ -3,48 +3,24 @@ import MobileAppWrapper from '../../../components/ui/MobileAppWrapper';
 import BottomNavBar from '../BottomNavBar';
 import TopAppBar from '../TopAppBar';
 import { useState } from 'react';
-import { ItemTypeOptions } from '../../../../pocketbase-types';
+import {
+  ItemTypeOptions,
+  RequestTagOptions,
+} from '../../../../pocketbase-types';
 import SearchBar from '../../../components/ui/SearchBar';
 import { useNavigate, useOutlet } from 'react-router-dom';
 
 export type StockItem = {
   name: string;
   tag: ItemTypeOptions;
-  id: number;
+  id: string;
   description: string;
   remaining: number;
   total: number;
 };
 
-export const dummyStockItems: StockItem[] = [
-  {
-    name: 'Wooden Chair',
-    tag: ItemTypeOptions.Office,
-    id: 0,
-    remaining: 6,
-    description: 'Upuan ni Andrei',
-    total: 10,
-  },
-  {
-    name: 'Goofy Mouse',
-    tag: ItemTypeOptions.IT,
-    id: 1,
-    remaining: 0,
-    description: 'Mouse ni Andrei',
-    total: 20,
-  },
-  {
-    name: 'AMD A6 Laptop',
-    tag: ItemTypeOptions.IT,
-    id: 2,
-    remaining: 2,
-    description: 'Laptop ko',
-    total: 1,
-  },
-];
-
 const Stocks = () => {
-  const [items, setItems] = useState(dummyStockItems);
+  const [items, setItems] = useState<StockItem[]>([]);
   const navigate = useNavigate();
 
   const navigateTo = (path: string) => () => navigate(path);
