@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDrawer } from '../../hooks/useDrawer';
-import PrintQrCodeItem from './PrintQrCodeItem';
-import { generateCoutout } from './utils/generateCutout';
+
 import toast from 'react-hot-toast';
 import { PocketbaseError } from '../../types/PocketbaseError';
 import { toastSettings } from '../../data/toastSettings';
-import { PrintItemRequest } from './PrintQrSidebar';
+
 import RestockItem from './RestockItem';
-import { ItemRecord } from '../../../pocketbase-types';
+
+import { generateSupplyForm } from './utils/generateSupplyForm';
+import { getApprovedRequests } from '../../services/request';
 
 export type RestockItemRequest = {
   id: string;
@@ -23,28 +24,15 @@ export type RequestItem = {
   // ...
 };
 
-const sampleRequests: RequestItem[] = [
-  {
-    name: 'Mouse',
-    description: 'Penble',
-    requestedBy: 'Andrei',
-    id: 'asdsa',
-    isIncluded: false,
-  },
-  {
-    name: 'A6 Laptop',
-    description: 'Goofy',
-    requestedBy: 'Me',
-    id: '13dsa',
-    isIncluded: false,
-  },
-];
+export type GenerateSupplyFormRequest = {
+  restock: RestockItemRequest[];
+  requests: RequestItem[];
+};
 
 const SupplyFormSidebar = () => {
-  const { selectedRows } = useDrawer()!;
+  const { selectedRows, drawerRef } = useDrawer()!;
   const [printItems, setPrintItems] = useState<RestockItemRequest[]>([]);
-  const [requestedItems, setRequestedItems] =
-    useState<RequestItem[]>(sampleRequests);
+  const [requestedItems, setRequestedItems] = useState<RequestItem[]>([]);
   const anchorDownloadRef = useRef<HTMLAnchorElement>(null);
 
   // Update print items
@@ -52,24 +40,45 @@ const SupplyFormSidebar = () => {
     setPrintItems(selectedRows.map(r => ({ id: r.id, amount: 1 })));
   }, [selectedRows]);
 
+  // Update requested items
+  useEffect(() => {
+    getApprovedRequests()
+      .then(requests => {
+        const data = requests.items;
+
+        const items: RequestItem[] = data.map(
+          ({ id, description, item_name, office }) => ({
+            description,
+            id,
+            isIncluded: false,
+            name: item_name,
+            requestedBy: office,
+          })
+        );
+
+        setRequestedItems(items);
+      })
+      .catch(err => {
+        console.log('Failed to get approved requests:', err);
+      });
+  }, [selectedRows]);
+
   const handlePrintSupplyForm = async () => {
     try {
       const items = printItems.filter(i => i.amount !== 0);
-      console.log(requestedItems.map(s => s.isIncluded));
+
       const a = requestedItems.filter(b => b.isIncluded === true);
 
-      console.log({ restock: items, requests: a });
+      const res = await generateSupplyForm({
+        restock: items,
+        requests: a,
+      });
 
-      await new Promise(() => {
-        console.log();
-      }).then();
-      // const res = await generateCoutout({
-      //   items,
-      // });
-
-      // anchorDownloadRef.current!.href = res;
-      // anchorDownloadRef.current!.download = 'qrcodes.pdf';
-      // anchorDownloadRef.current!.click();
+      anchorDownloadRef.current!.href = res;
+      anchorDownloadRef.current!.download = 'supply-form.xlsx';
+      anchorDownloadRef.current!.click();
+      drawerRef!.current!.click();
+      toast.error('Form generated', toastSettings);
     } catch (err) {
       const error = err as PocketbaseError;
       const errorFields = Object.keys(error.data.data);

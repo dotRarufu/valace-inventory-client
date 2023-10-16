@@ -28,6 +28,19 @@ export const getAllRequests = async () => {
   return res;
 };
 
+export const getApprovedRequests = async () => {
+  console.log('get approved requets filteR:', {
+    filter: `status = ${RequestStatusOptions.APPROVED}`,
+  });
+  const res = await pb
+    .collection(Collections.Request)
+    .getList<RequestResponse>(1, 10, {
+      filter: `status = "${RequestStatusOptions.APPROVED}"`,
+    });
+
+  return res;
+};
+
 export const getRequest = async (id: string) => {
   const res = await pb
     .collection(Collections.Request)
