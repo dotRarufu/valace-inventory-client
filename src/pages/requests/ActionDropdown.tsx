@@ -11,6 +11,7 @@ import { removeAccount } from '../../services/accounts';
 import { toastSettings } from '../../data/toastSettings';
 import { recordActivity } from '../../services/logger';
 import { PocketbaseError } from '../../types/PocketbaseError';
+import { judgeRequest, removeRequest } from '../../services/request';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -21,29 +22,21 @@ const ActionDropdown = ({ position, id }: Props) => {
   const { user } = useContext(UserContext)!;
   const {
     setActiveTable,
-    setState,
+    // setState,
     drawerRef,
     setActiveRowId,
     setShouldUpdateTable,
   } = useDrawer()!;
 
   const handleViewClick = () => {
-    console.log('!!! id:', id);
     setActiveTable('requests');
     setActiveRowId(id);
-    setState(null);
+    // setState(null);
     drawerRef!.current!.click();
   };
 
-  const handleEditClick = () => {
-    setActiveTable('accounts');
-    setActiveRowId(id);
-    setState('inEdit');
-    drawerRef!.current!.click();
-  };
-
-  const handleRemoveAccount = async () => {
-    await removeAccount(id).catch(err => {
+  const handleDeleteRequest = async () => {
+    await removeRequest(id).catch(err => {
       const error = err as PocketbaseError;
       const errorFields = Object.keys(error.data.data);
       const field =
@@ -53,13 +46,39 @@ const ActionDropdown = ({ position, id }: Props) => {
       toast.error(message, toastSettings);
     });
 
+    // TODO: for deleting request
     // Should never fail
-    await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
-      userId: user!.id,
-      targetUserId: id,
+    // await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
+    //   userId: user!.id,
+    //   targetUserId: id,
+    // });
+
+    toast.success(`Request deleted`, toastSettings);
+    setShouldUpdateTable(true);
+  };
+
+  const handleManageClick = async (isApproved: boolean) => {
+    await judgeRequest(id, isApproved).catch(err => {
+      const error = err as PocketbaseError;
+      const errorFields = Object.keys(error.data.data);
+      const field =
+        errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+      const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+      toast.error(message, toastSettings);
     });
 
-    toast.success(`Account removed`, toastSettings);
+    // TODO: for deleting request
+    // Should never fail
+    // await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
+    //   userId: user!.id,
+    //   targetUserId: id,
+    // });
+
+    toast.success(
+      `Request ${isApproved ? 'approved' : 'declined'}`,
+      toastSettings
+    );
     setShouldUpdateTable(true);
   };
 
@@ -91,7 +110,7 @@ const ActionDropdown = ({ position, id }: Props) => {
         </li>
         <li>
           <label
-            onClick={handleViewClick}
+            onClick={() => void handleManageClick(false)}
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
           >
             <div className="h-[13px]">Decline</div>
@@ -100,7 +119,7 @@ const ActionDropdown = ({ position, id }: Props) => {
         </li>
         <li>
           <label
-            onClick={handleEditClick}
+            onClick={() => void handleManageClick(true)}
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px] "
           >
             <div className="h-[13px]">Approve</div>
@@ -109,7 +128,7 @@ const ActionDropdown = ({ position, id }: Props) => {
         </li>
         <li>
           <label
-            onClick={() => void handleRemoveAccount()}
+            onClick={() => void handleDeleteRequest()}
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
           >
             <div className="h-[13px]">Delete</div>

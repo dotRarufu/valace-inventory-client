@@ -13,7 +13,6 @@ export const getAccounts = async (
     .getList<UserResponse>(1, 10, {
       filter: 'is_removed = false',
     });
-
   callback(result);
 };
 
@@ -36,9 +35,7 @@ export const getAccount = async (
   callback(res);
 };
 
-export const addAccount = async (
-  data: UserRecord,
-) => {
+export const addAccount = async (data: UserRecord) => {
   const res = await pb.collection(Collections.User).create<UserResponse>(data);
 
   return res;

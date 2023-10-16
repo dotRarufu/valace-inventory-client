@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import Add from '../../components/icons/Add';
-import { UserResponse } from '../../../pocketbase-types';
+import { RequestStatusOptions, UserResponse } from '../../../pocketbase-types';
 
 import { useDrawer } from '../../hooks/useDrawer';
 import { getAccounts } from '../../services/accounts';
@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
 import { PocketbaseError } from '../../types/PocketbaseError';
 import Table, { RequestDataRow } from './Table';
+import { getAllRequests, getRequest } from '../../services/request';
 
 export interface AccountDataRow extends UserResponse {
   actions?: ReactNode;
@@ -20,7 +21,7 @@ const sampleRequests: RequestDataRow[] = [
     id: '123dsf',
     itemName: 'Penble Mouse',
     officeName: 'IT Office',
-    status: false,
+    status: RequestStatusOptions.PENDING,
     tag: 'IT',
     unit: 'pcs',
   },
@@ -31,7 +32,7 @@ const sampleRequests: RequestDataRow[] = [
     id: '123dsf',
     itemName: 'Penble Mouse',
     officeName: 'IT Office',
-    status: false,
+    status: RequestStatusOptions.APPROVED,
     tag: 'IT',
     unit: 'pcs',
   },
@@ -42,7 +43,7 @@ const sampleRequests: RequestDataRow[] = [
     id: '123dsf',
     itemName: 'Penble Mouse',
     officeName: 'IT Office',
-    status: false,
+    status: RequestStatusOptions['ANO PA'],
     tag: 'IT',
     unit: 'pcs',
   },
@@ -54,40 +55,71 @@ const Requests = () => {
     useDrawer()!;
 
   // Initial fetch
-  // useEffect(() => {
-  //   getAccounts(({ items }) => setRowData(items)).catch(err => {
-  //     const error = err as PocketbaseError;
-  //     const errorFields = Object.keys(error.data.data);
-  //     const field =
-  //       errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
-  //     const message = `${field} - ${error.data.data[errorFields[0]].message}`;
-
-  //     toast.error(message, toastSettings);
-  //   });
-  // }, []);
-
-  // Separated for readability
-  // useEffect(() => {
-  //   if (!shouldUpdateTable) return;
-
-  //   getAccounts(({ items }) => {
-  //     setRowData(items);
-  //     setShouldUpdateTable(false);
-  //   }).catch(err => {
-  //     const error = err as PocketbaseError;
-  //     const errorFields = Object.keys(error.data.data);
-  //     const field =
-  //       errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
-  //     const message = `${field} - ${error.data.data[errorFields[0]].message}`;
-
-  //     toast.error(message, toastSettings);
-  //   });
-  // }, [setShouldUpdateTable, shouldUpdateTable]);
-
-  // Set sidebar
   useEffect(() => {
-    setActiveTable('accounts');
-  }, [setActiveTable]);
+    getAllRequests()
+      .then(({ items }) => {
+        const newValue: RequestDataRow[] = items.map(item => ({
+          amount: item.amount,
+          created: item.created,
+          description: item.description,
+          id: item.id,
+          itemName: item.item_name,
+          officeName: item.office,
+          status: item.status,
+          unit: item.unit,
+          tag: item.tag,
+        }));
+
+        setRowData(newValue);
+      })
+      .catch(err => {
+        const error = err as PocketbaseError;
+        const errorFields = Object.keys(error.data.data);
+        const field =
+          errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+        const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+        toast.error(message, toastSettings);
+      });
+  }, []);
+
+  // Update on shouldUpdate
+  useEffect(() => {
+    if (!shouldUpdateTable) return;
+    console.log('runs update request');
+
+    getAllRequests()
+      .then(({ items }) => {
+        const newValue: RequestDataRow[] = items.map(item => ({
+          amount: item.amount,
+          created: item.created,
+          description: item.description,
+          id: item.id,
+          itemName: item.item_name,
+          officeName: item.office,
+          status: item.status,
+          unit: item.unit,
+          tag: item.tag,
+        }));
+
+        setRowData(newValue);
+        setShouldUpdateTable(false);
+      })
+      .catch(err => {
+        const error = err as PocketbaseError;
+        const errorFields = Object.keys(error.data.data);
+        const field =
+          errorFields[0].charAt(0).toUpperCase() + errorFields[0].slice(1);
+        const message = `${field} - ${error.data.data[errorFields[0]].message}`;
+
+        toast.error(message, toastSettings);
+        setShouldUpdateTable(false);
+      });
+  }, [setShouldUpdateTable, shouldUpdateTable]);
+
+  useEffect(() => {
+    setActiveTable('requests');
+  }, []);
 
   return (
     <div className="flex h-full flex-col gap-[16px] px-[36px] pb-[28px]  ">

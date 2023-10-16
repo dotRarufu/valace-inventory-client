@@ -111,6 +111,7 @@ export enum RequestStatusOptions {
 	"PENDING" = "PENDING",
 	"APPROVED" = "APPROVED",
 	"ANO PA" = "ANO PA",
+	"DECLINED" = "DECLINED",
 }
 export type RequestRecord = {
 	office: RecordIdString
@@ -119,7 +120,7 @@ export type RequestRecord = {
 	tag: RequestTagOptions
 	unit: string
 	description: string
-	status?: RequestStatusOptions
+	status: RequestStatusOptions
 }
 
 export enum ShipmentTagOptions {

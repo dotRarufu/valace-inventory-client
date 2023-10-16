@@ -2,13 +2,16 @@ import {
   Collections,
   RequestRecord,
   RequestResponse,
+  RequestStatusOptions,
 } from '../../pocketbase-types';
 import pb from '../lib/pocketbase';
 
 export const createRequest = async (data: Omit<RequestRecord, 'status'>) => {
-  const res = await pb
-    .collection(Collections.Request)
-    .create<RequestRecord>(data);
+  const querydata: RequestRecord = {
+    ...data,
+    status: RequestStatusOptions.PENDING,
+  };
+  const res = await pb.collection(Collections.Request).create<RequestRecord>();
 
   return res;
 };
@@ -39,11 +42,21 @@ export const getRequest = async (id: string) => {
 //   return res;
 // };
 
-// export const removeItem = async (id: string) => {
-//   await pb.collection(Collections.Item).update(id, {
-//     is_removed: true,
-//   });
-// };
+export const removeRequest = async (id: string) => {
+  // await pb.collection(Collections.Request).update(id, {
+  //   is_removed: true,
+  // });
+  await pb.collection(Collections.Request).delete(id);
+};
+
+export const judgeRequest = async (id: string, isApproved: boolean) => {
+  const data: Partial<RequestRecord> = {
+    status: isApproved
+      ? RequestStatusOptions.APPROVED
+      : RequestStatusOptions.DECLINED,
+  };
+  await pb.collection(Collections.Request).update(id, data);
+};
 
 // export const getData = async (id: string) => {
 //   const res = await pb.collection(Collections.Item).getOne<ItemResponse>(id);

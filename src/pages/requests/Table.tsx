@@ -11,7 +11,7 @@ import {
 import Pagination, { PaginationProps } from '../../components/ui/Pagination';
 import { useState } from 'react';
 import ActionDropdown from './ActionDropdown';
- 
+import { RequestStatusOptions } from '../../../pocketbase-types';
 
 export type RequestDataRow = {
   id: string;
@@ -23,7 +23,7 @@ export type RequestDataRow = {
   tag: string;
   created: string;
 
-  status: boolean;
+  status: RequestStatusOptions;
   // actions: string;
 };
 
@@ -74,7 +74,7 @@ const columns = [
     header: () => 'Status',
     cell: info => (
       <span className={`${info.renderValue() ? 'text-success' : 'text-error'}`}>
-        {info.renderValue() ? 'Approved' : 'Pending'}
+        {info.renderValue()}
       </span>
     ),
     footer: info => info.column.id,
