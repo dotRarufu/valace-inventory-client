@@ -9,6 +9,7 @@ export enum Collections {
 	Item = "item",
 	Request = "request",
 	Shipment = "shipment",
+	ShipmentItem = "shipment_item",
 	User = "user",
 	Utilizee = "utilizee",
 	Utilizer = "utilizer",
@@ -123,15 +124,25 @@ export type RequestRecord = {
 	status: RequestStatusOptions
 }
 
-export enum ShipmentTagOptions {
+export enum ShipmentStatusOptions {
+	"WAITING" = "WAITING",
+	"COMPLETED" = "COMPLETED",
+}
+export type ShipmentRecord = {
+	status: ShipmentStatusOptions
+	created_by: RecordIdString
+	month: string
+}
+
+export enum ShipmentItemTagOptions {
 	"IT" = "IT",
 	"OFFICE" = "OFFICE",
 	"FURNITURE" = "FURNITURE",
 }
-export type ShipmentRecord = {
+export type ShipmentItemRecord = {
 	item_name: string
 	expected_amount: number
-	tag: ShipmentTagOptions
+	tag: ShipmentItemTagOptions
 	unit: string
 	description?: string
 	office: RecordIdString
@@ -167,6 +178,7 @@ export type CountResponse<Texpand = unknown> = Required<CountRecord> & BaseSyste
 export type ItemResponse<Texpand = unknown> = Required<ItemRecord> & BaseSystemFields<Texpand>
 export type RequestResponse<Texpand = unknown> = Required<RequestRecord> & BaseSystemFields<Texpand>
 export type ShipmentResponse<Texpand = unknown> = Required<ShipmentRecord> & BaseSystemFields<Texpand>
+export type ShipmentItemResponse<Texpand = unknown> = Required<ShipmentItemRecord> & BaseSystemFields<Texpand>
 export type UserResponse<Texpand = unknown> = Required<UserRecord> & AuthSystemFields<Texpand>
 export type UtilizeeResponse<Texpand = unknown> = Required<UtilizeeRecord> & BaseSystemFields<Texpand>
 export type UtilizerResponse<Texpand = unknown> = Required<UtilizerRecord> & BaseSystemFields<Texpand>
@@ -180,6 +192,7 @@ export type CollectionRecords = {
 	item: ItemRecord
 	request: RequestRecord
 	shipment: ShipmentRecord
+	shipment_item: ShipmentItemRecord
 	user: UserRecord
 	utilizee: UtilizeeRecord
 	utilizer: UtilizerRecord
@@ -192,6 +205,7 @@ export type CollectionResponses = {
 	item: ItemResponse
 	request: RequestResponse
 	shipment: ShipmentResponse
+	shipment_item: ShipmentItemResponse
 	user: UserResponse
 	utilizee: UtilizeeResponse
 	utilizer: UtilizerResponse

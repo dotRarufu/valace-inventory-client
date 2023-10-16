@@ -11,7 +11,9 @@ export const createRequest = async (data: Omit<RequestRecord, 'status'>) => {
     ...data,
     status: RequestStatusOptions.PENDING,
   };
-  const res = await pb.collection(Collections.Request).create<RequestRecord>();
+  const res = await pb
+    .collection(Collections.Request)
+    .create<RequestRecord>(querydata);
 
   return res;
 };

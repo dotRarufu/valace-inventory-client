@@ -55,6 +55,12 @@ const NavBar = ({ role }: Props) => {
               icon={accountsIcon}
               id="requests"
             />
+            <Item
+              path={'admin'}
+              label="Shipments"
+              icon={accountsIcon}
+              id="shipments"
+            />
           </>
         )}
         <div className="h-full"></div>

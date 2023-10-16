@@ -30,6 +30,7 @@ import UtilizeItem from './pages/office/utilize/UtilizeItem';
 import UtilizeReceipt from './pages/officer/utilize/UtilizeReceipt';
 import OfficeRequests from './pages/office/requests/Requests';
 import Requests from './pages/requests/Requests';
+import Shipments from './pages/shipments/Shipments';
 
 const App = () => {
   const { user, setShouldGetUser } = useUser();
@@ -59,6 +60,7 @@ const App = () => {
           <Route path="accounts" element={<Accounts />} />
           <Route path="activity-log" element={<ActivityLog />} />
           <Route path="requests" element={<Requests />} />
+          <Route path="shipments" element={<Shipments />} />
         </Route>
         <Route path="unauthorized" element={<Unauthorized />} />
 

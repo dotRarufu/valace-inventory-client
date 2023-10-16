@@ -6,6 +6,7 @@ import PrintQrSidebar from '../../pages/items/PrintQrSidebar';
 import { Sidebars } from './SidebarWrapper';
 import SupplyFormSidebar from '../../pages/items/SupplyFormSidebar';
 import RequestsSidebar from '../../pages/requests/RequestsSidebar';
+import ShipmentsSidebar from '../../pages/shipments/ShipmentsSidebar';
 
 type Props = {
   body: ReactNode;
@@ -23,6 +24,8 @@ const renderSidebar = (activeTable: Sidebars | null) => {
       return <SupplyFormSidebar />;
     case 'requests':
       return <RequestsSidebar />;
+    case 'shipments':
+      return <ShipmentsSidebar />;
 
     default:
       return '';

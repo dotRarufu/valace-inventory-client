@@ -9,6 +9,8 @@ import RestockItem from './RestockItem';
 
 import { generateSupplyForm } from './utils/generateSupplyForm';
 import { getApprovedRequests } from '../../services/request';
+import { createShipment } from '../../services/shipments';
+import useUser from '../../hooks/useUser';
 
 export type RestockItemRequest = {
   id: string;
@@ -30,6 +32,7 @@ export type GenerateSupplyFormRequest = {
 };
 
 const SupplyFormSidebar = () => {
+  const { user } = useUser()!;
   const { selectedRows, drawerRef } = useDrawer()!;
   const [printItems, setPrintItems] = useState<RestockItemRequest[]>([]);
   const [requestedItems, setRequestedItems] = useState<RequestItem[]>([]);
@@ -73,12 +76,16 @@ const SupplyFormSidebar = () => {
         restock: items,
         requests: a,
       });
+      await createShipment({
+        created_by: user!.id,
+        month: new Date().getMonth().toLocaleString(),
+      });
 
       anchorDownloadRef.current!.href = res;
       anchorDownloadRef.current!.download = 'supply-form.xlsx';
       anchorDownloadRef.current!.click();
       drawerRef!.current!.click();
-      toast.error('Form generated', toastSettings);
+      toast.success('Form generated', toastSettings);
     } catch (err) {
       const error = err as PocketbaseError;
       const errorFields = Object.keys(error.data.data);
@@ -93,7 +100,8 @@ const SupplyFormSidebar = () => {
   return (
     <div className="drawer-side z-[9999]">
       <a ref={anchorDownloadRef} className="hidden" target="_blank" />
-      <label htmlFor="my-drawer" className="drawer-overlay"></label>
+      <label htmlFor="my-drawer" className="drawer-overlay" />
+
       <div className="flex h-full w-[723px] flex-col gap-[8px] overflow-y-scroll bg-secondary px-[32px] pt-0 font-khula text-secondary-content">
         <div className="flex items-center justify-start pb-[16px]  pt-[32px]">
           <span className="h-[21px] text-[32px] font-semibold leading-none text-primary">
@@ -151,6 +159,12 @@ const SupplyFormSidebar = () => {
           ))}
         </ul>
 
+        <div className="form-control border border-red-500">
+          <label className="label cursor-pointer">
+            <span className="label-text">Create shipment for this request</span>
+            <input type="checkbox" className="toggle-primary toggle" />
+          </label>
+        </div>
         <div className="flex items-center justify-end gap-[16px] py-[32px]">
           <button
             onClick={() => void handlePrintSupplyForm()}

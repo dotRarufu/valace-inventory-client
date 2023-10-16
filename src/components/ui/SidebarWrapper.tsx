@@ -7,7 +7,13 @@ import { SidebarContext, SidebarStates } from '../../contexts/SidebarContext';
 import { ItemDataRow } from '../../pages/items';
 import useUser from '../../hooks/useUser';
 
-export type Sidebars = 'accounts' | 'items' | 'print-qr' | 'supply-form' | 'requests';
+export type Sidebars =
+  | 'accounts'
+  | 'items'
+  | 'print-qr'
+  | 'supply-form'
+  | 'requests'
+  | 'shipments';
 
 const SidebarWrapper = () => {
   const [state, setState] = useState<SidebarStates>(null);
