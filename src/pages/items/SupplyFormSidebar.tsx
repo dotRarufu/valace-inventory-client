@@ -9,7 +9,7 @@ import RestockItem from './RestockItem';
 
 import { generateSupplyForm } from './utils/generateSupplyForm';
 import { getApprovedRequests } from '../../services/request';
-import { createShipment } from '../../services/shipments';
+import { createShipment, createShipmentItems } from '../../services/shipments';
 import useUser from '../../hooks/useUser';
 
 export type RestockItemRequest = {
@@ -68,18 +68,20 @@ const SupplyFormSidebar = () => {
 
   const handlePrintSupplyForm = async () => {
     try {
-      const items = printItems.filter(i => i.amount !== 0);
+      const restocks = printItems.filter(i => i.amount !== 0);
 
-      const a = requestedItems.filter(b => b.isIncluded === true);
+      const requests = requestedItems.filter(b => b.isIncluded === true);
 
       const res = await generateSupplyForm({
-        restock: items,
-        requests: a,
+        restock: restocks,
+        requests: requests,
       });
       await createShipment({
         created_by: user!.id,
         month: new Date().getMonth().toLocaleString(),
       });
+
+      await createShipmentItems(restocks, requests);
 
       anchorDownloadRef.current!.href = res;
       anchorDownloadRef.current!.download = 'supply-form.xlsx';

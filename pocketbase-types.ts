@@ -100,12 +100,13 @@ export type ItemRecord = {
 	is_removed?: boolean
 	qr?: string
 	total: number
+	unit: string
 }
 
 export enum RequestTagOptions {
 	"IT" = "IT",
-	"Office" = "Office",
-	"Ano pa" = "Ano pa",
+	"OFFICE" = "OFFICE",
+	"FURNITURE" = "FURNITURE",
 }
 
 export enum RequestStatusOptions {
