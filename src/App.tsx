@@ -131,9 +131,9 @@ const App = () => {
           <Route index element={<Navigate to="utilize" />} />
           <Route path="profile" element={<Profile />} />
           <Route path="utilize" element={<OfficeUtilize />}>
-            <Route path=":id" element={<UtilizeItem />}>
-              <Route path="receipt" element={<UtilizeReceipt />} />
-            </Route>
+            <Route path=":id" element={<UtilizeItem />} />
+
+            <Route path="receipt/:id" element={<UtilizeReceipt />} />
           </Route>
           <Route path="requests" element={<OfficeRequests />}>
             <Route path="create" element={<CreateRequest />} />

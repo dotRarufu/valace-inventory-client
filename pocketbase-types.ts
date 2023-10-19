@@ -75,6 +75,8 @@ export type ActivityRecord = {
 export type BorrowRecord = {
 	item: RecordIdString
 	amount: number
+	office: RecordIdString
+	location: string
 }
 
 export type CountRecord = {
@@ -174,9 +176,9 @@ export type UtilizeeRecord = {
 }
 
 export type UtilizerRecord = {
-	borrow: RecordIdString
 	utilizer: RecordIdString
 	amoun_given?: number
+	item: RecordIdString
 }
 
 // Response types include system fields and match responses from the PocketBase API

@@ -2,10 +2,17 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { NavLink, useNavigate, useOutlet, useParams } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
-import { getItem } from '../../../services/item';
+import {
+  deleteBorrowed,
+  getBorrowedItem,
+  getItem,
+  recordUtilizee,
+  recordUtilizer,
+  updateItem,
+} from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
-import { ItemResponse } from '../../../../pocketbase-types';
+import { BorrowResponse, ItemResponse } from '../../../../pocketbase-types';
 
 export type UtilizationRequest = {
   id: number;
@@ -16,25 +23,65 @@ export type UtilizationRequest = {
 
 const UtilizeRequest = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [utilizationRequest, setUtilizationRequest] =
-    useState<ItemResponse | null>(null);
+    useState<BorrowResponse | null>(null);
+  const [itemData, setItemData] = useState<ItemResponse | null>(null);
+  const [amountGiven, setAmountGiven] = useState(0);
 
   useEffect(() => {
     if (!id) return;
 
-    getItem(id)
+    getBorrowedItem(id)
       .then(d => {
         setUtilizationRequest(d);
       })
       .catch(() => {
-        toast.error('Failed to get item data', toastSettings);
+        toast.error('Failed to get borrow item data', toastSettings);
       });
   }, [id]);
 
-  const navigate = useNavigate();
-  const navigateTo = (path: string) => () => navigate(path);
+  useEffect(() => {
+    if (!utilizationRequest) return;
 
-  // h-[100vh-46px-66px-32px]
+    getItem(utilizationRequest.item)
+      .then(d => {
+        setItemData(d);
+      })
+      .catch(() => {
+        toast.error('Failed to get item data', toastSettings);
+      });
+  }, [utilizationRequest]);
+
+  const handleDoneClick = async () => {
+    if (!utilizationRequest || !id || !itemData) return;
+
+    const { item, office, location } = utilizationRequest;
+
+    console.log('1');
+    // Add record to utilizee
+    await recordUtilizee({ amount: amountGiven, item, location, office });
+
+    console.log('3');
+    // Add record to utilizer
+    // todo: fix utilizer id
+    await recordUtilizer({
+      item: itemData.id,
+      utilizer: 'lqumdc60rwqdjom',
+      amoun_given: amountGiven,
+    });
+
+    // Delete borrow record
+
+    await deleteBorrowed(id);
+
+    // Deduct amount given to item table record quantity
+    await updateItem(itemData.id, {
+      quantity: itemData.quantity - amountGiven,
+    });
+
+    navigate('..');
+  };
 
   return utilizationRequest !== null ? (
     <div className="absolute flex h-[calc(100%-32px)] w-full flex-col gap-4 p-0 px-[16px] font-khula">
@@ -43,8 +90,7 @@ const UtilizeRequest = () => {
           <FiArrowLeft />
         </NavLink>
         <span className="h-[12px] text-lg font-semibold leading-none">
-          Request
-          {utilizationRequest?.id}
+          Request {utilizationRequest?.id}
         </span>
       </div>
       <ul className="flex w-full flex-col gap-2 ">
@@ -53,7 +99,7 @@ const UtilizeRequest = () => {
             <span className=" h-[16px] text-lg text-primary/50">Item Name</span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {utilizationRequest?.id}
+              {itemData?.name}
             </div>
           </div>
         </li>
@@ -65,7 +111,7 @@ const UtilizeRequest = () => {
               {
                 <span className="badge h-fit -translate-y-[12.5%] bg-primary px-[24px] py-[4px] text-[16px] text-secondary">
                   <span className="h-[13px] uppercase leading-none">
-                    {utilizationRequest?.id}
+                    {itemData?.type}
                   </span>
                 </span>
               }
@@ -79,7 +125,7 @@ const UtilizeRequest = () => {
             </span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {utilizationRequest?.id}
+              {utilizationRequest?.office}
             </div>
           </div>
         </li>
@@ -88,7 +134,7 @@ const UtilizeRequest = () => {
             <span className=" h-[16px] text-lg text-primary/50">Amount:</span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {utilizationRequest?.quantity}
+              {utilizationRequest?.amount}
             </div>
           </div>
         </li>
@@ -99,11 +145,8 @@ const UtilizeRequest = () => {
             </span>
 
             <div className="line-clamp-1 max-w-[50%] text-lg font-semibold text-primary ">
-              {/* {itemData?.description}
-               */}
-              Hmm. Were having trouble finding that site. We cant connect to the
-              server at loremipsum.io. If you entered the right address, you
-              can: Try again later Check your network connection Check
+              {/* {utilizationRequest?.} */}
+              WIP
             </div>
           </div>
         </li>
@@ -117,12 +160,19 @@ const UtilizeRequest = () => {
           </span>
 
           <input
+            value={amountGiven}
+            onChange={e => setAmountGiven(Number(e.target.value))}
             type="number"
             className="input-bordered input input-md w-full max-w-[96px] rounded-[5px] bg-primary/10 pt-[2px] text-primary [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
           />
         </div>
       </div>
-      <button className="btn-primary btn w-full rounded-[5px]">Done</button>
+      <button
+        onClick={() => void handleDoneClick()}
+        className="btn-primary btn w-full rounded-[5px]"
+      >
+        Done
+      </button>
     </div>
   ) : (
     <div className="flex h-full  flex-col items-center justify-center ">
@@ -131,7 +181,7 @@ const UtilizeRequest = () => {
           Request {id} does not exist
         </span>
         <button
-          onClick={navigateTo('..')}
+          onClick={() => navigate('..')}
           className="btn-primary btn w-full rounded-[5px]"
         >
           Go back

@@ -4,6 +4,8 @@ import {
   Collections,
   ItemRecord,
   ItemResponse,
+  UtilizeeRecord,
+  UtilizerRecord,
 } from '../../pocketbase-types';
 import pb from '../lib/pocketbase';
 
@@ -83,3 +85,34 @@ export const borrowItem = async (data: BorrowRecord) => {
 
   return res;
 };
+
+export const getBorrowedItem = async (id: string) => {
+  console.log('get browed item:', id);
+  const res = await pb
+    .collection(Collections.Borrow)
+    .getOne<BorrowResponse>(id);
+
+  return res;
+};
+
+export const recordUtilizee = async (data: UtilizeeRecord) => {
+  const res = await pb
+    .collection(Collections.Utilizee)
+    .create<UtilizeeRecord>(data);
+
+  return res;
+};
+
+export const recordUtilizer = async (data: UtilizerRecord) => {
+  const res = await pb
+    .collection(Collections.Utilizer)
+    .create<UtilizerRecord>(data);
+
+  return res;
+};
+
+export const deleteBorrowed = async (id: string) => {
+  const res = await pb.collection(Collections.Borrow).delete(id)
+
+  return res;
+}

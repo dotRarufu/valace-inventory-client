@@ -8,9 +8,7 @@ import { FiArrowRight } from 'react-icons/fi';
 const Utilize = () => {
   const [id, setId] = useState('');
   const navigate = useNavigate();
-
   const navigateTo = (path: string) => () => navigate(path);
-
   const outlet = useOutlet();
 
   return (
