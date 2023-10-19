@@ -8,6 +8,7 @@ import { toastSettings } from '../../data/toastSettings';
 import RestockItem from './RestockItem';
 
 import { generateSupplyForm } from './utils/generateSupplyForm';
+import getCurrentMonthYear from './utils/getCurrentMonthYear';
 import { getApprovedRequests } from '../../services/request';
 import { createShipment, createShipmentItems } from '../../services/shipments';
 import useUser from '../../hooks/useUser';
@@ -76,12 +77,12 @@ const SupplyFormSidebar = () => {
         restock: restocks,
         requests: requests,
       });
-      await createShipment({
+      const shipment = await createShipment({
         created_by: user!.id,
-        month: new Date().getMonth().toLocaleString(),
+        month: getCurrentMonthYear(),
       });
 
-      await createShipmentItems(restocks, requests);
+      await createShipmentItems(restocks, requests, shipment.id);
 
       anchorDownloadRef.current!.href = res;
       anchorDownloadRef.current!.download = 'supply-form.xlsx';

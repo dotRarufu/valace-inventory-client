@@ -13,7 +13,10 @@ import { toastSettings } from '../../data/toastSettings';
 import { PocketbaseError } from '../../types/PocketbaseError';
 import Table from './Table';
 import { getAllRequests, getRequest } from '../../services/request';
-import { getAllShipments } from '../../services/shipments';
+import {
+  getAllShipments,
+  getAllShipmentsAndItems,
+} from '../../services/shipments';
 
 export interface AccountDataRow extends UserResponse {
   actions?: ReactNode;
@@ -27,7 +30,7 @@ const Shipments = () => {
   // Initial fetch
   useEffect(() => {
     getAllShipments()
-      .then(({ items }) => {
+      .then(items => {
         setRowData(items);
       })
       .catch(err => {
@@ -46,7 +49,7 @@ const Shipments = () => {
     if (!shouldUpdateTable) return;
 
     getAllShipments()
-      .then(({ items }) => {
+      .then(items => {
         setRowData(items);
         setShouldUpdateTable(false);
       })

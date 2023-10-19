@@ -3,6 +3,7 @@ import {
   ShipmentItemRecord,
   ShipmentItemResponse,
   ShipmentItemTagOptions,
+  ShipmentItemTypeOptions,
   ShipmentRecord,
   ShipmentResponse,
   ShipmentStatusOptions,
@@ -16,13 +17,39 @@ import { getItem } from './item';
 import { getRequest } from './request';
 
 export const getAllShipments = async () => {
+  // Todo: add pagination on users of this function
+
   const res = await pb
     .collection(Collections.Shipment)
     .getList<ShipmentResponse>(1, 10);
 
-  //   {
-  //   filter: 'is_removed = false',
-  // });
+  return res.items;
+};
+
+export const getAllShipmentsAndItems = async () => {
+  const shipments = await pb
+    .collection(Collections.Shipment)
+    .getList<ShipmentResponse>(1, 10, {
+      filter: `status = "${ShipmentStatusOptions.WAITING}"`,
+    });
+
+  const shipmentsId = shipments.items.map(r => r.id);
+
+  const shipmentItems = (
+    await Promise.all(
+      shipmentsId.map(async id => await getShipmentItemFromShipmentId(id))
+    )
+  ).flat();
+  // console.log('shipmentItems:', shipmentItems);
+  const container: (ShipmentResponse & {
+    shipmentItems: ShipmentItemResponse[];
+  })[] = shipments.items.map(s => ({ ...s, shipmentItems: [] }));
+
+  const res = container.map(shipment => {
+    const match = shipmentItems.filter(item => item.shipment === shipment.id);
+
+    return { ...shipment, shipmentItems: match };
+  });
 
   return res;
 };
@@ -49,14 +76,15 @@ export const createShipment = async (data: Omit<ShipmentRecord, 'status'>) => {
   };
   const res = await pb
     .collection(Collections.Shipment)
-    .create<ShipmentRecord>(querydata);
+    .create<ShipmentResponse>(querydata);
 
   return res;
 };
 
 export const createShipmentItems = async (
   restocks: RestockItemRequest[],
-  requests: RequestItem[]
+  requests: RequestItem[],
+  shipmentId: string
 ) => {
   const defaultOfficeId = 'lqumdc60rwqdjom';
 
@@ -74,6 +102,8 @@ export const createShipmentItems = async (
     office: r.office,
     tag: r.tag as unknown as ShipmentItemTagOptions,
     unit: r.unit,
+    shipment: shipmentId,
+    type: ShipmentItemTypeOptions.REQUEST,
   }));
 
   const dataRestocks: ShipmentItemRecord[] = restocksData.map(r => {
@@ -90,12 +120,13 @@ export const createShipmentItems = async (
       office: defaultOfficeId,
       tag: r.type as unknown as ShipmentItemTagOptions,
       unit: r.unit,
+      shipment: shipmentId,
+      type: ShipmentItemTypeOptions.RESTOCK,
+      restock_item_id: r.id,
     };
   });
 
   const data: ShipmentItemRecord[] = [...dataRequests, ...dataRestocks];
-
-  console.log('data:', data);
 
   const res = await Promise.all(
     data.map(
@@ -107,4 +138,58 @@ export const createShipmentItems = async (
   );
 
   return res;
+};
+
+const getShipmentItemFromShipmentId = async (id: string) => {
+  const res = await pb
+    .collection(Collections.ShipmentItem)
+    .getFullList<ShipmentItemResponse>({
+      filter: `shipment = "${id}" && received_amount = 0`,
+    });
+
+  return res;
+};
+
+export const getShipmentItem = async (id: string) => {
+  const res = await pb
+    .collection(Collections.ShipmentItem)
+    .getOne<ShipmentItemResponse>(id);
+
+  return res;
+};
+
+export const updateShipmentItem = async (
+  id: string,
+  data: Partial<ShipmentItemRecord>
+) => {
+  const res = await pb
+    .collection(Collections.ShipmentItem)
+    .update<ShipmentItemResponse>(id, data);
+
+  return res;
+};
+
+export const checkAndMarkShipmentAsComplete = async (id: string) => {
+  const items = await pb
+    .collection(Collections.ShipmentItem)
+    .getFullList<ShipmentItemResponse>({
+      filter: `shipment = "${id}" && received_amount = 0`,
+    });
+  console.log('shipment id:', id);
+  console.log('items:', items);
+
+  // - 1 to account the current request
+  if (items.length === 0) {
+    const data: Partial<ShipmentRecord> = {
+      status: ShipmentStatusOptions.COMPLETED,
+    };
+
+    const res = await pb
+      .collection(Collections.Shipment)
+      .update<ShipmentResponse>(id, data);
+
+    console.log('shipment marked as complete');
+
+    return res;
+  }
 };

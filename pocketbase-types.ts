@@ -90,7 +90,6 @@ export enum ItemTypeOptions {
 export type ItemRecord = {
 	name: string
 	quantity?: number
-	location: string
 	supplier?: string
 	remarks?: string
 	type: ItemTypeOptions
@@ -136,18 +135,25 @@ export type ShipmentRecord = {
 }
 
 export enum ShipmentItemTagOptions {
+	"Furniture" = "Furniture",
 	"IT" = "IT",
-	"OFFICE" = "OFFICE",
-	"FURNITURE" = "FURNITURE",
+	"Office" = "Office",
+}
+
+export enum ShipmentItemTypeOptions {
+	"RESTOCK" = "RESTOCK",
+	"REQUEST" = "REQUEST",
 }
 export type ShipmentItemRecord = {
 	item_name: string
 	expected_amount: number
 	tag: ShipmentItemTagOptions
 	unit: string
-	description?: string
 	office: RecordIdString
 	received_amount?: number
+	shipment: RecordIdString
+	type: ShipmentItemTypeOptions
+	restock_item_id?: RecordIdString
 }
 
 export type UserRecord = {
@@ -164,6 +170,7 @@ export type UtilizeeRecord = {
 	office: RecordIdString
 	amount: number
 	note?: string
+	location: string
 }
 
 export type UtilizerRecord = {

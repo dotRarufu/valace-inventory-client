@@ -56,9 +56,11 @@ export const createItem = async (data: ItemRecord) => {
   return res;
 };
 
-export type ItemUpdate = Omit<ItemRecord, 'serial_number'>;
+export type ItemUpdate = Partial<ItemRecord>;
 
+ 
 export const updateItem = async (id: string, data: ItemUpdate) => {
+  console.log("updateitem:", id)
   await pb.collection(Collections.Item).update(id, data);
 };
 

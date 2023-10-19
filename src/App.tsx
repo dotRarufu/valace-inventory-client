@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import ActivityLog from './pages/activity-log';
 import Accounts from './pages/accounts';
 import Login from './pages/login/Login';
@@ -95,7 +95,9 @@ const App = () => {
           }
         >
           <Route index element={<Navigate to="shipments" />} />
-          <Route path="shipments" element={<Shipment />}>
+          <Route path="shipments" element={<Outlet />}>
+            <Route index element={<Shipment />} />
+
             <Route path=":id" element={<ShipmentItemInfo />} />
           </Route>
           <Route path="stocks" element={<Stocks />}>
