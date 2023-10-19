@@ -2,13 +2,17 @@ import { FiArrowRight, FiSearch } from 'react-icons/fi';
 import MobileAppWrapper from '../../../components/ui/MobileAppWrapper';
 import BottomNavBar from '../BottomNavBar';
 import TopAppBar from '../TopAppBar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
+  ItemResponse,
   ItemTypeOptions,
   RequestTagOptions,
 } from '../../../../pocketbase-types';
 import SearchBar from '../../../components/ui/SearchBar';
 import { useNavigate, useOutlet } from 'react-router-dom';
+import { getAllItems } from '../../../services/item';
+import { toast } from 'react-hot-toast';
+import { toastSettings } from '../../../data/toastSettings';
 
 export type StockItem = {
   name: string;
@@ -20,12 +24,20 @@ export type StockItem = {
 };
 
 const Stocks = () => {
-  const [items, setItems] = useState<StockItem[]>([]);
+  const [items, setItems] = useState<ItemResponse[]>([]);
   const navigate = useNavigate();
-
+  const outlet = useOutlet();
   const navigateTo = (path: string) => () => navigate(path);
 
-  const outlet = useOutlet();
+  useEffect(() => {
+    getAllItems()
+      .then(d => {
+        setItems(d.items);
+      })
+      .catch(() => {
+        toast.error('Failed to get images', toastSettings);
+      });
+  }, []);
 
   return (
     outlet || (
@@ -53,11 +65,11 @@ const Stocks = () => {
                   {item.name}
                   <div className="flex gap-2">
                     <span className="badge badge-success pt-[3px]">
-                      {item.tag}
+                      {item.type}
                     </span>
 
                     <span className="badge badge-info pt-[3px]">
-                      {item.remaining}
+                      {item.quantity}
                     </span>
                   </div>
                 </li>

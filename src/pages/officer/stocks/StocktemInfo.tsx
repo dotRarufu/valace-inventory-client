@@ -5,6 +5,10 @@ import { useEffect, useState } from 'react';
 import { StockItem } from './Stocks';
 import { dummyStockItems } from '../../../data/dummyStockItems';
 import { dummyHistoryItems } from '../../../data/dummyHistoryItems';
+import { getItem } from '../../../services/item';
+import { toast } from 'react-hot-toast';
+import { toastSettings } from '../../../data/toastSettings';
+import { ItemResponse } from '../../../../pocketbase-types';
 
 export type HistoryItem = {
   utilizer: string;
@@ -16,14 +20,20 @@ export type HistoryItem = {
 
 const StockItemInfo = () => {
   const { id } = useParams();
-  const [itemData, setItemData] = useState<StockItem | null>(null);
+  const [itemData, setItemData] = useState<ItemResponse | null>(null);
   const [historyItems, setHistoryItems] =
     useState<HistoryItem[]>(dummyHistoryItems);
 
   useEffect(() => {
-    const data = dummyStockItems.filter(d => d.id === id)[0];
+    if (!id) return;
 
-    setItemData(data);
+    getItem(id)
+      .then(d => {
+        setItemData(d);
+      })
+      .catch(() => {
+        toast.error('Failed to get images', toastSettings);
+      });
   }, [id]);
 
   // h-[100vh-46px-66px-32px]
@@ -65,7 +75,7 @@ const StockItemInfo = () => {
                 {
                   <span className="badge h-fit -translate-y-[12.5%] bg-primary px-[24px] py-[4px] text-[16px] text-secondary">
                     <span className="h-[13px] uppercase leading-none">
-                      {itemData?.tag}
+                      {itemData?.type}
                     </span>
                   </span>
                 }
@@ -79,7 +89,7 @@ const StockItemInfo = () => {
               </span>
 
               <div className="h-[16px] text-lg font-semibold text-primary ">
-                {itemData?.remaining}
+                {itemData?.quantity}
               </div>
             </div>
           </li>
@@ -90,7 +100,7 @@ const StockItemInfo = () => {
               </span>
 
               <div className="line-clamp-1 max-w-[50%] text-lg font-semibold text-primary ">
-                {itemData?.description}
+                {itemData?.remarks}
               </div>
             </div>
           </li>
