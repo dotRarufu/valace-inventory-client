@@ -3,19 +3,29 @@ import { NavLink, useParams } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
 import { HistoryItem } from './StocktemInfo';
-import { dummyHistoryItems } from '../../../data/dummyHistoryItems';
+import { getUtilizeeData } from '../../../services/item';
+import { toast } from 'react-hot-toast';
+import { toastSettings } from '../../../data/toastSettings';
+import { UtilizeeResponse } from '../../../../pocketbase-types';
 
 const StockItemHistory = () => {
-  const { id } = useParams();
-  const [historyItem, setHistoryItem] = useState<HistoryItem | null>(null);
+  const { itemId } = useParams();
+  // const [historyItem, setHistoryItem] = useState<HistoryItem | null>(null);
+  const [data, setData] = useState<UtilizeeResponse | null>(null);
 
   useEffect(() => {
-    const data = dummyHistoryItems.filter(d => d.id === Number(id))[0];
+    if (!itemId) return;
 
-    setHistoryItem(data);
-  }, [id]);
+    getUtilizeeData(itemId)
+      .then(data => {
+        setData(data);
+      })
+      .catch(() => {
+        toast.error('Failed to get utilizee data', toastSettings);
+      });
 
-  // h-[100vh-46px-66px-32px]
+    // setHistoryItem(data);
+  }, [itemId]);
 
   return (
     <div className="absolute flex h-[calc(100%-32px)] w-full flex-col gap-4 p-0 px-[16px] font-khula">
@@ -24,7 +34,7 @@ const StockItemHistory = () => {
           <FiArrowLeft />
         </NavLink>
         <span className="h-[12px] text-lg font-semibold leading-none">
-          {historyItem?.utilizer}
+          {data?.office}
         </span>
       </div>
       <ul className="flex w-full flex-col gap-2 ">
@@ -33,7 +43,7 @@ const StockItemHistory = () => {
             <span className=" h-[16px] text-lg text-primary/50">Amount:</span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {historyItem?.amount}
+              {data?.amount}
             </div>
           </div>
         </li>
@@ -45,7 +55,7 @@ const StockItemHistory = () => {
             </span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {historyItem?.utilizer}
+              {data?.office}
             </div>
           </div>
         </li>
@@ -56,7 +66,7 @@ const StockItemHistory = () => {
             </span>
 
             <div className="line-clamp-1 max-w-[50%] text-lg font-semibold text-primary ">
-              {historyItem?.description}
+              {data?.note}
             </div>
           </div>
         </li>

@@ -49,7 +49,7 @@ const UtilizeRequest = () => {
         setItemData(d);
       })
       .catch(() => {
-        toast.error('Failed to get item data', toastSettings);
+        toast.error('Failed to get item data 2 ', toastSettings);
       });
   }, [utilizationRequest]);
 

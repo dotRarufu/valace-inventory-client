@@ -103,7 +103,7 @@ const App = () => {
           <Route path="stocks" element={<Stocks />}>
             <Route path=":id" element={<StockItemInfo />}>
               <Route path="history">
-                <Route path=":id" element={<StockItemHistory />} />
+                <Route path=":itemId" element={<StockItemHistory />} />
               </Route>
             </Route>
           </Route>

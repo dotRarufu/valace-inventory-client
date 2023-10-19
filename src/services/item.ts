@@ -5,6 +5,7 @@ import {
   ItemRecord,
   ItemResponse,
   UtilizeeRecord,
+  UtilizeeResponse,
   UtilizerRecord,
 } from '../../pocketbase-types';
 import pb from '../lib/pocketbase';
@@ -112,7 +113,27 @@ export const recordUtilizer = async (data: UtilizerRecord) => {
 };
 
 export const deleteBorrowed = async (id: string) => {
-  const res = await pb.collection(Collections.Borrow).delete(id)
+  const res = await pb.collection(Collections.Borrow).delete(id);
 
   return res;
-}
+};
+
+export const getUtilizees = async (itemId: string) => {
+  // todo: add pagination on users of this
+  const res = await pb
+    .collection(Collections.Utilizee)
+    .getList<UtilizeeResponse>(1, 10, {
+      filter: `item = "${itemId}"`,
+    });
+
+  return res.items;
+};
+
+export const getUtilizeeData = async (id: string) => {
+  // todo: add pagination on users of this
+  const res = await pb
+    .collection(Collections.Utilizee)
+    .getOne<UtilizeeResponse>(id);
+
+  return res;
+};

@@ -5,10 +5,10 @@ import { useEffect, useState } from 'react';
 import { StockItem } from './Stocks';
 import { dummyStockItems } from '../../../data/dummyStockItems';
 import { dummyHistoryItems } from '../../../data/dummyHistoryItems';
-import { getItem } from '../../../services/item';
+import { getItem, getUtilizees } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
-import { ItemResponse } from '../../../../pocketbase-types';
+import { ItemResponse, UtilizeeResponse } from '../../../../pocketbase-types';
 
 export type HistoryItem = {
   utilizer: string;
@@ -20,9 +20,11 @@ export type HistoryItem = {
 
 const StockItemInfo = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const navigateTo = (path: string) => () => navigate(path);
+  const outlet = useOutlet();
   const [itemData, setItemData] = useState<ItemResponse | null>(null);
-  const [historyItems, setHistoryItems] =
-    useState<HistoryItem[]>(dummyHistoryItems);
+  const [historyItems, setHistoryItems] = useState<UtilizeeResponse[]>([]);
 
   useEffect(() => {
     if (!id) return;
@@ -30,19 +32,25 @@ const StockItemInfo = () => {
     getItem(id)
       .then(d => {
         setItemData(d);
+        console.log("but sets")
       })
       .catch(() => {
-        toast.error('Failed to get item data', toastSettings);
+        toast.error('Failed to get item data 1:' + id, toastSettings);
       });
   }, [id]);
 
-  // h-[100vh-46px-66px-32px]
+  // Get utilizees
+  useEffect(() => {
+    if (!id) return;
 
-  const navigate = useNavigate();
-
-  const navigateTo = (path: string) => () => navigate(path);
-
-  const outlet = useOutlet();
+    getUtilizees(id)
+      .then(d => {
+        setHistoryItems(d);
+      })
+      .catch(() => {
+        toast.error("Failed to get item's utilzees", toastSettings);
+      });
+  }, []);
 
   return (
     outlet || (
@@ -107,18 +115,19 @@ const StockItemInfo = () => {
         </ul>
 
         <h2 className="h-[12px] text-lg font-semibold leading-none">
-          Utilizers History
+          Item Utilizees
         </h2>
         <ul className="flex flex-col overflow-clip rounded-[5px]">
           {historyItems.map(history => (
             <li
-              onClick={navigateTo(`history/${history.id.toString()}`)}
+              key={history.id}
+              onClick={navigateTo(`history/${history.id}`)}
               className="flex cursor-pointer items-center justify-between p-2 odd:bg-base-100 even:bg-base-100/40"
             >
-              {history.utilizer}
+              {history.office}
               <div className="flex gap-2">
                 <span className="badge badge-success pt-[3px]">
-                  {history.date}
+                  {history.created}
                 </span>
               </div>
             </li>
