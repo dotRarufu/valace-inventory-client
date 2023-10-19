@@ -4,22 +4,41 @@ import { NavLink, useNavigate, useOutlet, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { StockItem } from '../../officer/stocks/Stocks';
 import { dummyStockItems } from '../../../data/dummyStockItems';
+import { borrowItem, getItem } from '../../../services/item';
+import { toast } from 'react-hot-toast';
+import { toastSettings } from '../../../data/toastSettings';
+import { ItemResponse } from '../../../../pocketbase-types';
 
 const UtilizeItem = () => {
   const { id } = useParams();
-  const [itemData, setItemData] = useState<StockItem | null>(null);
+  const navigate = useNavigate();
+  const outlet = useOutlet();
+  const [itemData, setItemData] = useState<ItemResponse | null>(null);
+  const [amount, setAmount] = useState(0);
 
   useEffect(() => {
-    const data = dummyStockItems.filter(d => d.id === id)[0];
+    if (!id) return;
 
-    setItemData(data);
+    getItem(id)
+      .then(d => {
+        setItemData(d);
+      })
+      .catch(() => {
+        toast.error('Failed to get item data', toastSettings);
+      });
   }, [id]);
 
-  const navigate = useNavigate();
+  const handleBorrowClick = () => {
+    if (!id) return;
 
-  const navigateTo = (path: string) => () => navigate(path);
-
-  const outlet = useOutlet();
+    borrowItem({ amount, item: id })
+      .then(d => {
+        navigate('receipt');
+      })
+      .catch(() => {
+        toast.error('Failed to get images', toastSettings);
+      });
+  };
 
   return (
     outlet || (
@@ -52,7 +71,7 @@ const UtilizeItem = () => {
                 {
                   <span className="badge h-fit -translate-y-[12.5%] bg-primary px-[24px] py-[4px] text-[16px] text-secondary">
                     <span className="h-[13px] uppercase leading-none">
-                      {itemData?.tag}
+                      {itemData?.type}
                     </span>
                   </span>
                 }
@@ -66,7 +85,7 @@ const UtilizeItem = () => {
               </span>
 
               <div className="h-[16px] text-lg font-semibold text-primary ">
-                {itemData?.remaining}
+                {itemData?.quantity}
               </div>
             </div>
           </li>
@@ -77,7 +96,7 @@ const UtilizeItem = () => {
               </span>
 
               <div className="line-clamp-1 max-w-[50%] text-lg font-semibold text-primary ">
-                {itemData?.description}
+                {itemData?.remarks}
               </div>
             </div>
           </li>
@@ -91,13 +110,15 @@ const UtilizeItem = () => {
             </span>
 
             <input
+              value={amount}
+              onChange={e => setAmount(Number(e.target.value))}
               type="number"
               className="input-bordered input input-md w-full max-w-[96px] rounded-[5px] bg-primary/10 pt-[2px] text-primary [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
             />
           </div>
         </div>
         <button
-          onClick={navigateTo('receipt')}
+          onClick={() => void handleBorrowClick()}
           className="btn-primary btn w-full rounded-[5px]"
         >
           Borrow

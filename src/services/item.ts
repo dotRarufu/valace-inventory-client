@@ -1,4 +1,10 @@
-import { Collections, ItemRecord, ItemResponse } from '../../pocketbase-types';
+import {
+  BorrowRecord,
+  BorrowResponse,
+  Collections,
+  ItemRecord,
+  ItemResponse,
+} from '../../pocketbase-types';
 import pb from '../lib/pocketbase';
 
 export const getItem = async (id: string) => {
@@ -8,6 +14,7 @@ export const getItem = async (id: string) => {
 };
 
 export const getAllItems = async () => {
+  // todo: add pagination to users of this function
   const res = await pb
     .collection(Collections.Item)
     .getList<ItemResponse>(1, undefined, {
@@ -58,9 +65,7 @@ export const createItem = async (data: ItemRecord) => {
 
 export type ItemUpdate = Partial<ItemRecord>;
 
- 
 export const updateItem = async (id: string, data: ItemUpdate) => {
-  console.log("updateitem:", id)
   await pb.collection(Collections.Item).update(id, data);
 };
 
@@ -69,4 +74,12 @@ export const deleteImage = async (id: string, filenames: string[]) => {
     'images-': filenames,
   };
   await pb.collection(Collections.Item).update(id, data);
+};
+
+export const borrowItem = async (data: BorrowRecord) => {
+  const res = await pb
+    .collection(Collections.Borrow)
+    .create<BorrowResponse>(data);
+
+  return res;
 };

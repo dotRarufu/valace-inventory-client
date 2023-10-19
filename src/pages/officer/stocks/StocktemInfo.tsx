@@ -32,7 +32,7 @@ const StockItemInfo = () => {
         setItemData(d);
       })
       .catch(() => {
-        toast.error('Failed to get images', toastSettings);
+        toast.error('Failed to get item data', toastSettings);
       });
   }, [id]);
 

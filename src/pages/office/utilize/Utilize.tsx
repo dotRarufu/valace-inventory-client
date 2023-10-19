@@ -17,8 +17,6 @@ const OfficeUtilize = () => {
   useEffect(() => {
     getAllItems()
       .then(items => {
-        console.log();
-
         const stockItems: StockItem[] = items.items.map(
           (item): StockItem => ({
             description: item.remarks,

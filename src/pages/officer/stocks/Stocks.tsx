@@ -35,7 +35,7 @@ const Stocks = () => {
         setItems(d.items);
       })
       .catch(() => {
-        toast.error('Failed to get images', toastSettings);
+        toast.error('Failed to get item data', toastSettings);
       });
   }, []);
 

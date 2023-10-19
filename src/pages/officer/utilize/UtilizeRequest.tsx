@@ -2,6 +2,10 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { NavLink, useNavigate, useOutlet, useParams } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
+import { getItem } from '../../../services/item';
+import { toast } from 'react-hot-toast';
+import { toastSettings } from '../../../data/toastSettings';
+import { ItemResponse } from '../../../../pocketbase-types';
 
 export type UtilizationRequest = {
   id: number;
@@ -10,40 +14,21 @@ export type UtilizationRequest = {
   amount: number;
 };
 
-export const dummyUtilizationRequests: UtilizationRequest[] = [
-  {
-    amount: 2,
-    id: 0,
-    itemId: 0,
-    utilizerId: 0,
-  },
-  {
-    amount: 5,
-    id: 1,
-    itemId: 2,
-    utilizerId: 0,
-  },
-  {
-    amount: 10,
-    id: 2,
-    itemId: 1,
-    utilizerId: 1,
-  },
-];
-
 const UtilizeRequest = () => {
   const { id } = useParams();
   const [utilizationRequest, setUtilizationRequest] =
-    useState<UtilizationRequest | null>(null);
+    useState<ItemResponse | null>(null);
 
   useEffect(() => {
-    const res = dummyUtilizationRequests.filter(d => d.id === Number(id));
+    if (!id) return;
 
-    if (res.length === 0) return;
-
-    const data = res[0];
-
-    setUtilizationRequest(data);
+    getItem(id)
+      .then(d => {
+        setUtilizationRequest(d);
+      })
+      .catch(() => {
+        toast.error('Failed to get item data', toastSettings);
+      });
   }, [id]);
 
   const navigate = useNavigate();
@@ -68,7 +53,7 @@ const UtilizeRequest = () => {
             <span className=" h-[16px] text-lg text-primary/50">Item Name</span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {utilizationRequest?.itemId}
+              {utilizationRequest?.id}
             </div>
           </div>
         </li>
@@ -80,7 +65,7 @@ const UtilizeRequest = () => {
               {
                 <span className="badge h-fit -translate-y-[12.5%] bg-primary px-[24px] py-[4px] text-[16px] text-secondary">
                   <span className="h-[13px] uppercase leading-none">
-                    {utilizationRequest?.itemId}
+                    {utilizationRequest?.id}
                   </span>
                 </span>
               }
@@ -94,7 +79,7 @@ const UtilizeRequest = () => {
             </span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {utilizationRequest?.utilizerId}
+              {utilizationRequest?.id}
             </div>
           </div>
         </li>
@@ -103,7 +88,7 @@ const UtilizeRequest = () => {
             <span className=" h-[16px] text-lg text-primary/50">Amount:</span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {utilizationRequest?.amount}
+              {utilizationRequest?.quantity}
             </div>
           </div>
         </li>
