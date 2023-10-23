@@ -7,12 +7,17 @@ import { getAllItems } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
 import { PocketbaseError } from '../../../types/PocketbaseError';
+import { useFuzzy } from 'react-use-fuzzy';
 
 const OfficeUtilize = () => {
   const [items, setItems] = useState<StockItem[] | null>(null);
   const navigate = useNavigate();
   const outlet = useOutlet();
   const navigateTo = (path: string) => () => navigate(path);
+
+  const { result, keyword, search } = useFuzzy<StockItem>(items || [], {
+    keys: ['name'],
+  });
 
   useEffect(() => {
     getAllItems()
@@ -55,6 +60,7 @@ const OfficeUtilize = () => {
         <div className="flex w-full flex-col gap-4">
           <div className="join w-full">
             <input
+              onChange={e => search(e.target.value)}
               type="text"
               placeholder="Type here"
               className="input-bordered input-primary input join-item w-full "
@@ -65,7 +71,7 @@ const OfficeUtilize = () => {
           </div>
 
           <ul className="flex flex-col overflow-clip rounded-[5px]">
-            {items.map(item => (
+            {(keyword ? result : items).map(item => (
               <li
                 key={item.id}
                 onClick={navigateTo(item.id.toString())}

@@ -44,10 +44,6 @@ const Stocks = () => {
       });
   }, []);
 
-  useEffect(() => {
-    console.log('result:', result);
-  }, [result]);
-
   if (outlet) return outlet;
 
   if (items === null)
