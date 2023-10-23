@@ -105,69 +105,83 @@ const SupplyFormSidebar = () => {
       <a ref={anchorDownloadRef} className="hidden" target="_blank" />
       <label htmlFor="my-drawer" className="drawer-overlay" />
 
-      <div className="flex h-full w-[723px] flex-col gap-[8px] overflow-y-scroll bg-secondary px-[32px] pt-0 font-khula text-secondary-content">
+      <div className="flex h-screen w-[723px] flex-col gap-[8px] overflow-clip bg-secondary px-[32px] pt-0 font-khula text-secondary-content">
         <div className="flex items-center justify-start pb-[16px]  pt-[32px]">
           <span className="h-[21px] text-[32px] font-semibold leading-none text-primary">
             Generate Supply Form
           </span>
         </div>
 
-        <h2 className="h-[16px] text-base font-semibold leading-none text-primary">
-          Restock
-        </h2>
+        <div className="grow-1 collapse-arrow collapse relative max-h-[50%] min-h-[60px] shrink-0 overflow-y-scroll rounded-[5px] text-[24px]  font-semibold [scrollbar-width:none]">
+          <input type="checkbox" className="peer sticky top-0" />
 
-        <ul className="flex h-fit flex-col gap-4 overflow-y-scroll">
-          {selectedRows.map(row => (
-            // <li className="border border-red-500">{row.id}</li>
-            <RestockItem key={row.id} row={row} setPrintItems={setPrintItems} />
-          ))}
-        </ul>
+          <div className="collapse-title sticky top-0 flex h-[16px] w-full items-center bg-primary  text-primary-content peer-checked:bg-base-100 peer-checked:text-base-content">
+            <span className="pt-1 font-khula text-[24px] font-semibold leading-5">
+              Restock
+            </span>
+          </div>
 
-        {/* <div className="h-[2px] w-full bg-base-content" /> */}
-
-        <h2 className="h-[16px] text-base font-semibold leading-none text-primary">
-          Include Approved Requested Items
-        </h2>
-
-        <ul className="flex h-fit flex-col gap-2 overflow-y-scroll">
-          {requestedItems.map(row => (
-            <li
-              key={row.id}
-              className="flex items-center justify-between border border-primary py-2 pr-4"
-            >
-              <span className="h-[16px] font-khula text-base font-semibold leading-none text-primary">
-                {row.name}
-              </span>
-              <span
-                // todo: can make this rendered by the user comp
-                className={`badge h-fit -translate-y-[12.5%]  bg-primary px-[24px] py-[4px] text-[20px] text-secondary`}
-              >
-                <span className="h-[13px] uppercase leading-none">
-                  {row.requestedBy}
-                </span>
-              </span>
-              <input
-                type="checkbox"
-                className="checkbox"
-                onClick={() => {
-                  setRequestedItems(old =>
-                    old.map(o =>
-                      o.id === row.id ? { ...o, isIncluded: !o.isIncluded } : o
-                    )
-                  );
-                }}
-              />
-            </li>
-            // <RestockItem key={row.id} row={row} setPrintItems={setPrintItems} />
-          ))}
-        </ul>
-
-        <div className="form-control border border-red-500">
-          <label className="label cursor-pointer">
-            <span className="label-text">Create shipment for this request</span>
-            <input type="checkbox" className="toggle-primary toggle" />
-          </label>
+          <div className="collapse-content rounded-b-[5px] border border-neutral-content bg-transparent pt-4">
+            <ul className="flex h-fit flex-col gap-4 ">
+              {selectedRows.map(row => (
+                // <li className="border border-neutral-content">{row.id}</li>
+                <RestockItem
+                  key={row.id}
+                  row={row}
+                  setPrintItems={setPrintItems}
+                />
+              ))}
+            </ul>
+          </div>
         </div>
+        <div className="collapse-arrow grow-1 collapse relative max-h-[50%] min-h-[60px] shrink-0 overflow-y-scroll rounded-[5px] text-[24px]  font-semibold [scrollbar-width:none]">
+          <input type="checkbox" className="peer sticky top-0" />
+
+          <div className="collapse-title sticky top-0 flex h-[16px] w-full items-center bg-primary  text-primary-content peer-checked:bg-base-100 peer-checked:text-base-content">
+            <span className="pt-1 font-khula text-[24px] font-semibold leading-5">
+              Include Approved Requested Items
+            </span>
+          </div>
+
+          <div className="collapse-content rounded-b-[5px] border border-neutral-content bg-transparent pt-4">
+            <ul className="flex h-fit flex-col gap-2 overflow-y-scroll">
+              {requestedItems.map(row => (
+                <li
+                  key={row.id}
+                  className="flex items-center justify-between border border-primary py-2 pr-4"
+                >
+                  <span className="h-[16px] font-khula text-base font-semibold leading-none text-primary">
+                    {row.name}
+                  </span>
+                  <span
+                    // todo: can make this rendered by the user comp
+                    className={`badge h-fit -translate-y-[12.5%]  bg-primary px-[24px] py-[4px] text-[20px] text-secondary`}
+                  >
+                    <span className="h-[13px] uppercase leading-none">
+                      {row.requestedBy}
+                    </span>
+                  </span>
+                  <input
+                    type="checkbox"
+                    className="checkbox"
+                    onClick={() => {
+                      setRequestedItems(old =>
+                        old.map(o =>
+                          o.id === row.id
+                            ? { ...o, isIncluded: !o.isIncluded }
+                            : o
+                        )
+                      );
+                    }}
+                  />
+                </li>
+                // <RestockItem key={row.id} row={row} setPrintItems={setPrintItems} />
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div className="grow-1 shrink-1 h-full"></div>
+
         <div className="flex items-center justify-end gap-[16px] py-[32px]">
           <button
             onClick={() => void handlePrintSupplyForm()}
