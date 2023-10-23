@@ -24,7 +24,7 @@ export type StockItem = {
 };
 
 const Stocks = () => {
-  const [items, setItems] = useState<ItemResponse[]>([]);
+  const [items, setItems] = useState<ItemResponse[] | null>(null);
   const navigate = useNavigate();
   const outlet = useOutlet();
   const navigateTo = (path: string) => () => navigate(path);
@@ -39,8 +39,18 @@ const Stocks = () => {
       });
   }, []);
 
+  if (outlet) return outlet
+
+
+  if (items === null)
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <span className="loading loading-ring aspect-square w-1/2" />
+      </div>
+    );
+
   return (
-    outlet || (
+    
       <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] pb-[8px] font-khula">
         {items.length > 0 ? (
           <div className="flex w-full flex-col gap-4">
@@ -85,7 +95,7 @@ const Stocks = () => {
         )}
       </div>
     )
-  );
+ 
 };
 
 export default Stocks;

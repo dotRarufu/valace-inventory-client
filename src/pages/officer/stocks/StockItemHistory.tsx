@@ -27,6 +27,13 @@ const StockItemHistory = () => {
     // setHistoryItem(data);
   }, [itemId]);
 
+  if (data === null)
+  return (
+    <div className="flex h-full w-full items-center justify-center">
+      <span className="loading loading-ring aspect-square w-1/2" />
+    </div>
+  );
+
   return (
     <div className="absolute flex h-[calc(100%-32px)] w-full flex-col gap-4 p-0 px-[16px] font-khula">
       <div className="flex items-center gap-2 ">

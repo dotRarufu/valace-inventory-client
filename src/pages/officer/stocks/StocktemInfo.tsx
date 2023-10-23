@@ -32,7 +32,7 @@ const StockItemInfo = () => {
     getItem(id)
       .then(d => {
         setItemData(d);
-        console.log("but sets")
+        console.log('but sets');
       })
       .catch(() => {
         toast.error('Failed to get item data 1:' + id, toastSettings);
@@ -52,88 +52,96 @@ const StockItemInfo = () => {
       });
   }, []);
 
+  if (outlet) return outlet;
+
+  if (itemData === null)
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <span className="loading loading-ring aspect-square w-1/2" />
+      </div>
+    );
+
   return (
-    outlet || (
-      <div className="absolute flex h-[calc(100%-32px)] w-full flex-col gap-4 p-0 px-[16px] font-khula">
-        <div className="flex items-center gap-2 ">
-          <NavLink to=".." className="btn-square btn-sm btn">
-            <FiArrowLeft />
-          </NavLink>
-          <span className="h-[12px] text-lg font-semibold leading-none">
-            {itemData?.name}
-          </span>
-        </div>
-        <ul className="flex w-full flex-col gap-2 ">
-          <li className="flex flex-col leading-none">
-            <div className=" flex max-h-[53px] items-center justify-between py-[4px]">
-              <span className=" h-[16px] text-lg text-primary/50">
-                Total amount:
-              </span>
+    <div className="absolute flex h-[calc(100%-32px)] w-full flex-col gap-4 p-0 px-[16px] font-khula">
+      <div className="flex items-center gap-2 ">
+        <NavLink to=".." className="btn-square btn-sm btn">
+          <FiArrowLeft />
+        </NavLink>
+        <span className="h-[12px] text-lg font-semibold leading-none">
+          {itemData?.name}
+        </span>
+      </div>
+      <ul className="flex w-full flex-col gap-2 ">
+        <li className="flex flex-col leading-none">
+          <div className=" flex max-h-[53px] items-center justify-between py-[4px]">
+            <span className=" h-[16px] text-lg text-primary/50">
+              Total amount:
+            </span>
 
-              <div className="h-[16px] text-lg font-semibold text-primary ">
-                {itemData?.total}
-              </div>
+            <div className="h-[16px] text-lg font-semibold text-primary ">
+              {itemData?.total}
             </div>
-          </li>
-          <li className="flex flex-col leading-none">
-            <div className=" flex max-h-[53px] items-center justify-between py-[4px]">
-              <span className=" h-[16px] text-lg text-primary/50">Tag:</span>
+          </div>
+        </li>
+        <li className="flex flex-col leading-none">
+          <div className=" flex max-h-[53px] items-center justify-between py-[4px]">
+            <span className=" h-[16px] text-lg text-primary/50">Tag:</span>
 
-              <div className="h-[16px] text-lg font-semibold text-primary ">
-                {
-                  <span className="badge h-fit -translate-y-[12.5%] bg-primary px-[24px] py-[4px] text-[16px] text-secondary">
-                    <span className="h-[13px] uppercase leading-none">
-                      {itemData?.type}
-                    </span>
+            <div className="h-[16px] text-lg font-semibold text-primary ">
+              {
+                <span className="badge h-fit -translate-y-[12.5%] bg-primary px-[24px] py-[4px] text-[16px] text-secondary">
+                  <span className="h-[13px] uppercase leading-none">
+                    {itemData?.type}
                   </span>
-                }
-              </div>
-            </div>
-          </li>
-          <li className="flex flex-col leading-none">
-            <div className=" flex max-h-[53px] items-center justify-between py-[4px]">
-              <span className=" h-[16px] text-lg text-primary/50">
-                Remaining:
-              </span>
-
-              <div className="h-[16px] text-lg font-semibold text-primary ">
-                {itemData?.quantity}
-              </div>
-            </div>
-          </li>
-          <li className="flex flex-col leading-none">
-            <div className=" flex max-h-[53px] items-center justify-between py-[4px] ">
-              <span className="h-[16px] text-lg leading-none text-primary/50">
-                Description:
-              </span>
-
-              <div className="line-clamp-1 max-w-[50%] text-lg font-semibold text-primary ">
-                {itemData?.remarks}
-              </div>
-            </div>
-          </li>
-        </ul>
-
-        <h2 className="h-[12px] text-lg font-semibold leading-none">
-          Item Utilizees
-        </h2>
-        <ul className="flex flex-col overflow-clip rounded-[5px]">
-          {historyItems.map(history => (
-            <li
-              key={history.id}
-              onClick={navigateTo(`history/${history.id}`)}
-              className="flex cursor-pointer items-center justify-between p-2 odd:bg-base-100 even:bg-base-100/40"
-            >
-              {history.office}
-              <div className="flex gap-2">
-                <span className="badge badge-success pt-[3px]">
-                  {history.created}
                 </span>
-              </div>
-            </li>
-          ))}
-        </ul>
-        {/* <div className="h-full"></div>
+              }
+            </div>
+          </div>
+        </li>
+        <li className="flex flex-col leading-none">
+          <div className=" flex max-h-[53px] items-center justify-between py-[4px]">
+            <span className=" h-[16px] text-lg text-primary/50">
+              Remaining:
+            </span>
+
+            <div className="h-[16px] text-lg font-semibold text-primary ">
+              {itemData?.quantity}
+            </div>
+          </div>
+        </li>
+        <li className="flex flex-col leading-none">
+          <div className=" flex max-h-[53px] items-center justify-between py-[4px] ">
+            <span className="h-[16px] text-lg leading-none text-primary/50">
+              Description:
+            </span>
+
+            <div className="line-clamp-1 max-w-[50%] text-lg font-semibold text-primary ">
+              {itemData?.remarks}
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <h2 className="h-[12px] text-lg font-semibold leading-none">
+        Item Utilizees
+      </h2>
+      <ul className="flex flex-col overflow-clip rounded-[5px]">
+        {historyItems.map(history => (
+          <li
+            key={history.id}
+            onClick={navigateTo(`history/${history.id}`)}
+            className="flex cursor-pointer items-center justify-between p-2 odd:bg-base-100 even:bg-base-100/40"
+          >
+            {history.office}
+            <div className="flex gap-2">
+              <span className="badge badge-success pt-[3px]">
+                {history.created}
+              </span>
+            </div>
+          </li>
+        ))}
+      </ul>
+      {/* <div className="h-full"></div>
       <div className="flex flex-col leading-none">
         <div className=" flex max-h-[53px] items-center justify-between py-[4px] ">
           <span className="h-[16px] text-lg leading-none text-base-content">
@@ -147,8 +155,7 @@ const StockItemInfo = () => {
         </div>
       </div>
       <button className="btn-primary btn w-full rounded-[5px]">Confirm</button> */}
-      </div>
-    )
+    </div>
   );
 };
 

@@ -74,6 +74,8 @@ const OfficeRequests = () => {
       });
   }, []);
 
+  if (outlet) return outlet;
+
   if (items === null)
     return (
       <div className="flex h-full w-full items-center justify-center">
@@ -82,102 +84,100 @@ const OfficeRequests = () => {
     );
 
   return (
-    outlet || (
-      <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] pb-[8px] font-khula">
-        {items.length > 0 ? (
-          <div className="flex w-full flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <div className="text-lg font-bold">{activeUser}'s Requests</div>
+    <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] pb-[8px] font-khula">
+      {items.length > 0 ? (
+        <div className="flex w-full flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <div className="text-lg font-bold">{activeUser}'s Requests</div>
 
-              <div className="flex justify-between">
-                <div className="dropdown-bottom dropdown">
-                  <label
-                    tabIndex={0}
-                    className=" btn-outline btn-sm btn rounded-[5px]"
-                  >
-                    Sort
-                  </label>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content menu rounded-box z-[1] w-52 bg-base-100 p-2 shadow"
-                  >
-                    <li>
-                      <a>Item 1</a>
-                    </li>
-                    <li>
-                      <a>Item 2</a>
-                    </li>
-                  </ul>
-                </div>
-
-                <NavLink
-                  to="create"
-                  className="btn-outline btn-sm btn rounded-[5px]"
+            <div className="flex justify-between">
+              <div className="dropdown-bottom dropdown">
+                <label
+                  tabIndex={0}
+                  className=" btn-outline btn-sm btn rounded-[5px]"
                 >
-                  Add
-                </NavLink>
+                  Sort
+                </label>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content menu rounded-box z-[1] w-52 bg-base-100 p-2 shadow"
+                >
+                  <li>
+                    <a>Item 1</a>
+                  </li>
+                  <li>
+                    <a>Item 2</a>
+                  </li>
+                </ul>
               </div>
+
+              <NavLink
+                to="create"
+                className="btn-outline btn-sm btn rounded-[5px]"
+              >
+                Add
+              </NavLink>
             </div>
-
-            <ul className="flex flex-col overflow-clip rounded-[5px] ">
-              {items.map(item => (
-                <li
-                  key={item.id}
-                  className="flex cursor-pointer items-center justify-between p-2 odd:bg-base-100 even:bg-base-100/40"
-                  onClick={navigateTo(item.id.toString())}
-                >
-                  {item.name}
-                  <span className="badge badge-success pt-[3px]">
-                    {keyPairs[item.status] || 'Pending'}
-                  </span>
-                </li>
-              ))}
-            </ul>
           </div>
-        ) : (
-          <div className="flex w-full flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <div className="text-lg font-bold">{activeUser}'s Requests</div>
 
-              <div className="flex justify-between">
-                <div className="dropdown-bottom dropdown">
-                  <label
-                    tabIndex={0}
-                    className=" btn-outline btn-sm btn rounded-[5px]"
-                  >
-                    Sort
-                  </label>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content menu rounded-box z-[1] w-52 bg-base-100 p-2 shadow"
-                  >
-                    <li>
-                      <a>Item 1</a>
-                    </li>
-                    <li>
-                      <a>Item 2</a>
-                    </li>
-                  </ul>
-                </div>
-
-                <NavLink
-                  to="create"
-                  className="btn-outline btn-sm btn rounded-[5px]"
-                >
-                  Add
-                </NavLink>
-              </div>
-
-              <div className="flex h-full items-center justify-center">
-                <span className=" w-[75%] text-center font-khula text-lg font-semibold">
-                  You have no requests
+          <ul className="flex flex-col overflow-clip rounded-[5px] ">
+            {items.map(item => (
+              <li
+                key={item.id}
+                className="flex cursor-pointer items-center justify-between p-2 odd:bg-base-100 even:bg-base-100/40"
+                onClick={navigateTo(item.id.toString())}
+              >
+                {item.name}
+                <span className="badge badge-success pt-[3px]">
+                  {keyPairs[item.status] || 'Pending'}
                 </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <div className="flex w-full flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <div className="text-lg font-bold">{activeUser}'s Requests</div>
+
+            <div className="flex justify-between">
+              <div className="dropdown-bottom dropdown">
+                <label
+                  tabIndex={0}
+                  className=" btn-outline btn-sm btn rounded-[5px]"
+                >
+                  Sort
+                </label>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content menu rounded-box z-[1] w-52 bg-base-100 p-2 shadow"
+                >
+                  <li>
+                    <a>Item 1</a>
+                  </li>
+                  <li>
+                    <a>Item 2</a>
+                  </li>
+                </ul>
               </div>
+
+              <NavLink
+                to="create"
+                className="btn-outline btn-sm btn rounded-[5px]"
+              >
+                Add
+              </NavLink>
+            </div>
+
+            <div className="flex h-full items-center justify-center">
+              <span className=" w-[75%] text-center font-khula text-lg font-semibold">
+                You have no requests
+              </span>
             </div>
           </div>
-        )}
-      </div>
-    )
+        </div>
+      )}
+    </div>
   );
 };
 

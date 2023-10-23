@@ -50,9 +50,9 @@ export const dummyItems: ShipmentItem[] = [
 const Shipment = () => {
   const navigate = useNavigate();
 
-  const [shipments, setShipments] = useState<
-    Awaited<ReturnType<typeof getAllShipmentsAndItems>>
-  >([]);
+  const [shipments, setShipments] = useState<Awaited<
+    ReturnType<typeof getAllShipmentsAndItems>
+  > | null>(null);
 
   const navigateTo = (path: string) => () => navigate(path);
 
@@ -68,6 +68,13 @@ const Shipment = () => {
         toast.error('Failed to get shipments', toastSettings);
       });
   }, []);
+
+  if (shipments === null)
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <span className="loading loading-ring aspect-square w-1/2" />
+      </div>
+    );
 
   return (
     <div className="absolute flex h-full w-full flex-col gap-4 px-[16px] pb-[8px] font-khula">
