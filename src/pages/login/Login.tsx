@@ -4,6 +4,7 @@ import { UserContext } from '../../contexts/UserContext';
 import { toast } from 'react-hot-toast';
 import { loginUser } from '../../services/auth';
 import { useNavigate } from 'react-router-dom';
+import { getUserTypePath } from '../../utils/getUserTypePath';
 
 const Login = () => {
   // Use Form (similar to Angular)
@@ -16,7 +17,7 @@ const Login = () => {
   // Automatically navigate to appropriate route
   useEffect(() => {
     if (user !== null) {
-      navigate(user.is_admin ? '/admin' : '/staff');
+      navigate(getUserTypePath(user.type));
     }
   }, [navigate, user]);
 

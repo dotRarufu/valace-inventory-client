@@ -24,7 +24,10 @@ const Accounts = () => {
 
   // Initial fetch
   useEffect(() => {
-    getAccounts(({ items }) => setRowData(items)).catch(err => {
+    getAccounts(({ items }) => {
+      console.log('fetched:', items);
+      setRowData(items);
+    }).catch(err => {
       const error = err as PocketbaseError;
       const errorFields = Object.keys(error.data.data);
       const field =

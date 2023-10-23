@@ -7,13 +7,16 @@ import accountsIcon from '../../assets/users.svg';
 import logoutIcon from '../../assets/logout.svg';
 import Modal from '../ui/Modal';
 import pb from '../../lib/pocketbase';
-import { ActivityActionOptions } from '../../../pocketbase-types';
+import {
+  ActivityActionOptions,
+  UserTypeOptions,
+} from '../../../pocketbase-types';
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import { recordActivity } from '../../services/logger';
 
 type Props = {
-  role: 'admin' | 'staff';
+  role: UserTypeOptions;
 };
 
 const NavBar = ({ role }: Props) => {
@@ -35,7 +38,7 @@ const NavBar = ({ role }: Props) => {
       <ul className="flex h-full flex-col gap-[8px] ">
         <Item path={role} label="Reports" icon={reportsIcon} id="reports" />
         <Item path={role} label="Items" icon={itemsIcon} id="items" />
-        {role === 'admin' && (
+        {role === UserTypeOptions.ADMIN && (
           <>
             <Item
               path={'admin'}

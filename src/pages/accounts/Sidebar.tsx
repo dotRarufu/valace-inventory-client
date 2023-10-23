@@ -3,7 +3,10 @@ import TextInputField from '../../components/field/TextInputField';
 import PasswordField from '../../components/field/PasswordField';
 import ToggleField from '../../components/field/ToggleField';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { ActivityActionOptions } from '../../../pocketbase-types';
+import {
+  ActivityActionOptions,
+  UserTypeOptions,
+} from '../../../pocketbase-types';
 import { useDrawer } from '../../hooks/useDrawer';
 import { UserContext } from '../../contexts/UserContext';
 import toast from 'react-hot-toast';
@@ -14,14 +17,14 @@ import { PocketbaseError } from '../../types/PocketbaseError';
 
 const initialFieldValues = {
   username: 'test',
-  isAdmin: false,
+  type: UserTypeOptions.STAFF,
   password: 'mypassword',
   isActive: false,
 };
 
 type Fields = {
   username: string;
-  isAdmin: boolean;
+  type: UserTypeOptions;
   password: string;
   isActive: boolean;
 };
@@ -33,16 +36,18 @@ const Sidebar = () => {
 
   const [id, setId] = useState('');
   const [fields, setfields] = useState(initialFieldValues);
-  const { username, isAdmin, password, isActive } = fields;
+  const { username, type, password, isActive } = fields;
   const [shouldRefetchData, setShouldRefetchData] = useState(false);
   const [initialFields, setInitialFields] = useState<Fields | null>(null);
-
+  useEffect(() => {
+    console.log('fields:', fields);
+  }, [fields]);
   // Get account
   useEffect(() => {
     getAccount(activeRowId, res => {
       const newFields = {
         isActive: res.is_active,
-        isAdmin: res.is_admin,
+        type: res.type,
         password: res.plain_password,
         username: res.username,
       };
@@ -69,7 +74,7 @@ const Sidebar = () => {
     getAccount(activeRowId, res => {
       const newFields = {
         isActive: res.is_active,
-        isAdmin: res.is_admin,
+        type: res.type,
         password: res.plain_password,
         username: res.username,
       };
@@ -90,7 +95,7 @@ const Sidebar = () => {
   }, [activeRowId, shouldRefetchData]);
 
   const recordChangedFields = async () => {
-    const { username, isActive, isAdmin, password } = fields;
+    const { username, isActive, type, password } = fields;
 
     if (initialFields && initialFields.username !== username) {
       await recordActivity(ActivityActionOptions['EDIT ACCOUNT USERNAME'], {
@@ -101,12 +106,12 @@ const Sidebar = () => {
       });
     }
 
-    if (initialFields && initialFields.isAdmin !== isAdmin) {
+    if (initialFields && initialFields.type !== type) {
       await recordActivity(ActivityActionOptions['EDIT ACCOUNT ROLE'], {
         userId: user!.id,
         targetUserId: id,
-        oldValue: (initialFields.isAdmin ? 'Admin' : 'Staff') || undefined,
-        newValue: isAdmin ? 'Admin' : 'Staff',
+        oldValue: initialFields.type,
+        newValue: type,
       });
     }
 
@@ -131,7 +136,7 @@ const Sidebar = () => {
     // In case user does not change row id
     setInitialFields({
       isActive,
-      isAdmin,
+      type,
       password,
       username,
     });
@@ -140,7 +145,7 @@ const Sidebar = () => {
   const handleUpdateAccount = () => {
     const data = {
       username,
-      is_admin: isAdmin,
+      type,
       plain_password: password,
       is_active: isActive,
     };
@@ -162,21 +167,9 @@ const Sidebar = () => {
   };
 
   const clearData = useCallback(() => {
-    setInitialFields({
-      isActive: false,
-      isAdmin: false,
-      password: '',
-      username: '',
-    });
+    setInitialFields(initialFieldValues);
 
-    const defaultFields = {
-      username: '',
-      isAdmin: false,
-      password: '',
-      isActive: false,
-    };
-
-    setfields(defaultFields);
+    setfields(initialFieldValues);
     setId('');
   }, []);
 
@@ -184,7 +177,7 @@ const Sidebar = () => {
     try {
       const data = {
         username,
-        is_admin: isAdmin,
+        type,
         is_active: isActive,
         plain_password: password,
         password,
@@ -247,15 +240,27 @@ const Sidebar = () => {
           />
           <SelectField
             label="Role"
-            value={isAdmin ? 'Admin' : 'Staff'}
+            value={type}
             dropdown={[
               {
-                label: 'Admin',
-                callback: () => setfields(old => ({ ...old, isAdmin: true })),
+                label: UserTypeOptions.ADMIN,
+                callback: () =>
+                  setfields(old => ({ ...old, type: UserTypeOptions.ADMIN })),
               },
               {
-                label: 'Staff',
-                callback: () => setfields(old => ({ ...old, isAdmin: false })),
+                label: UserTypeOptions.OFFICER,
+                callback: () =>
+                  setfields(old => ({ ...old, type: UserTypeOptions.OFFICER })),
+              },
+              {
+                label: UserTypeOptions.STAFF,
+                callback: () =>
+                  setfields(old => ({ ...old, type: UserTypeOptions.STAFF })),
+              },
+              {
+                label: UserTypeOptions.OFFICE,
+                callback: () =>
+                  setfields(old => ({ ...old, type: UserTypeOptions.OFFICE })),
               },
             ]}
             isUpdate={state !== null}

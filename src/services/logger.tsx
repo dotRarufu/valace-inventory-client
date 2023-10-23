@@ -3,6 +3,7 @@ import {
   ActivityRecord,
   ActivityResponse,
   Collections,
+  UserTypeOptions,
 } from '../../pocketbase-types';
 import pb from '../lib/pocketbase';
 import { getItem } from './item';
@@ -59,7 +60,8 @@ export const getActivityData = async (activity: ActivityResponse) => {
     action: actionDescription,
     details: [edit_old_value, edit_new_value],
     date: created,
-    icon: user.is_admin ? <Admin /> : <Staff />,
+    // Todo: add icon for office
+    icon: user.type === UserTypeOptions.ADMIN ? <Admin /> : <Staff />,
   };
 
   return res;

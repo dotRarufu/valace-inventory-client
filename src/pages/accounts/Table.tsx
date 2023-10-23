@@ -11,6 +11,7 @@ import ActionDropdown from './ActionDropdown';
 import { AccountDataRow } from '.';
 import Pagination, { PaginationProps } from '../../components/ui/Pagination';
 import { useState } from 'react';
+import { UserTypeOptions } from '../../../pocketbase-types';
 
 const columnHelper = createColumnHelper<AccountDataRow>();
 
@@ -32,14 +33,14 @@ const columns = [
     cell: info => info.renderValue(),
     footer: info => info.column.id,
   }),
-  columnHelper.accessor('is_admin', {
+  columnHelper.accessor('type', {
     header: () => 'Role',
     cell: info => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      const roleName = info.renderValue() ? 'admin' : 'staff';
+      const roleName = info.renderValue();
       const backgroundColor =
-        roleName === 'staff' ? 'badge-primary' : 'badge-accent';
+        roleName === UserTypeOptions.STAFF ? 'badge-primary' : 'badge-accent';
 
       return (
         <span

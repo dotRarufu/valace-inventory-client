@@ -158,13 +158,19 @@ export type ShipmentItemRecord = {
 	restock_item_id?: RecordIdString
 }
 
+export enum UserTypeOptions {
+	"ADMIN" = "ADMIN",
+	"STAFF" = "STAFF",
+	"OFFICE" = "OFFICE",
+	"OFFICER" = "OFFICER",
+}
 export type UserRecord = {
 	name?: string
 	avatar?: string
 	plain_password: string
 	is_active?: boolean
-	is_admin?: boolean
 	is_removed?: boolean
+	type: UserTypeOptions
 }
 
 export type UtilizeeRecord = {

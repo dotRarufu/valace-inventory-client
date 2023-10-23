@@ -20,7 +20,8 @@ import ShipmentItemInfo from './pages/officer/shipment/ShipmentItemInfo';
 import StockItemInfo from './pages/officer/stocks/StocktemInfo';
 import StockItemHistory from './pages/officer/stocks/StockItemHistory';
 import UtilizeRequest from './pages/officer/utilize/UtilizeRequest';
-import Profile from './pages/office/profile/Profile';
+import OfficeProfile from './pages/office/profile/Profile';
+import OfficerProfile from './pages/officer/profile/Profile';
 import BottomNavBar from './pages/officer/BottomNavBar';
 import OfficeBottomNavBar from './pages/office/BottomNavBar';
 import OfficeUtilize from './pages/office/utilize/Utilize';
@@ -31,6 +32,8 @@ import UtilizeReceipt from './pages/officer/utilize/UtilizeReceipt';
 import OfficeRequests from './pages/office/requests/Requests';
 import Requests from './pages/requests/Requests';
 import Shipments from './pages/shipments/Shipments';
+import { UserTypeOptions } from '../pocketbase-types';
+import { getUserTypePath } from './utils/getUserTypePath';
 
 const App = () => {
   const { user, setShouldGetUser } = useUser();
@@ -46,9 +49,9 @@ const App = () => {
           element={
             <ProtectedRoute
               redirectPath={
-                user === null ? '/login' : user.is_admin ? '/admin' : '/staff'
+                user === null ? '/login' : getUserTypePath(user.type)
               }
-              isAllowed={!!user && user.is_admin}
+              isAllowed={!!user && user.type === UserTypeOptions.ADMIN}
               children={<SidebarWrapper />}
             />
           }
@@ -69,9 +72,9 @@ const App = () => {
           element={
             <ProtectedRoute
               redirectPath={
-                user === null ? '/login' : !user.is_admin ? '/staff' : '/admin'
+                user === null ? '/login' : getUserTypePath(user.type)
               }
-              isAllowed={!!user && !user.is_admin}
+              isAllowed={!!user && user.type === UserTypeOptions.STAFF}
               children={<SidebarWrapper />}
             />
           }
@@ -80,20 +83,23 @@ const App = () => {
           <Route path="reports" element={<Reports />} />
           <Route path="items" element={<Items />} />
         </Route>
+
         <Route
           path="officer"
           element={
             <ProtectedRoute
               // redirectPath={
-              //   user === null ? '/login' : user.role
+              //   user === null ? '/login' : getUserTypePath(user.type)
               // }
-              // isAllowed={!!user && !user.is_admin}
+              // isAllowed={!!user && user.type === UserTypeOptions.OFFICE}
               redirectPath={''}
               isAllowed={true}
               children={<MobileAppWrapper bottomNavBar={<BottomNavBar />} />}
             />
           }
         >
+          <Route path="profile" element={<OfficerProfile />} />
+
           <Route index element={<Navigate to="shipments" />} />
           <Route path="shipments" element={<Outlet />}>
             <Route index element={<Shipment />} />
@@ -116,12 +122,10 @@ const App = () => {
           path="office"
           element={
             <ProtectedRoute
-              // redirectPath={
-              //   user === null ? '/login' : user.role
-              // }
-              // isAllowed={!!user && !user.is_admin}
-              redirectPath={''}
-              isAllowed={true}
+              redirectPath={
+                user === null ? '/login' : getUserTypePath(user.type)
+              }
+              isAllowed={!!user && user.type === UserTypeOptions.OFFICE}
               children={
                 <MobileAppWrapper bottomNavBar={<OfficeBottomNavBar />} />
               }
@@ -129,7 +133,7 @@ const App = () => {
           }
         >
           <Route index element={<Navigate to="utilize" />} />
-          <Route path="profile" element={<Profile />} />
+          <Route path="profile" element={<OfficeProfile />} />
           <Route path="utilize" element={<OfficeUtilize />}>
             <Route path=":id" element={<UtilizeItem />} />
 

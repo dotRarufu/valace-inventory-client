@@ -46,7 +46,7 @@ const SidebarWrapper = () => {
       <Drawer
         body={
           <div className="flex h-screen w-screen overflow-y-clip">
-            <NavBar role={user!.is_admin ? 'admin' : 'staff'} />
+            <NavBar role={user!.type} />
 
             <div className="relative flex  w-full flex-col gap-[28px] bg-base-100 ">
               <div className="px-[36px] pt-[28px]">
