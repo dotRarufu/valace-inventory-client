@@ -15,6 +15,7 @@ import { getAllItems, removeItem } from '../../services/item';
 import { toastSettings } from '../../data/toastSettings';
 import { recordActivity } from '../../services/logger';
 import { PocketbaseError } from '../../types/PocketbaseError';
+import { FiFile, FiPrinter, FiTablet } from 'react-icons/fi';
 
 export interface ItemDataRow extends ItemResponse {
   selected: boolean;
@@ -140,7 +141,7 @@ const Items = () => {
                 htmlFor="my-drawer"
                 className="btn-secondary btn px-[16px] text-[20px] font-semibold hover:btn-primary"
               >
-                <Trash />
+                <FiPrinter className="h-[28px] w-[28px] text-primary" />
                 Print qr
               </label>
               <label
@@ -150,7 +151,7 @@ const Items = () => {
                 htmlFor="my-drawer"
                 className="btn-secondary btn px-[16px] text-[20px] font-semibold hover:btn-primary"
               >
-                <Trash />
+                <FiFile className="h-[28px] w-[28px] text-primary" />
                 Supply form
               </label>
             </>

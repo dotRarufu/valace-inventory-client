@@ -1,8 +1,9 @@
+import { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface Props {
   active?: boolean;
-  icon: string;
+  icon: string | ReactNode;
   path: string;
   label: string;
   id?: string;
@@ -26,10 +27,14 @@ const Item = ({ icon, label, id, path, callback }: Props) => {
       onClick={handleClick}
       className={`${
         isActive() ? 'bg-base-100' : ''
-      } btn btn-ghost py-[16px] pl-[72px] justify-start rounded-none h-fit capitalize `}
+      } btn-ghost btn h-fit justify-start rounded-none py-[16px] pl-[72px] capitalize `}
     >
-      <img src={icon} alt="Reports" className="w-[28px] h-[28px]" />
-      <span className=" h-[16px] text-base-content font-khula text-[24px] font-semibold leading-none">
+      {typeof icon === 'string' ? (
+        <img src={icon} alt="Reports" className="h-[28px] w-[28px]" />
+      ) : (
+        icon
+      )}
+      <span className=" h-[16px] font-khula text-[24px] font-semibold leading-none text-base-content">
         {label}
       </span>
     </li>

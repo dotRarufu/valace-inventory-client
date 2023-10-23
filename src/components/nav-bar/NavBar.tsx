@@ -14,6 +14,14 @@ import {
 import { useContext } from 'react';
 import { UserContext } from '../../contexts/UserContext';
 import { recordActivity } from '../../services/logger';
+import {
+  FiActivity,
+  FiClipboard,
+  FiMonitor,
+  FiPackage,
+  FiTruck,
+  FiUsers,
+} from 'react-icons/fi';
 
 type Props = {
   role: UserTypeOptions;
@@ -36,32 +44,42 @@ const NavBar = ({ role }: Props) => {
       <Logo />
 
       <ul className="flex h-full flex-col gap-[8px] ">
-        <Item path={role} label="Reports" icon={reportsIcon} id="reports" />
-        <Item path={role} label="Items" icon={itemsIcon} id="items" />
+        <Item
+          path={role}
+          label="Reports"
+          icon={<FiMonitor className="h-[28px] w-[28px] text-primary" />}
+          id="reports"
+        />
+        <Item
+          path={role}
+          label="Items"
+          icon={<FiPackage className="h-[28px] w-[28px] text-primary" />}
+          id="items"
+        />
         {role === UserTypeOptions.ADMIN && (
           <>
             <Item
               path={'admin'}
               label="Activity Log"
               icon={activityLogIcon}
-              id="activity-log"
+              icon={<FiActivity className="h-[28px] w-[28px] text-primary" />}
             />
             <Item
               path={'admin'}
               label="Accounts"
-              icon={accountsIcon}
+              icon={<FiUsers className="h-[28px] w-[28px] text-primary" />}
               id="accounts"
             />
             <Item
               path={'admin'}
               label="Requests"
-              icon={accountsIcon}
+              icon={<FiClipboard className="h-[28px] w-[28px] text-primary" />}
               id="requests"
             />
             <Item
               path={'admin'}
               label="Shipments"
-              icon={accountsIcon}
+              icon={<FiTruck className="h-[28px] w-[28px] text-primary" />}
               id="shipments"
             />
           </>
