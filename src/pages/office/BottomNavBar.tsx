@@ -4,12 +4,12 @@ import { FiBox, FiClipboard, FiSend, FiTruck, FiUser } from 'react-icons/fi';
 const OfficeBottomNavBar = () => {
   return (
     <div className="">
-      <div className="join w-full rounded-[5px] bg-primary">
+      <div className="join w-full rounded-[5px] border-t border-base-200 bg-base-200 bg-transparent shadow-md">
         <NavLink
           to="requests"
           className={({ isActive }) =>
-            `btn-primary join-item btn flex h-fit flex-1 flex-col py-1 text-primary-content ${
-              isActive ? 'text-info' : ''
+            ` join-item btn flex h-fit flex-1 flex-col py-1  ${
+              isActive ? 'btn-primary' : 'btn-ghost'
             }`
           }
         >
@@ -20,8 +20,8 @@ const OfficeBottomNavBar = () => {
         <NavLink
           to="utilize"
           className={({ isActive }) =>
-            `btn-primary join-item btn flex h-fit flex-1 flex-col py-1 text-primary-content ${
-              isActive ? 'text-info' : ''
+            ` join-item btn flex h-fit flex-1 flex-col py-1  ${
+              isActive ? 'btn-primary' : 'btn-ghost'
             }`
           }
         >
@@ -33,8 +33,8 @@ const OfficeBottomNavBar = () => {
         <NavLink
           to="profile"
           className={({ isActive }) =>
-            `btn-primary join-item btn flex h-fit flex-1 flex-col py-1 text-primary-content ${
-              isActive ? 'text-info' : ''
+            ` join-item btn flex h-fit flex-1 flex-col py-1  ${
+              isActive ? 'btn-primary' : 'btn-ghost'
             }`
           }
         >
