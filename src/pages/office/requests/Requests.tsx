@@ -9,6 +9,11 @@ import { getAllRequests } from '../../../services/request';
 import { PocketbaseError } from '../../../types/PocketbaseError';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
+import {
+  SortOrder,
+  sortArrayByProperty,
+} from '../../../utils/sortArrayByProperty';
+import { FiArrowDown, FiArrowUp } from 'react-icons/fi';
 
 export type RequestedItem = {
   id: string;
@@ -41,6 +46,7 @@ const OfficeRequests = () => {
   const navigate = useNavigate();
   const [activeUser, setActiveUser] = useState('IT Office');
   const [items, setItems] = useState<RequestedItem[] | null>(null);
+  const [sort, setSort] = useState<SortOrder>('asc');
 
   const navigateTo = (path: string) => () => navigate(path);
   const outlet = useOutlet();
@@ -83,6 +89,19 @@ const OfficeRequests = () => {
       </div>
     );
 
+  const sortItems = () => {
+    const order = sort === 'asc' ? 'desc' : 'asc';
+    const sorted = sortArrayByProperty(items, 'name', order);
+
+    setSort(order);
+    setItems(sorted);
+  };
+
+  const getSortIcon = () => {
+    if (sort === 'asc') return <FiArrowDown />;
+    else return <FiArrowUp />;
+  };
+
   return (
     <div className="absolute flex h-full w-full flex-col gap-2 px-[16px] pb-[8px] font-khula">
       {items.length > 0 ? (
@@ -92,23 +111,12 @@ const OfficeRequests = () => {
 
             <div className="flex justify-between">
               <div className="dropdown-bottom dropdown">
-                <label
-                  tabIndex={0}
-                  className=" btn-outline btn-sm btn rounded-[5px]"
+                <button
+                  onClick={() => sortItems()}
+                  className=" btn-outline btn-sm btn flex items-center justify-center  rounded-[5px]"
                 >
-                  Sort
-                </label>
-                <ul
-                  tabIndex={0}
-                  className="dropdown-content menu rounded-box z-[1] w-52 bg-base-100 p-2 shadow"
-                >
-                  <li>
-                    <a>Item 1</a>
-                  </li>
-                  <li>
-                    <a>Item 2</a>
-                  </li>
-                </ul>
+                  <span className="pt-1">Sort</span> {getSortIcon()}
+                </button>
               </div>
 
               <NavLink
