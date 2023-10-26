@@ -9,6 +9,7 @@ import {
   UtilizerRecord,
 } from '../../pocketbase-types';
 import pb from '../lib/pocketbase';
+import { getAccount } from './accounts';
 
 export const getItem = async (id: string) => {
   const res = await pb.collection(Collections.Item).getOne<ItemResponse>(id);
@@ -22,6 +23,17 @@ export const getAllItems = async () => {
     .collection(Collections.Item)
     .getList<ItemResponse>(1, undefined, {
       filter: 'is_removed = false',
+    });
+
+  return res;
+};
+
+export const getOnStockItems = async () => {
+  // todo: add pagination to users of this function
+  const res = await pb
+    .collection(Collections.Item)
+    .getList<ItemResponse>(1, undefined, {
+      filter: 'is_removed = false && quantity > 0',
     });
 
   return res;
@@ -88,12 +100,14 @@ export const borrowItem = async (data: BorrowRecord) => {
 };
 
 export const getBorrowedItem = async (id: string) => {
-  console.log('get browed item:', id);
   const res = await pb
     .collection(Collections.Borrow)
     .getOne<BorrowResponse>(id);
 
-  return res;
+  const officeData = await getAccount(res.office);
+  const itemData = await getItem(res.item);
+
+  return { ...res, officeData, itemData };
 };
 
 export const recordUtilizee = async (data: UtilizeeRecord) => {
@@ -120,13 +134,21 @@ export const deleteBorrowed = async (id: string) => {
 
 export const getUtilizees = async (itemId: string) => {
   // todo: add pagination on users of this
-  const res = await pb
-    .collection(Collections.Utilizee)
-    .getList<UtilizeeResponse>(1, 10, {
+  const utilizees = (
+    await pb.collection(Collections.Utilizee).getList<UtilizeeResponse>(1, 10, {
       filter: `item = "${itemId}"`,
-    });
+    })
+  ).items;
 
-  return res.items;
+  const res = await Promise.all(
+    utilizees.map(async u => {
+      const officeData = await getAccount(u.office);
+
+      return { ...u, officeData };
+    })
+  );
+
+  return res;
 };
 
 export const getUtilizeeData = async (id: string) => {
@@ -135,5 +157,7 @@ export const getUtilizeeData = async (id: string) => {
     .collection(Collections.Utilizee)
     .getOne<UtilizeeResponse>(id);
 
-  return res;
+  const officeData = await getAccount(res.office);
+
+  return { ...res, officeData };
 };

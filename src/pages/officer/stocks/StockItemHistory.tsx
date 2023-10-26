@@ -6,12 +6,15 @@ import { HistoryItem } from './StocktemInfo';
 import { getUtilizeeData } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
-import { UtilizeeResponse } from '../../../../pocketbase-types';
+import { UserResponse, UtilizeeResponse } from '../../../../pocketbase-types';
+import { beautifyDate } from '../../../utils/beautifyDate';
 
 const StockItemHistory = () => {
   const { itemId } = useParams();
   // const [historyItem, setHistoryItem] = useState<HistoryItem | null>(null);
-  const [data, setData] = useState<UtilizeeResponse | null>(null);
+  const [data, setData] = useState<
+    (UtilizeeResponse & { officeData: UserResponse }) | null
+  >(null);
 
   useEffect(() => {
     if (!itemId) return;
@@ -28,11 +31,11 @@ const StockItemHistory = () => {
   }, [itemId]);
 
   if (data === null)
-  return (
-    <div className="flex h-full w-full items-center justify-center">
-      <span className="loading loading-ring aspect-square w-1/2" />
-    </div>
-  );
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <span className="loading loading-ring aspect-square w-1/2" />
+      </div>
+    );
 
   return (
     <div className="absolute flex h-[calc(100%-32px)] w-full flex-col gap-4 p-0 px-[16px] font-khula">
@@ -41,7 +44,7 @@ const StockItemHistory = () => {
           <FiArrowLeft />
         </NavLink>
         <span className="h-[12px] text-lg font-semibold leading-none">
-          {data?.office}
+          {data?.id}
         </span>
       </div>
       <ul className="flex w-full flex-col gap-2 ">
@@ -62,18 +65,29 @@ const StockItemHistory = () => {
             </span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {data?.office}
+              {data?.officeData.name}
             </div>
           </div>
         </li>
         <li className="flex flex-col leading-none">
           <div className=" flex max-h-[53px] items-center justify-between py-[4px] ">
             <span className="h-[16px] text-lg leading-none text-primary/50">
-              Description:
+              Date:
             </span>
 
             <div className="line-clamp-1 max-w-[50%] text-lg font-semibold text-primary ">
-              {data?.note}
+              {beautifyDate(new Date(data.created || 0))}
+            </div>
+          </div>
+        </li>
+        <li className="flex flex-col leading-none">
+          <div className=" flex max-h-[53px] items-center justify-between py-[4px] ">
+            <span className="h-[16px] text-lg leading-none text-primary/50">
+              Location:
+            </span>
+
+            <div className="line-clamp-1 max-w-[50%] text-lg font-semibold text-primary ">
+              {data.location}
             </div>
           </div>
         </li>

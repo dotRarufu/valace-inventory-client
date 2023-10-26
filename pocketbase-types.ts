@@ -177,7 +177,6 @@ export type UtilizeeRecord = {
 	item: RecordIdString
 	office: RecordIdString
 	amount: number
-	note?: string
 	location: string
 }
 

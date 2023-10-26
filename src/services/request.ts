@@ -5,6 +5,7 @@ import {
   RequestStatusOptions,
 } from '../../pocketbase-types';
 import pb from '../lib/pocketbase';
+import { getAccount } from './accounts';
 
 export const createRequest = async (data: Omit<RequestRecord, 'status'>) => {
   const querydata: RequestRecord = {
@@ -47,8 +48,9 @@ export const getRequest = async (id: string) => {
   const res = await pb
     .collection(Collections.Request)
     .getOne<RequestResponse>(id);
+  const officeData = await getAccount(res.office);
 
-  return res;
+  return { ...res, officeData };
 };
 
 // export const addItemImages = async (id: string, data: FormData) => {

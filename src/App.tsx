@@ -42,7 +42,8 @@ const App = () => {
     <UserContext.Provider value={{ user, setShouldGetUser }}>
       <Toaster />
       <Routes>
-        <Route index element={<Landing />} />
+        {/* <Route index element={<Landing />} /> */}
+        <Route index element={<Navigate to="/login" />} />
         <Route path="login" element={<Login />} />
         <Route
           path="admin"

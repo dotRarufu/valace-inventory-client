@@ -3,6 +3,7 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { NavLink, useParams } from 'react-router-dom';
 import { RequestedItem } from './Requests';
 import { getRequest } from '../../../services/request';
+import { UserResponse } from '../../../../pocketbase-types';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const keyPairs: { [REQUEST_STATUS: string]: string } = {
@@ -18,7 +19,7 @@ export const STAGE_NAMES = Object.values(keyPairs);
 const RequestInfo = () => {
   const { id } = useParams();
   const [itemData, setItemData] = useState<
-    (RequestedItem & { statusIndex: number }) | null
+    (RequestedItem & { statusIndex: number; officeData: UserResponse }) | null
   >(null);
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const RequestInfo = () => {
         );
         const newValue: RequestedItem & {
           statusIndex: number;
+          officeData: UserResponse;
         } = {
           date: data.created,
           description: data.description,
@@ -41,6 +43,7 @@ const RequestInfo = () => {
           status: data.status,
           tag: data.tag,
           unit: data.unit,
+          officeData: data.officeData,
           statusIndex,
         };
 
@@ -105,7 +108,7 @@ const RequestInfo = () => {
             </div>
           </div>
         </li>
-       
+
         <li className="flex flex-col leading-none">
           <div className=" flex max-h-[53px] items-center justify-between py-[4px]">
             <span className=" h-[16px] text-lg text-primary/50">Tag:</span>
@@ -128,7 +131,7 @@ const RequestInfo = () => {
             </span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {itemData.requestedBy}
+              {itemData.officeData.name}
             </div>
           </div>
         </li>

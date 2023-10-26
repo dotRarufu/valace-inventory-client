@@ -15,13 +15,16 @@ import {
   ItemTypeOptions,
   ShipmentItemResponse,
   ShipmentItemTypeOptions,
+  UserResponse,
 } from '../../../../pocketbase-types';
 import generateSerialNumber from '../../items/utils/generateSerialNumber';
 
 const ShipmentItemInfo = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [itemData, setItemData] = useState<ShipmentItemResponse | null>(null);
+  const [itemData, setItemData] = useState<
+    (ShipmentItemResponse & { officeData: UserResponse }) | null
+  >(null);
   const [receivedAmount, setReceivedAmount] = useState(0);
   const [propertyNumber, setPropertyNumber] = useState('');
 
@@ -33,7 +36,7 @@ const ShipmentItemInfo = () => {
         setItemData(data);
       })
       .catch(err => {
-        toast.error('Failed t get shipment item data', toastSettings);
+        toast.error('Failed to get shipment item data', toastSettings);
       });
   }, [id]);
 
@@ -122,18 +125,7 @@ const ShipmentItemInfo = () => {
             </span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {itemData?.office}
-            </div>
-          </div>
-        </li>
-        <li className="flex flex-col leading-none">
-          <div className=" flex max-h-[53px] items-center justify-between py-[4px] ">
-            <span className="h-[16px] text-lg leading-none text-primary/50">
-              Description:
-            </span>
-
-            <div className="line-clamp-1 max-w-[50%] text-lg font-semibold text-primary ">
-              {'WIP'}
+              {itemData?.officeData.name}
             </div>
           </div>
         </li>

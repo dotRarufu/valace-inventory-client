@@ -3,7 +3,7 @@ import { useNavigate, useOutlet } from 'react-router-dom';
 import { StockItem } from '../../officer/stocks/Stocks';
 import { FiSearch } from 'react-icons/fi';
 import { getAllRequests } from '../../../services/request';
-import { getAllItems } from '../../../services/item';
+import { getAllItems, getOnStockItems } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
 import { PocketbaseError } from '../../../types/PocketbaseError';
@@ -20,7 +20,7 @@ const OfficeUtilize = () => {
   });
 
   useEffect(() => {
-    getAllItems()
+    getOnStockItems()
       .then(items => {
         const stockItems: StockItem[] = items.items.map(
           (item): StockItem => ({

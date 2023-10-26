@@ -10,7 +10,7 @@ import {
 } from '../../../../pocketbase-types';
 import SearchBar from '../../../components/ui/SearchBar';
 import { useNavigate, useOutlet } from 'react-router-dom';
-import { getAllItems } from '../../../services/item';
+import { getAllItems, getOnStockItems } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
 import { useFuzzy } from 'react-use-fuzzy';
@@ -35,7 +35,7 @@ const Stocks = () => {
   });
 
   useEffect(() => {
-    getAllItems()
+    getOnStockItems()
       .then(d => {
         setItems(d.items);
       })

@@ -8,7 +8,12 @@ import { dummyHistoryItems } from '../../../data/dummyHistoryItems';
 import { getItem, getUtilizees } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
-import { ItemResponse, UtilizeeResponse } from '../../../../pocketbase-types';
+import {
+  ItemResponse,
+  UserResponse,
+  UtilizeeResponse,
+} from '../../../../pocketbase-types';
+import { beautifyDate } from '../../../utils/beautifyDate';
 
 export type HistoryItem = {
   utilizer: string;
@@ -24,7 +29,9 @@ const StockItemInfo = () => {
   const navigateTo = (path: string) => () => navigate(path);
   const outlet = useOutlet();
   const [itemData, setItemData] = useState<ItemResponse | null>(null);
-  const [historyItems, setHistoryItems] = useState<UtilizeeResponse[]>([]);
+  const [historyItems, setHistoryItems] = useState<
+    (UtilizeeResponse & { officeData: UserResponse })[]
+  >([]);
 
   useEffect(() => {
     if (!id) return;
@@ -132,10 +139,10 @@ const StockItemInfo = () => {
             onClick={navigateTo(`history/${history.id}`)}
             className="flex cursor-pointer items-center justify-between p-2 odd:bg-base-100 even:bg-base-100/40"
           >
-            {history.office}
+            {history.officeData.name}
             <div className="flex gap-2">
               <span className="badge badge-success pt-[3px]">
-                {history.created}
+                {beautifyDate(new Date(history.created))}
               </span>
             </div>
           </li>

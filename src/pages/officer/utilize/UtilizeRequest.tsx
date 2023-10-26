@@ -1,18 +1,22 @@
 import { FiArrowLeft } from 'react-icons/fi';
-import { NavLink, useNavigate, useOutlet, useParams } from 'react-router-dom';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
 import {
   deleteBorrowed,
   getBorrowedItem,
-  getItem,
   recordUtilizee,
   recordUtilizer,
   updateItem,
 } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
-import { BorrowResponse, ItemResponse } from '../../../../pocketbase-types';
+import {
+  BorrowResponse,
+  ItemResponse,
+  UserResponse,
+} from '../../../../pocketbase-types';
+import useUser from '../../../hooks/useUser';
 
 export type UtilizationRequest = {
   id: number;
@@ -24,10 +28,13 @@ export type UtilizationRequest = {
 const UtilizeRequest = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [utilizationRequest, setUtilizationRequest] =
-    useState<BorrowResponse | null>(null);
-  const [itemData, setItemData] = useState<ItemResponse | null>(null);
+  const [utilizationRequest, setUtilizationRequest] = useState<
+    | (BorrowResponse & { officeData: UserResponse; itemData: ItemResponse })
+    | null
+    | undefined
+  >(null);
   const [amountGiven, setAmountGiven] = useState(0);
+  const { user } = useUser();
 
   useEffect(() => {
     if (!id) return;
@@ -37,37 +44,24 @@ const UtilizeRequest = () => {
         setUtilizationRequest(d);
       })
       .catch(() => {
+        setUtilizationRequest(undefined);
         toast.error('Failed to get borrow item data', toastSettings);
       });
   }, [id]);
 
-  useEffect(() => {
-    if (!utilizationRequest) return;
-
-    getItem(utilizationRequest.item)
-      .then(d => {
-        setItemData(d);
-      })
-      .catch(() => {
-        toast.error('Failed to get item data 2 ', toastSettings);
-      });
-  }, [utilizationRequest]);
-
   const handleDoneClick = async () => {
-    if (!utilizationRequest || !id || !itemData) return;
+    if (!utilizationRequest || !id) return;
 
     const { item, office, location } = utilizationRequest;
 
-    console.log('1');
     // Add record to utilizee
     await recordUtilizee({ amount: amountGiven, item, location, office });
 
-    console.log('3');
     // Add record to utilizer
     // todo: fix utilizer id
     await recordUtilizer({
-      item: itemData.id,
-      utilizer: 'lqumdc60rwqdjom',
+      item: utilizationRequest.itemData.id,
+      utilizer: user!.id,
       amoun_given: amountGiven,
     });
 
@@ -76,14 +70,21 @@ const UtilizeRequest = () => {
     await deleteBorrowed(id);
 
     // Deduct amount given to item table record quantity
-    await updateItem(itemData.id, {
-      quantity: itemData.quantity - amountGiven,
+    await updateItem(utilizationRequest.itemData.id, {
+      quantity: utilizationRequest.itemData.quantity - amountGiven,
     });
 
     navigate('..');
   };
 
-  return utilizationRequest !== null ? (
+  if (utilizationRequest === null)
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <span className="loading loading-ring aspect-square w-1/2" />
+      </div>
+    );
+
+  return utilizationRequest !== undefined ? (
     <div className="absolute flex h-[calc(100%-32px)] w-full flex-col gap-4 p-0 px-[16px] font-khula">
       <div className="flex items-center gap-2 ">
         <NavLink to=".." className="btn-square btn-sm btn">
@@ -99,7 +100,7 @@ const UtilizeRequest = () => {
             <span className=" h-[16px] text-lg text-primary/50">Item Name</span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {itemData?.name}
+              {utilizationRequest.itemData?.name}
             </div>
           </div>
         </li>
@@ -111,7 +112,7 @@ const UtilizeRequest = () => {
               {
                 <span className="badge h-fit -translate-y-[12.5%] bg-primary px-[24px] py-[4px] text-[16px] text-secondary">
                   <span className="h-[13px] uppercase leading-none">
-                    {itemData?.type}
+                    {utilizationRequest.itemData?.type}
                   </span>
                 </span>
               }
@@ -125,7 +126,7 @@ const UtilizeRequest = () => {
             </span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {utilizationRequest?.office}
+              {utilizationRequest?.officeData.name}
             </div>
           </div>
         </li>
@@ -135,18 +136,6 @@ const UtilizeRequest = () => {
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
               {utilizationRequest?.amount}
-            </div>
-          </div>
-        </li>
-        <li className="flex flex-col leading-none">
-          <div className=" flex max-h-[53px] items-center justify-between py-[4px] ">
-            <span className="h-[16px] text-lg leading-none text-primary/50">
-              Description:
-            </span>
-
-            <div className="line-clamp-1 max-w-[50%] text-lg font-semibold text-primary ">
-              {/* {utilizationRequest?.} */}
-              WIP
             </div>
           </div>
         </li>

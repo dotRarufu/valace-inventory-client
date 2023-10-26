@@ -28,11 +28,13 @@ export const updateAccount = async (
 
 export const getAccount = async (
   id: string,
-  callback: (res: UserResponse) => void
+  callback?: (res: UserResponse) => void
 ) => {
   const res = await pb.collection(Collections.User).getOne<UserResponse>(id);
 
-  callback(res);
+  callback && callback(res);
+
+  return res;
 };
 
 export const addAccount = async (data: UserRecord) => {

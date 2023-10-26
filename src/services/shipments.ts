@@ -13,6 +13,7 @@ import {
   RequestItem,
   RestockItemRequest,
 } from '../pages/items/SupplyFormSidebar';
+import { getAccount } from './accounts';
 import { getItem } from './item';
 import { getRequest } from './request';
 
@@ -154,8 +155,9 @@ export const getShipmentItem = async (id: string) => {
   const res = await pb
     .collection(Collections.ShipmentItem)
     .getOne<ShipmentItemResponse>(id);
+  const officeData = await getAccount(res.office);
 
-  return res;
+  return { ...res, officeData };
 };
 
 export const updateShipmentItem = async (
