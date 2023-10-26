@@ -39,9 +39,7 @@ const Sidebar = () => {
   const { username, type, password, isActive } = fields;
   const [shouldRefetchData, setShouldRefetchData] = useState(false);
   const [initialFields, setInitialFields] = useState<Fields | null>(null);
-  useEffect(() => {
-    console.log('fields:', fields);
-  }, [fields]);
+
   // Get account
   useEffect(() => {
     getAccount(activeRowId, res => {

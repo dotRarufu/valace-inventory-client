@@ -100,7 +100,6 @@ const ItemsSidebar = () => {
       supplier,
       type,
     } = fields;
-
     if (initialFields && initialFields.type !== type) {
       await recordActivity(ActivityActionOptions['EDIT TYPE'], {
         userId: user!.id,
@@ -148,6 +147,23 @@ const ItemsSidebar = () => {
         itemId: activeRowId,
         oldValue: initialFields.remarks || undefined,
         newValue: remarks,
+      });
+    }
+    // todo: update activity table
+    if (initialFields && initialFields.total !== total) {
+      await recordActivity(ActivityActionOptions['EDIT TOTAL'], {
+        userId: user!.id,
+        itemId: activeRowId,
+        oldValue: initialFields.total.toString() || undefined,
+        newValue: total.toString(),
+      });
+    }
+    if (initialFields && initialFields.unit !== unit) {
+      await recordActivity(ActivityActionOptions['EDIT UNIT'], {
+        userId: user!.id,
+        itemId: activeRowId,
+        oldValue: initialFields.unit || undefined,
+        newValue: unit,
       });
     }
 

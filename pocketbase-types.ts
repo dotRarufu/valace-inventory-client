@@ -62,14 +62,16 @@ export enum ActivityActionOptions {
 	"EDIT PROPERTY NUMBER" = "EDIT PROPERTY NUMBER",
 	"ADD ITEM IMAGE" = "ADD ITEM IMAGE",
 	"DELETE ITEM IMAGE" = "DELETE ITEM IMAGE",
+	"EDIT TOTAL" = "EDIT TOTAL",
+	"EDIT UNIT" = "EDIT UNIT",
 }
 export type ActivityRecord = {
 	user_id: RecordIdString
-	action: ActivityActionOptions
 	item_id?: RecordIdString
 	target_user_id?: RecordIdString
 	edit_old_value?: string
 	edit_new_value?: string
+	action: ActivityActionOptions
 }
 
 export type BorrowRecord = {
