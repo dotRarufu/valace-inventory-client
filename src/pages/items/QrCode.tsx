@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useDrawer } from '../../hooks/useDrawer';
 import { qrCode } from '../../services/qrCodeStyling';
+import { getBaseUrl } from '../../utils/getBaseUrl';
 
 const QrCode = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -15,7 +16,7 @@ const QrCode = () => {
 
   // Set QR Code data
   useEffect(() => {
-    const address = import.meta.env.VITE_URL || 'isUndefined';
+    const address = getBaseUrl();
     const route = 'user';
     const query = '?id=';
     qrCode.update({

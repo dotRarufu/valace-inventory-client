@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { qrCode } from '../../../services/qrCodeStyling';
+import { getBaseUrl } from '../../../utils/getBaseUrl';
+
 const UtilizeReceipt = () => {
   const { id } = useParams();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -14,8 +16,11 @@ const UtilizeReceipt = () => {
 
   // Set QR Code data
   useEffect(() => {
+    const base = getBaseUrl();
+    const utilizerUrl = `${base}/officer/utilize/${id!}`;
+
     qrCode.update({
-      data: id,
+      data: utilizerUrl,
     });
   }, [id]);
 

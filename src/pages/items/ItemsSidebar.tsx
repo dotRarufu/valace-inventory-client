@@ -27,6 +27,7 @@ import generateSerialNumber from './utils/generateSerialNumber';
 import { increaseRowCount } from './utils/increaseRowCount';
 import { toastSettings } from '../../data/toastSettings';
 import { PocketbaseError } from '../../types/PocketbaseError';
+import { getBaseUrl } from '../../utils/getBaseUrl';
 
 type Fields = {
   type: ItemTypeOptions;
@@ -314,8 +315,6 @@ const ItemsSidebar = () => {
         name,
         quantity,
         type,
-
-        location,
         supplier,
         remarks,
         serial_number: await generateSerialNumber(),
@@ -323,7 +322,7 @@ const ItemsSidebar = () => {
 
       const res = await createItem(data);
       const newFormData = new FormData();
-      const address = import.meta.env.VITE_URL || 'isUndefined';
+      const address = getBaseUrl();
       const route = 'user';
       const query = '?id=';
 
