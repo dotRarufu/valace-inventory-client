@@ -55,11 +55,17 @@ const UtilizeRequest = () => {
     const { item, office, location } = utilizationRequest;
 
     // Add record to utilizee
-    await recordUtilizee({ amount: amountGiven, item, location, office });
+    const utilizee = await recordUtilizee({
+      amount: amountGiven,
+      item,
+      location,
+      office,
+    });
 
     // Add record to utilizer
     // todo: fix utilizer id
     await recordUtilizer({
+      utilizee: utilizee.id,
       item: utilizationRequest.itemData.id,
       utilizer: user!.id,
       amoun_given: amountGiven,

@@ -177,8 +177,6 @@ export const checkAndMarkShipmentAsComplete = async (id: string) => {
     .getFullList<ShipmentItemResponse>({
       filter: `shipment = "${id}" && received_amount = 0`,
     });
-  console.log('shipment id:', id);
-  console.log('items:', items);
 
   // - 1 to account the current request
   if (items.length === 0) {
@@ -189,8 +187,6 @@ export const checkAndMarkShipmentAsComplete = async (id: string) => {
     const res = await pb
       .collection(Collections.Shipment)
       .update<ShipmentResponse>(id, data);
-
-    console.log('shipment marked as complete');
 
     return res;
   }

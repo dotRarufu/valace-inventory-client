@@ -4,6 +4,8 @@ import {
   Collections,
   ItemRecord,
   ItemResponse,
+  UserRecord,
+  UserResponse,
   UtilizeeRecord,
   UtilizeeResponse,
   UtilizerRecord,
@@ -113,7 +115,7 @@ export const getBorrowedItem = async (id: string) => {
 export const recordUtilizee = async (data: UtilizeeRecord) => {
   const res = await pb
     .collection(Collections.Utilizee)
-    .create<UtilizeeRecord>(data);
+    .create<UtilizeeResponse>(data);
 
   return res;
 };
@@ -151,6 +153,22 @@ export const getUtilizees = async (itemId: string) => {
   return res;
 };
 
+const getUtilizerByUtilizee = async (utilizeeId: string) => {
+  const res = await pb
+    .collection(Collections.Utilizer)
+    .getList<UtilizerRecord>(1, 10, {
+      filter: `utilizee = '${utilizeeId}'`,
+    });
+
+  return res.items[0];
+};
+
+const getUtilizerData = async (id: string) => {
+  const res = await pb.collection(Collections.User).getOne<UserResponse>(id);
+
+  return res;
+};
+
 export const getUtilizeeData = async (id: string) => {
   // todo: add pagination on users of this
   const res = await pb
@@ -158,6 +176,8 @@ export const getUtilizeeData = async (id: string) => {
     .getOne<UtilizeeResponse>(id);
 
   const officeData = await getAccount(res.office);
+  const utilizer = await getUtilizerByUtilizee(res.id);
+  const utilizerData = await getUtilizerData(utilizer.utilizer);
 
-  return { ...res, officeData };
+  return { ...res, officeData, utilizerData };
 };

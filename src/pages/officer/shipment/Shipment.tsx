@@ -61,7 +61,7 @@ const Shipment = () => {
     getAllShipmentsAndItems()
       .then(d => {
         const withItems = d.filter(a => a.shipmentItems.length > 0);
-        console.log('d:', withItems);
+
         setShipments(withItems);
       })
       .catch(err => {

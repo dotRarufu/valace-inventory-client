@@ -184,6 +184,7 @@ export type UtilizerRecord = {
 	utilizer: RecordIdString
 	amoun_given?: number
 	item: RecordIdString
+	utilizee: RecordIdString
 }
 
 // Response types include system fields and match responses from the PocketBase API

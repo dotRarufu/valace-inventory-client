@@ -39,7 +39,6 @@ const StockItemInfo = () => {
     getItem(id)
       .then(d => {
         setItemData(d);
-        console.log('but sets');
       })
       .catch(() => {
         toast.error('Failed to get item data 1:' + id, toastSettings);

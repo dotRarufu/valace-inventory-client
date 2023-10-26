@@ -24,7 +24,7 @@ const Profile = () => {
         <li className="flex flex-col leading-none">
           <div className=" flex max-h-[53px] items-center justify-between py-[4px]">
             <span className=" h-[16px] text-lg text-primary/50">
-              Office Name:
+              Username:
             </span>
 
             <div className="h-[16px] text-lg font-semibold text-primary">
