@@ -72,8 +72,8 @@ const getColumns = (
     header: () => <span>Quantity</span>,
     footer: info => info.column.id,
   }),
-  columnHelper.accessor('location', {
-    header: 'Location',
+  columnHelper.accessor('unit', {
+    header: 'Unit',
     footer: info => info.column.id,
   }),
   columnHelper.accessor('supplier', {

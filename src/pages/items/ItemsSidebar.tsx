@@ -31,11 +31,11 @@ import { getBaseUrl } from '../../utils/getBaseUrl';
 
 type Fields = {
   type: ItemTypeOptions;
-
+  total: number;
+  unit: string;
   propertyNumber: string;
   name: string;
   quantity: number;
-  location: string;
   supplier: string;
   dateAdded: string;
   serialNumber: string;
@@ -45,7 +45,8 @@ type Fields = {
 const initialFieldValues = {
   isAvailable: false,
   dateAdded: '',
-  location: '',
+  total: 0,
+  unit: '',
   name: '',
   propertyNumber: '',
   quantity: 0,
@@ -64,7 +65,8 @@ const ItemsSidebar = () => {
 
   const {
     dateAdded,
-    location,
+    total,
+    unit,
     name,
     propertyNumber,
     quantity,
@@ -88,7 +90,8 @@ const ItemsSidebar = () => {
     // Does not destructure the state in dependency array
     const {
       dateAdded,
-      location,
+      total,
+      unit,
       name,
       propertyNumber,
       quantity,
@@ -122,14 +125,7 @@ const ItemsSidebar = () => {
         newValue: quantity.toString(),
       });
     }
-    if (initialFields && initialFields.location !== location) {
-      await recordActivity(ActivityActionOptions['EDIT LOCATION'], {
-        userId: user!.id,
-        itemId: activeRowId,
-        oldValue: initialFields.location || undefined,
-        newValue: location,
-      });
-    }
+
     if (initialFields && initialFields.supplier !== supplier) {
       await recordActivity(ActivityActionOptions['EDIT SUPPLIER'], {
         userId: user!.id,
@@ -158,10 +154,10 @@ const ItemsSidebar = () => {
     // In case user does not change row id
     setInitialFields({
       type,
-
       name,
       quantity,
-      location,
+      total,
+      unit,
       supplier,
       propertyNumber,
       remarks,
@@ -185,7 +181,8 @@ const ItemsSidebar = () => {
         propertyNumber: res.property_number,
         name: res.name,
         quantity: res.quantity,
-        location: res.location,
+        total: res.total,
+        unit: res.unit,
         supplier: res.supplier,
         dateAdded: res.created,
         serialNumber: res.serial_number,
@@ -217,7 +214,8 @@ const ItemsSidebar = () => {
         propertyNumber: res.property_number,
         name: res.name,
         quantity: res.quantity,
-        location: res.location,
+        total: res.total,
+        unit: res.unit,
         supplier: res.supplier,
         dateAdded: res.created,
         serialNumber: res.serial_number,
@@ -232,7 +230,8 @@ const ItemsSidebar = () => {
 
         name: res.name,
         quantity: res.quantity,
-        location: res.location,
+        total: res.total,
+        unit: res.unit,
         supplier: res.supplier,
         dateAdded: res.created,
         serialNumber: res.serial_number,
@@ -253,8 +252,8 @@ const ItemsSidebar = () => {
       name,
       quantity,
       type,
-
-      location,
+      total,
+      unit,
       supplier,
       remarks,
     };
@@ -279,21 +278,8 @@ const ItemsSidebar = () => {
   const clearData = useCallback(() => {
     setItemResponse(null);
 
-    const empty = {
-      isAvailable: false,
-      name: '',
-      quantity: 0,
-      location: '',
-      supplier: '',
-      propertyNumber: '',
-      remarks: '',
-      type: ItemTypeOptions.IT,
-      dateAdded: '',
-      serialNumber: '',
-    };
-
-    setFields(empty);
-    setInitialFields(empty);
+    setFields(initialFieldValues);
+    setInitialFields(initialFieldValues);
   }, []);
 
   // When to clear data
@@ -310,12 +296,15 @@ const ItemsSidebar = () => {
 
   const addItem = async () => {
     try {
+      // todo: fix this
       const data: ItemRecord = {
         property_number: propertyNumber,
         name,
         quantity,
         type,
         supplier,
+        total,
+        unit,
         remarks,
         serial_number: await generateSerialNumber(),
       };
@@ -446,12 +435,21 @@ const ItemsSidebar = () => {
               }}
             />
           )}
-          <TextInputField
-            label="Location"
-            value={location}
+
+          <NumberInputField
+            label="Total"
+            value={total}
             isUpdate={state !== null}
             handleChange={v => {
-              setFields(old => ({ ...old, location: v }));
+              setFields(old => ({ ...old, total: v }));
+            }}
+          />
+          <TextInputField
+            label="Unit"
+            value={unit}
+            isUpdate={state !== null}
+            handleChange={v => {
+              setFields(old => ({ ...old, unit: v }));
             }}
           />
           <TextInputField
