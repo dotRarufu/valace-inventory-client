@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "pb-dev": "sudo ../pocketbase/pocketbase serve --http='170.10.12.83:8090'",
+    "pb-dev": "sudo ../pocketbase/pocketbase serve --http='192.168.0.119:8090'",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",

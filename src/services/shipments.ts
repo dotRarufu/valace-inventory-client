@@ -67,6 +67,16 @@ export const deleteShipment = async (id: string) => {
   // await pb.collection(Collections.Request).update(id, {
   //   is_removed: true,
   // });
+  console.log('delete shipemnt:', id);
+  const shipmentItems = await pb
+    .collection(Collections.ShipmentItem)
+    .getFullList({ filter: `shipment = '${id}'` });
+  await Promise.all(
+    shipmentItems.map(
+      async i => await pb.collection(Collections.ShipmentItem).delete(i.id)
+    )
+  );
+
   await pb.collection(Collections.Shipment).delete(id);
 };
 
