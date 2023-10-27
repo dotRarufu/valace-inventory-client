@@ -54,7 +54,7 @@ const columns = [
     cell: info => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      const roleName = info.renderValue();
+      const roleName = info.renderValue()!;
       const backgroundColor = getRoleColor(roleName);
 
       return (

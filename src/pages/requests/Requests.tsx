@@ -57,22 +57,25 @@ const Requests = () => {
   // Initial fetch
   useEffect(() => {
     getAllRequests()
-      .then(({ items }) => {
+      .then(items => {
+        console.log('row data set 1');
         const newValue: RequestDataRow[] = items.map(item => ({
           amount: item.amount,
           created: item.created,
           description: item.description,
           id: item.id,
           itemName: item.item_name,
-          officeName: item.office,
+          officeName: item.officeData.username,
           status: item.status,
           unit: item.unit,
           tag: item.tag,
         }));
 
+        console.log('row data set');
         setRowData(newValue);
       })
       .catch(err => {
+        console.log("err:", err)
         const error = err as PocketbaseError;
         const errorFields = Object.keys(error.data.data);
         const field =
@@ -89,7 +92,7 @@ const Requests = () => {
     console.log('runs update request');
 
     getAllRequests()
-      .then(({ items }) => {
+      .then(items => {
         const newValue: RequestDataRow[] = items.map(item => ({
           amount: item.amount,
           created: item.created,

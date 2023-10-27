@@ -3,6 +3,7 @@ import {
   RequestRecord,
   RequestResponse,
   RequestStatusOptions,
+  UserResponse,
 } from '../../pocketbase-types';
 import pb from '../lib/pocketbase';
 import { getAccount } from './accounts';
@@ -23,18 +24,27 @@ export const getAllRequests = async () => {
   const res = await pb
     .collection(Collections.Request)
     .getList<RequestResponse>(1, 10);
+  const offices = res.items.map(i => i.office);
+  const uniqueOffices = new Set<string>();
 
-  //   {
-  //   filter: 'is_removed = false',
-  // });
+  offices.forEach(o => uniqueOffices.add(o));
 
-  return res;
+  const officesData = await Promise.all(
+    [...uniqueOffices].map(
+      async o => await pb.collection(Collections.User).getOne<UserResponse>(o)
+    )
+  );
+
+  const actualRes = res.items.map(i => {
+    const match = officesData.filter(o => o.id === i.office)[0];
+
+    return { ...i, officeData: match };
+  });
+
+  return actualRes;
 };
 
 export const getApprovedRequests = async () => {
-  console.log('get approved requets filteR:', {
-    filter: `status = ${RequestStatusOptions.APPROVED}`,
-  });
   const res = await pb
     .collection(Collections.Request)
     .getList<RequestResponse>(1, 10, {
