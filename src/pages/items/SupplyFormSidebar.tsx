@@ -148,7 +148,7 @@ const SupplyFormSidebar = () => {
               {requestedItems.map(row => (
                 <li
                   key={row.id}
-                  className="flex items-center justify-between border border-primary py-2 pr-4"
+                  className="flex items-center justify-between py-2 pr-4"
                 >
                   <span className="h-[16px] font-khula text-base font-semibold leading-none text-primary">
                     {row.name}
@@ -163,7 +163,7 @@ const SupplyFormSidebar = () => {
                   </span>
                   <input
                     type="checkbox"
-                    className="checkbox"
+                    className="checkbox checkbox-primary"
                     onClick={() => {
                       setRequestedItems(old =>
                         old.map(o =>
