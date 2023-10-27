@@ -15,6 +15,22 @@ import { UserTypeOptions } from '../../../pocketbase-types';
 
 const columnHelper = createColumnHelper<AccountDataRow>();
 
+const getRoleColor = (role: UserTypeOptions) => {
+  switch (role) {
+    case UserTypeOptions.STAFF:
+      return 'badge-primary';
+    case UserTypeOptions.ADMIN:
+      return 'badge-accent';
+    case UserTypeOptions.OFFICE:
+      return 'badge-info';
+    case UserTypeOptions.OFFICER:
+      return 'badge-success';
+
+    default:
+      throw 'unknown role';
+  }
+};
+
 type Props = {
   setData: React.Dispatch<React.SetStateAction<AccountDataRow[]>>;
   data: AccountDataRow[];
@@ -39,8 +55,7 @@ const columns = [
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const roleName = info.renderValue();
-      const backgroundColor =
-        roleName === UserTypeOptions.STAFF ? 'badge-primary' : 'badge-accent';
+      const backgroundColor = getRoleColor(roleName);
 
       return (
         <span
