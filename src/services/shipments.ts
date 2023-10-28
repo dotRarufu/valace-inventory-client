@@ -14,6 +14,7 @@ import {
   RestockItemRequest,
 } from '../pages/items/SupplyFormSidebar';
 import { getAccount } from './accounts';
+import { getUser } from './auth';
 import { getItem } from './item';
 import { getRequest } from './request';
 
@@ -24,7 +25,15 @@ export const getAllShipments = async () => {
     .collection(Collections.Shipment)
     .getList<ShipmentResponse>(1, 10);
 
-  return res.items;
+  const actualRes = await Promise.all(
+    res.items.map(async i => {
+      const { username, name } = await getUser(i.created_by);
+
+      return { ...i, created_by: name || username };
+    })
+  );
+
+  return actualRes;
 };
 
 export const getAllShipmentsAndItems = async () => {
@@ -59,6 +68,16 @@ export const getShipment = async (id: string) => {
   const res = await pb
     .collection(Collections.Shipment)
     .getOne<ShipmentResponse>(id);
+
+  return res;
+};
+
+export const deleteShipmentItem = async (id: string) => {
+  // await pb.collection(Collections.Request).update(id, {
+  //   is_removed: true,
+  // });
+
+  const res = await pb.collection(Collections.ShipmentItem).delete(id);
 
   return res;
 };

@@ -7,6 +7,8 @@ import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
 import {
   checkAndMarkShipmentAsComplete,
+  deleteShipment,
+  deleteShipmentItem,
   getShipmentItem,
   updateShipmentItem,
 } from '../../../services/shipments';
@@ -18,6 +20,7 @@ import {
   UserResponse,
 } from '../../../../pocketbase-types';
 import generateSerialNumber from '../../items/utils/generateSerialNumber';
+import { increaseRowCount } from '../../items/utils/increaseRowCount';
 
 const ShipmentItemInfo = () => {
   const { id } = useParams();
@@ -52,10 +55,14 @@ const ShipmentItemInfo = () => {
         property_number: propertyNumber,
         serial_number: await generateSerialNumber(),
         total: receivedAmount,
+        quantity: receivedAmount,
         type: itemData.tag as unknown as ItemTypeOptions,
         unit: itemData.unit,
       };
+      console.log('serail number:', newStock.serial_number);
       await createItem(newStock);
+      await increaseRowCount('m940ztp5mzi2wlq');
+      await deleteShipmentItem(itemData.id);
     } else {
       const requests = [
         updateItem(itemData.restock_item_id, {

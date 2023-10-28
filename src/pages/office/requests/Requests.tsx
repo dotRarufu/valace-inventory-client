@@ -54,7 +54,7 @@ const OfficeRequests = () => {
   useEffect(() => {
     getAllRequests()
       .then(items => {
-        const stockItems: RequestedItem[] = items.items.map(
+        const stockItems: RequestedItem[] = items.map(
           (item): RequestedItem => ({
             date: item.created,
             description: item.description,
