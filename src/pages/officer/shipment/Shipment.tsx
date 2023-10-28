@@ -20,32 +20,6 @@ export type ShipmentItem = {
   expectedAmount: number;
 };
 
-export const dummyItems: ShipmentItem[] = [
-  {
-    name: 'Wooden Chair',
-    tag: ItemTypeOptions.Office,
-    id: 0,
-    requestedBy: 'IT Office',
-    description: 'Upuan ni Andrei',
-    expectedAmount: 1,
-  },
-  {
-    name: 'Goofy Mouse',
-    tag: ItemTypeOptions.IT,
-    id: 1,
-    requestedBy: 'IT Office',
-    description: 'Mouse ni Andrei',
-    expectedAmount: 1,
-  },
-  {
-    name: 'AMD A6 Laptop',
-    tag: ItemTypeOptions.IT,
-    id: 2,
-    requestedBy: 'IT Office',
-    description: 'Laptop ko',
-    expectedAmount: 1,
-  },
-];
 
 const Shipment = () => {
   const navigate = useNavigate();

@@ -1,6 +1,5 @@
 import { FiArrowLeft } from 'react-icons/fi';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { ShipmentItem, dummyItems } from './Shipment';
 import { useEffect, useState } from 'react';
 import { createItem, getItem, updateItem } from '../../../services/item';
 import { toast } from 'react-hot-toast';

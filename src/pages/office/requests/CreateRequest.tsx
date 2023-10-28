@@ -1,5 +1,5 @@
 import { FiArrowLeft } from 'react-icons/fi';
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { RequestedItem } from './Requests';
 import { createRequest } from '../../../services/request';
@@ -27,25 +27,20 @@ const emptyForm: Form = {
 
 const CreateRequest = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useUser()!;
   const [itemData, setItemData] = useState<RequestedItem | null>(null);
   const [form, setForm] = useState<Form>(emptyForm);
 
-  // useEffect(() => {
-  //   const data = dummyRequestedItems.filter(d => d.id === id)[0];
-
-  //   setItemData(data);
-  // }, [id]);
-
   const dropdown: RequestTagOptions[] = [
-    RequestTagOptions['Ano pa'],
+    RequestTagOptions.FURNITURE,
     RequestTagOptions.IT,
-    RequestTagOptions.Office,
+    RequestTagOptions.OFFICE,
   ];
 
   const handleDoneClick = async () => {
     try {
-      const data: RequestRecord = {
+      const data: Omit<RequestRecord, 'status'> = {
         amount: form.amount,
         description: form.description,
         item_name: form.name,
@@ -56,6 +51,7 @@ const CreateRequest = () => {
       await createRequest(data);
 
       toast.success('Request sent', toastSettings);
+      navigate('/office/requests');
     } catch (err) {
       const error = err as PocketbaseError;
       const errorFields = Object.keys(error.data.data);
@@ -164,13 +160,12 @@ const CreateRequest = () => {
 
       <div className="h-full"></div>
 
-      <NavLink
-        to="/office/requests"
+      <button
         onClick={() => void handleDoneClick()}
         className="btn-primary btn w-full rounded-[5px]"
       >
         Done
-      </NavLink>
+      </button>
     </div>
   );
 };

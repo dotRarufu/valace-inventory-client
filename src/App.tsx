@@ -89,11 +89,9 @@ const App = () => {
           path="officer"
           element={
             <ProtectedRoute
-              // redirectPath={
-              //   user === null ? '/login' : getUserTypePath(user.type)
-              // }
-              // isAllowed={!!user && user.type === UserTypeOptions.OFFICE}
-              redirectPath={''}
+              redirectPath={
+                user === null ? '/login' : getUserTypePath(user.type)
+              }
               isAllowed={true}
               children={<MobileAppWrapper bottomNavBar={<BottomNavBar />} />}
             />
@@ -140,7 +138,8 @@ const App = () => {
 
             <Route path="receipt/:id" element={<UtilizeReceipt />} />
           </Route>
-          <Route path="requests" element={<OfficeRequests />}>
+          <Route path="requests" element={<Outlet />}>
+            <Route index element={<OfficeRequests />} />
             <Route path="create" element={<CreateRequest />} />
             <Route path=":id" element={<RequestInfo />} />
           </Route>
