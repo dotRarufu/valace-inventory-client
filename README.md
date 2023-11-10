@@ -13,6 +13,7 @@ npm install
 <h2>⚙️ Setup</h2>
 
 <p>1. Create <code>.env</code> file in root with these:</p>
+
 | Keys                    | Example                   | Description                           |
 |-------------------------|---------------------------|---------------------------------------|
 | VITE_POCKETBASE_ADDRESS | http://170.10.31.175:8090 | Address of pocketbase instance        |
