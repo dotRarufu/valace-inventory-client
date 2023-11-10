@@ -4,12 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
-    "pb-dev": "sudo ../pocketbase/pocketbase serve --http='170.10.31.175:8090'",
+    "host": "vite --host",
+    "start": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "generate-types": "npx pocketbase-typegen --db ../pocketbase/pb_data/data.db --out pocketbase-types.ts"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@json2csv/plainjs": "^7.0.1",

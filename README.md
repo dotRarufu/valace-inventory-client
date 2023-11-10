@@ -1,37 +1,32 @@
-<br/>
-<p align="center">
-  <h3 align="center">ValAce Inventory</h3>
+<h1 id="title" align="center">ValAce Inventory</h1>
 
-  <p align="center">
-    an inventory system for Valenzuela City Library
-    <br/>
-  </p>
-</p>
+<p id="description">a client-side application for Valenzuela City Library inventory system</p>
 
+<h2>🔨 Installation</h2>
 
+<p>Install packages</p>
 
-## Screenshots
-
-![Screen Shot](images/screenshot.png)
-
-
-## Built With
-
-
-
-* [React]()
-* [Tailwind]()
-* [DaisyUI]()
-* [Pocketbase]()
-
-### Run
-
-```sh
-npm install 
 ```
-```sh
-npm run dev
+npm install
 ```
-```sh
-npm run pb-dev
+
+<h2>⚙️ Setup</h2>
+
+<p>1. Create <code>.env</code> file in root with these:</p>
+| Keys                    | Example                   | Description                           |
+|-------------------------|---------------------------|---------------------------------------|
+| VITE_POCKETBASE_ADDRESS | http://170.10.31.175:8090 | Address of pocketbase instance        |
+| VITE_BACKEND_ADDRESS    | http://172.17.0.1:3002    | Address of back-end operations server |
+| ADMIN_EMAIL             | admin1@email.com          | Admin email for generating types      |
+| ADMIN_PASSWORD          | admin1password            | Admin password for generating types   |
+
 ```
+npm run host
+```
+
+<h2>💻 Built with</h2>
+
+- React
+- Pocketbase
+- Tailwind
+- DaisyUI

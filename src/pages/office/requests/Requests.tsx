@@ -14,6 +14,7 @@ import {
   sortArrayByProperty,
 } from '../../../utils/sortArrayByProperty';
 import { FiArrowDown, FiArrowUp } from 'react-icons/fi';
+import { toTitleCase } from '../../../utils/toTitleCase';
 
 export type RequestedItem = {
   id: string;
@@ -44,7 +45,7 @@ export const REQUEST_STATUS: {
 
 const OfficeRequests = () => {
   const navigate = useNavigate();
-  const [activeUser, setActiveUser] = useState('IT Office');
+  const [activeUser] = useState('IT Office');
   const [items, setItems] = useState<RequestedItem[] | null>(null);
   const [sort, setSort] = useState<SortOrder>('asc');
 
@@ -137,7 +138,7 @@ const OfficeRequests = () => {
               >
                 {item.name}
                 <span className="badge badge-success pt-[3px]">
-                  {keyPairs[item.status] || 'Pending'}
+                  {toTitleCase(item.status) || ''}
                 </span>
               </li>
             ))}

@@ -76,7 +76,7 @@ const RequestInfo = () => {
           <FiArrowLeft />
         </NavLink>
         <span className="h-[12px] text-lg font-semibold leading-none">
-          {itemData.name} | {itemData.statusIndex}
+          {itemData.name}
         </span>
       </div>
       <ul className="steps">
