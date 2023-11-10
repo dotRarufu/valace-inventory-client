@@ -4,13 +4,16 @@ import { NavLink, useParams } from 'react-router-dom';
 import { RequestedItem } from './Requests';
 import { getRequest } from '../../../services/request';
 import { UserResponse } from '../../../../pocketbase-types';
+import { toTitleCase } from '../../../utils/toTitleCase';
+import { toast } from 'react-hot-toast';
+import { toastSettings } from '../../../data/toastSettings';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const keyPairs: { [REQUEST_STATUS: string]: string } = {
-  pending: 'Pending',
-  approved: 'Approved',
-  requested: 'Requested',
-  completed: 'Completed',
+  pending: 'PENDING',
+  approved: 'APPROVED',
+  requested: 'REQUESTED',
+  completed: 'COMPLETED',
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -27,9 +30,10 @@ const RequestInfo = () => {
 
     getRequest(id)
       .then(data => {
-        const statusIndex = STAGE_NAMES.findIndex(
-          v => v === keyPairs[data.status]
-        );
+        const statusIndex = STAGE_NAMES.findIndex(v => v === data.status);
+
+        if (statusIndex === -1) throw new Error('Unknown status');
+
         const newValue: RequestedItem & {
           statusIndex: number;
           officeData: UserResponse;
@@ -49,8 +53,9 @@ const RequestInfo = () => {
 
         setItemData(newValue);
       })
-      .catch(() => {
-        console.log();
+      .catch(err => {
+        toast.error('Failed to display request info', toastSettings);
+        console.error(err);
       });
 
     // only run once
@@ -71,7 +76,7 @@ const RequestInfo = () => {
           <FiArrowLeft />
         </NavLink>
         <span className="h-[12px] text-lg font-semibold leading-none">
-          {itemData.name}
+          {itemData.name} | {itemData.statusIndex}
         </span>
       </div>
       <ul className="steps">
@@ -82,7 +87,7 @@ const RequestInfo = () => {
               index <= itemData.statusIndex ? 'step-primary' : ''
             }`}
           >
-            {name}
+            {toTitleCase(name)}
           </li>
         ))}
       </ul>

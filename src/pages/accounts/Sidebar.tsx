@@ -16,9 +16,9 @@ import { recordActivity } from '../../services/logger';
 import { PocketbaseError } from '../../types/PocketbaseError';
 
 const initialFieldValues = {
-  username: 'test',
+  username: '',
   type: UserTypeOptions.STAFF,
-  password: 'mypassword',
+  password: '',
   isActive: false,
 };
 
