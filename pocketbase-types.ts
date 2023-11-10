@@ -98,7 +98,7 @@ export type ItemRecord = {
 	remarks?: string
 	type: ItemTypeOptions
 	images?: string[]
-	property_number: string
+	property_number?: string
 	serial_number: string
 	is_removed?: boolean
 	qr?: string

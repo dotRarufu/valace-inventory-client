@@ -132,7 +132,8 @@ const UtilizeRequest = () => {
             </span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {utilizationRequest?.officeData.name}
+              {utilizationRequest?.officeData.name ||
+                utilizationRequest?.officeData.username}
             </div>
           </div>
         </li>

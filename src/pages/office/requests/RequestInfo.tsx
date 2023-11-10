@@ -131,7 +131,7 @@ const RequestInfo = () => {
             </span>
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
-              {itemData.officeData.name}
+              {itemData.officeData.name || itemData?.officeData.username}
             </div>
           </div>
         </li>
