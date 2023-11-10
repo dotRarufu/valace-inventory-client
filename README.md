@@ -12,7 +12,7 @@ npm install
 
 <h2>⚙️ Setup</h2>
 
-<p>1. Create <code>.env</code> file in root with these:</p>
+<p>Create <code>.env</code> file in root with these:</p>
 
 | Keys                    | Example                   | Description                           |
 |-------------------------|---------------------------|---------------------------------------|
@@ -20,6 +20,8 @@ npm install
 | VITE_BACKEND_ADDRESS    | http://172.17.0.1:3002    | Address of back-end operations server |
 | ADMIN_EMAIL             | admin1@email.com          | Admin email for generating types      |
 | ADMIN_PASSWORD          | admin1password            | Admin password for generating types   |
+
+<h2>🏃 Run</h2>
 
 ```
 npm run host
