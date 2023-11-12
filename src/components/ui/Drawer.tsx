@@ -36,6 +36,18 @@ const Drawer = ({ body }: Props) => {
 
   const drawerCheckboxRef = useRef<HTMLInputElement>(null);
 
+  // Close drawer on esc press
+  useEffect(() => {
+    const callback = (d: KeyboardEvent) => {
+      if (d.key !== 'Escape') return;
+
+      drawerCheckboxRef.current!.checked = false;
+    };
+    window.addEventListener('keydown', callback);
+
+    return () => window.removeEventListener('keydown', callback);
+  }, []);
+
   useEffect(() => {
     setDrawerRef(drawerCheckboxRef);
   }, [setDrawerRef]);
