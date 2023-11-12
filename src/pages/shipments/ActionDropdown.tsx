@@ -11,6 +11,9 @@ import { toastSettings } from '../../data/toastSettings';
 import { PocketbaseError } from '../../types/PocketbaseError';
 
 import { deleteShipment } from '../../services/shipments';
+import useUser from '../../hooks/useUser';
+import { recordActivity } from '../../services/logger';
+import { ActivityActionOptions } from '../../../pocketbase-types';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -18,6 +21,7 @@ type Props = {
 };
 
 const ActionDropdown = ({ position, id }: Props) => {
+  const { user } = useUser()!;
   const {
     setActiveTable,
     // setState,
@@ -46,10 +50,10 @@ const ActionDropdown = ({ position, id }: Props) => {
 
     // TODO: for deleting request
     // Should never fail
-    // await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
-    //   userId: user!.id,
-    //   targetUserId: id,
-    // });
+    await recordActivity(ActivityActionOptions['DELETE SHIPMENT'], {
+      userId: user!.id,
+      shipmentId: id,
+    });
 
     toast.success(`Request deleted`, toastSettings);
     setShouldUpdateTable(true);
@@ -100,7 +104,7 @@ const ActionDropdown = ({ position, id }: Props) => {
           </label>
         </li>
 
-        <li>
+        {/* <li>
           <label
             onClick={() => void handlePrintClick()}
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px] "
@@ -108,7 +112,7 @@ const ActionDropdown = ({ position, id }: Props) => {
             <div className="h-[13px]">Print</div>
             <img src={editIcon} />
           </label>
-        </li>
+        </li> */}
         <li>
           <label
             onClick={() => void handleDeleteRequest()}

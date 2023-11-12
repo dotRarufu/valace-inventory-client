@@ -1,6 +1,7 @@
 import TextInputField from '../../components/field/TextInputField';
 import { useCallback, useEffect, useState } from 'react';
 import {
+  ActivityActionOptions,
   RequestRecord,
   RequestStatusOptions,
   RequestTagOptions,
@@ -15,6 +16,8 @@ import {
   judgeRequest,
   removeRequest,
 } from '../../services/request';
+import { recordActivity } from '../../services/logger';
+import useUser from '../../hooks/useUser';
 
 const emptyRequest: RequestRecord = {
   amount: 0,
@@ -27,6 +30,7 @@ const emptyRequest: RequestRecord = {
 };
 
 const RequestsSidebar = () => {
+  const { user } = useUser();
   const { activeRowId, drawerRef, setShouldUpdateTable } = useDrawer()!;
   const [fields, setFields] = useState(emptyRequest);
   const { amount, description, item_name, office, tag, unit, status } = fields;
@@ -80,10 +84,10 @@ const RequestsSidebar = () => {
 
     // TODO: for record activity
     // Should never fail
-    // await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
-    //   userId: user!.id,
-    //   targetUserId: id,
-    // });
+    await recordActivity(ActivityActionOptions['APPROVE REQUEST'], {
+      userId: user!.id,
+      requestId: activeRowId,
+    });
 
     toast.success(`Request approved`, toastSettings);
     setShouldUpdateTable(true);
@@ -91,6 +95,12 @@ const RequestsSidebar = () => {
   };
 
   const handleDeleteRequest = async () => {
+    // Should never fail
+    await recordActivity(ActivityActionOptions['DELETE REQUEST'], {
+      userId: user!.id,
+      requestId: activeRowId,
+    });
+
     await removeRequest(activeRowId).catch(err => {
       const error = err as PocketbaseError;
       const errorFields = Object.keys(error.data.data);
@@ -100,13 +110,6 @@ const RequestsSidebar = () => {
 
       toast.error(message, toastSettings);
     });
-
-    // TODO: for deleting request
-    // Should never fail
-    // await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
-    //   userId: user!.id,
-    //   targetUserId: id,
-    // });
 
     toast.success(`Request deleted`, toastSettings);
     setShouldUpdateTable(true);

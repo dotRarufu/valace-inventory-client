@@ -7,16 +7,18 @@ import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
 import { PocketbaseError } from '../../types/PocketbaseError';
 import {
-  getRequest,
   getRequestNoOffice,
   judgeRequest,
   removeRequest,
 } from '../../services/request';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
+  ActivityActionOptions,
   RequestResponse,
   RequestStatusOptions,
 } from '../../../pocketbase-types';
+import { recordActivity } from '../../services/logger';
+import { UserContext } from '../../contexts/UserContext';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -24,7 +26,7 @@ type Props = {
 };
 
 const ActionDropdown = ({ position, id }: Props) => {
-  // const { user } = useContext(UserContext)!;
+  const { user } = useContext(UserContext)!;
   const {
     setActiveTable,
     // setState,
@@ -52,6 +54,13 @@ const ActionDropdown = ({ position, id }: Props) => {
   }, [id]);
 
   const handleDeleteRequest = async () => {
+    // TODO: for deleting request
+    // Should never fail
+    await recordActivity(ActivityActionOptions['DELETE REQUEST'], {
+      userId: user!.id,
+      requestId: id,
+    });
+
     await removeRequest(id).catch(err => {
       const error = err as PocketbaseError;
       const errorFields = Object.keys(error.data.data);
@@ -61,13 +70,6 @@ const ActionDropdown = ({ position, id }: Props) => {
 
       toast.error(message, toastSettings);
     });
-
-    // TODO: for deleting request
-    // Should never fail
-    // await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
-    //   userId: user!.id,
-    //   targetUserId: id,
-    // });
 
     toast.success(`Request deleted`, toastSettings);
     setShouldUpdateTable(true);
@@ -84,12 +86,11 @@ const ActionDropdown = ({ position, id }: Props) => {
       toast.error(message, toastSettings);
     });
 
-    // TODO: for deleting request
     // Should never fail
-    // await recordActivity(ActivityActionOptions['DELETE ACCOUNT'], {
-    //   userId: user!.id,
-    //   targetUserId: id,
-    // });
+    await recordActivity(ActivityActionOptions['APPROVE REQUEST'], {
+      userId: user!.id,
+      requestId: id,
+    });
 
     toast.success(`Request approved`, toastSettings);
     setShouldUpdateTable(true);

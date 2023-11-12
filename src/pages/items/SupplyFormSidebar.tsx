@@ -15,7 +15,11 @@ import {
 } from '../../services/request';
 import { createShipment, createShipmentItems } from '../../services/shipments';
 import useUser from '../../hooks/useUser';
-import { RequestStatusOptions } from '../../../pocketbase-types';
+import {
+  ActivityActionOptions,
+  RequestStatusOptions,
+} from '../../../pocketbase-types';
+import { recordActivity } from '../../services/logger';
 
 export type RestockItemRequest = {
   id: string;
@@ -101,6 +105,10 @@ const SupplyFormSidebar = () => {
       anchorDownloadRef.current!.download = 'supply-form.xlsx';
       anchorDownloadRef.current!.click();
       drawerRef!.current!.click();
+      await recordActivity(ActivityActionOptions['PRINT SHIPMENT'], {
+        userId: user!.id,
+        shipmentId: shipment.id,
+      });
       toast.success('Form generated', toastSettings);
     } catch (err) {
       const error = err as PocketbaseError;

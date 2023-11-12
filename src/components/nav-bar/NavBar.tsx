@@ -13,7 +13,6 @@ import { recordActivity } from '../../services/logger';
 import {
   FiActivity,
   FiClipboard,
-  FiMonitor,
   FiPackage,
   FiTruck,
   FiUsers,

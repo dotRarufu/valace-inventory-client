@@ -50,7 +50,6 @@ export enum ActivityActionOptions {
 	"LOGOUT" = "LOGOUT",
 	"EDIT NAME" = "EDIT NAME",
 	"EDIT QUANTITY" = "EDIT QUANTITY",
-	"EDIT LOCATION" = "EDIT LOCATION",
 	"EDIT SUPPLIER" = "EDIT SUPPLIER",
 	"EDIT REMARKS" = "EDIT REMARKS",
 	"EDIT TYPE" = "EDIT TYPE",
@@ -64,6 +63,10 @@ export enum ActivityActionOptions {
 	"DELETE ITEM IMAGE" = "DELETE ITEM IMAGE",
 	"EDIT TOTAL" = "EDIT TOTAL",
 	"EDIT UNIT" = "EDIT UNIT",
+	"APPROVE REQUEST" = "APPROVE REQUEST",
+	"DELETE REQUEST" = "DELETE REQUEST",
+	"PRINT SHIPMENT" = "PRINT SHIPMENT",
+	"DELETE SHIPMENT" = "DELETE SHIPMENT",
 }
 export type ActivityRecord = {
 	user_id: RecordIdString
@@ -72,6 +75,8 @@ export type ActivityRecord = {
 	edit_old_value?: string
 	edit_new_value?: string
 	action: ActivityActionOptions
+	request_id?: string
+	shipment_id?: string
 }
 
 export type BorrowRecord = {

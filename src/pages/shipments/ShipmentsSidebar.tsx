@@ -123,12 +123,12 @@ const ShipmentsSidebar = () => {
         <div className="h-full"></div>
 
         <div className="flex items-center justify-end gap-[16px] py-[32px]">
-          <button
+          {/* <button
             onClick={() => void handlePrintShipment()}
             className="btn-primary btn px-[16px] text-[20px]  font-semibold"
           >
             <span className="h-[13px] ">Print</span>
-          </button>
+          </button> */}
 
           <button
             onClick={() => void handleDeleteShipment()}

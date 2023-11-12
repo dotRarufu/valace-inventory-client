@@ -11,6 +11,8 @@ import { ActivityData } from '../pages/activity-log/LogList';
 import Admin from '../components/icons/Admin';
 import Staff from '../components/icons/Staff';
 import { getUser } from './auth';
+import { getShipment } from './shipments';
+import { getRequest } from './request';
 
 export const recordActivity = async (
   action: ActivityActionOptions,
@@ -20,9 +22,19 @@ export const recordActivity = async (
     oldValue?: string;
     itemId?: string;
     targetUserId?: string;
+    requestId?: string;
+    shipmentId?: string;
   }
 ) => {
-  const { userId, newValue, oldValue, itemId, targetUserId } = info;
+  const {
+    userId,
+    newValue,
+    oldValue,
+    itemId,
+    targetUserId,
+    requestId,
+    shipmentId,
+  } = info;
 
   const data: ActivityRecord = {
     user_id: userId,
@@ -31,15 +43,21 @@ export const recordActivity = async (
     edit_old_value: oldValue,
     item_id: itemId,
     target_user_id: targetUserId,
+    request_id: requestId,
+    shipment_id: shipmentId,
   };
+  console.log('create log:', data);
 
-  await pb.collection(Collections.Activity).create(data);
+  const created = await pb.collection(Collections.Activity).create(data);
+  console.log('created:', created);
 };
 
 export const getActivityData = async (activity: ActivityResponse) => {
   const {
     user_id: userId,
     item_id: itemId,
+    shipment_id: shipmentId,
+    request_id: requestId,
     target_user_id: targetUserId,
     action,
     edit_new_value,
@@ -48,12 +66,15 @@ export const getActivityData = async (activity: ActivityResponse) => {
   } = activity;
   const user = await getUser(userId);
   // todo: update type: this could result in PocketbaseError
-  const item = await getItem(itemId);
-  const targetUser = await getUser(targetUserId);
+  const item = (itemId && (await getItem(itemId))) || null;
+  const targetUser = (targetUserId && (await getUser(targetUserId))) || null;
+  // const shipment = (targetUserId && (await getShipment(shipmentId))) || null;
+  // const request = (targetUserId && (await getRequest(requestId))) || null;
   const actionDescription = getActionDescription(action, {
-    username: user.username,
-    targetName: item.name || targetUser.username,
+    username: user.name || user.username,
+    targetName: item?.name || targetUser?.username || shipmentId || requestId,
   });
+  console.log('action:', activity, actionDescription);
 
   const res: ActivityData = {
     name: user.username,
@@ -108,8 +129,8 @@ const getActionDescription = (
       return `changed ${targetName}'s role`;
     case ActivityActionOptions['EDIT ACCOUNT STATUS']:
       return `changed ${targetName}'s status`;
-    case ActivityActionOptions['EDIT LOCATION']:
-      return `changed ${targetName}'s location`;
+    // case ActivityActionOptions['EDIT LOCATION']:
+    //   return `changed ${targetName}'s location`;
     case ActivityActionOptions['EDIT NAME']:
       return `changed ${targetName}'s name`;
     case ActivityActionOptions['EDIT PROPERTY NUMBER']:
@@ -137,8 +158,6 @@ const getActionDescription = (
       return `edited the name of ${targetName}`;
     case 'EDIT QUANTITY':
       return `edited the quantity of ${targetName}`;
-    case 'EDIT LOCATION':
-      return `edited the location of ${targetName}`;
     case 'EDIT SUPPLIER':
       return `edited the supplier of ${targetName}`;
     case 'EDIT REMARKS':
@@ -148,7 +167,17 @@ const getActionDescription = (
     case 'EDIT IMAGES':
       return `edited the images of ${targetName}`;
 
+    case ActivityActionOptions['APPROVE REQUEST']:
+      return `approved request ${targetName}`;
+    case ActivityActionOptions['DELETE REQUEST']:
+      return `deleted request ${targetName}`;
+    case ActivityActionOptions['PRINT SHIPMENT']:
+      return `printed a supply form for shipment ${targetName}`;
+    case ActivityActionOptions['DELETE SHIPMENT']:
+      return `deleted shipment ${targetName}`;
+
     default:
+      console.log('NOMATCH:', activity, data);
       return '';
   }
 };
