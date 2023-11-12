@@ -7,7 +7,8 @@
     "host": "vite --host",
     "start": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-types": "./tools/generate-types.sh"
   },
   "dependencies": {
     "@json2csv/plainjs": "^7.0.1",

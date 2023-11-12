@@ -19,6 +19,8 @@ import {
 } from '../../../../pocketbase-types';
 import generateSerialNumber from '../../items/utils/generateSerialNumber';
 import { increaseRowCount } from '../../items/utils/increaseRowCount';
+import { qrCode } from '../../../services/qrCodeStyling';
+import { getBaseUrl } from '../../../utils/getBaseUrl';
 
 const ShipmentItemInfo = () => {
   const { id } = useParams();
@@ -37,7 +39,7 @@ const ShipmentItemInfo = () => {
       })
       .catch(err => {
         toast.error('Failed to get shipment item data', toastSettings);
-        console.log(err)
+        console.log(err);
       });
   }, [id]);
 
@@ -45,8 +47,6 @@ const ShipmentItemInfo = () => {
     if (!itemData || !id) return;
 
     if (itemData.type === ShipmentItemTypeOptions.REQUEST) {
-      // todo: ask for location when user is borrowing item
-      // todo: update admin client, remove location field
       const newStock: ItemRecord = {
         name: itemData.item_name,
         // todo: add field for property number
@@ -60,6 +60,21 @@ const ShipmentItemInfo = () => {
       await createItem(newStock);
       await increaseRowCount('m940ztp5mzi2wlq');
       await deleteShipmentItem(itemData.id);
+      const newFormData = new FormData();
+      const address = getBaseUrl();
+      const route = 'user';
+      const query = '?id=';
+
+      qrCode.update({
+        data: `${address}/${route}${query}${id}`,
+      });
+      const file = await qrCode.getRawData();
+
+      if (file === null)
+        throw new Error('could not convert qrcoderaw data to blob');
+
+      newFormData.append('qr', file);
+      await updateItem(id, newFormData);
     } else {
       const requests = [
         updateItem(itemData.restock_item_id, {
