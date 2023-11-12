@@ -5,6 +5,7 @@ import { getImageUrlTokenized } from '../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
 import { PocketbaseError } from '../../types/PocketbaseError';
+import { FiMinus, FiPlus } from 'react-icons/fi';
 
 type Props = {
   row: ItemDataRow;
@@ -70,23 +71,23 @@ const RestockItem = ({ row, setPrintItems }: Props) => {
         <span>Stock: {row.quantity}</span>
       
       </div>
-      <div className="join-vertical join">
+      <div className="join-horizontal join flex items-center">
         <button
           onClick={() => setAmount(old => old + 1)}
-          className="btn-primary btn-square btn-sm join-item btn"
+          className="btn-primary btn-square join-item btn"
         >
-          +
+          <FiPlus className="h-[28px] w-[28px] text-primary-content"/>
         </button>
         <input
-          className="input input-sm w-8 rounded-none p-2"
+          className="input font-bold w-16 text-center rounded-none p-2 text-lg"
           value={amount}
           onChange={e => handleInputChange(e.target.value)}
         />
         <button
           onClick={() => setAmount(old => (old !== 0 ? old - 1 : 0))}
-          className="btn-error btn-square btn-sm join-item btn"
+          className="btn-error btn-square join-item btn"
         >
-          -
+          <FiMinus  className="h-[28px] w-[28px] text-error-content" />
         </button>
       </div>
     </li>
