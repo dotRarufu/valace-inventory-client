@@ -85,10 +85,7 @@ const RequestsSidebar = () => {
     //   targetUserId: id,
     // });
 
-    toast.success(
-      `Request approved`,
-      toastSettings
-    );
+    toast.success(`Request approved`, toastSettings);
     setShouldUpdateTable(true);
     drawerRef!.current!.checked = false;
   };
@@ -153,12 +150,14 @@ const RequestsSidebar = () => {
         <div className="h-full"></div>
 
         <div className="flex items-center justify-end gap-[16px] py-[32px]">
-          <button
-            onClick={() => void handleJudgeRequest()}
-            className="btn-primary btn px-[16px] text-[20px]  font-semibold"
-          >
-            <span className="h-[13px] ">Approve</span>
-          </button>
+          {status === RequestStatusOptions.PENDING && (
+            <button
+              onClick={() => void handleJudgeRequest()}
+              className="btn-primary btn px-[16px] text-[20px]  font-semibold"
+            >
+              <span className="h-[13px] ">Approve</span>
+            </button>
+          )}
           {/* <button
             onClick={() => void handleJudgeRequest(false)}
             className="btn-outline btn px-[16px] text-[20px] font-semibold  hover:btn-error"

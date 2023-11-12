@@ -6,7 +6,17 @@ import { useDrawer } from '../../hooks/useDrawer';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
 import { PocketbaseError } from '../../types/PocketbaseError';
-import { judgeRequest, removeRequest } from '../../services/request';
+import {
+  getRequest,
+  getRequestNoOffice,
+  judgeRequest,
+  removeRequest,
+} from '../../services/request';
+import { useEffect, useState } from 'react';
+import {
+  RequestResponse,
+  RequestStatusOptions,
+} from '../../../pocketbase-types';
 
 type Props = {
   position?: 'top' | 'bottom';
@@ -29,6 +39,17 @@ const ActionDropdown = ({ position, id }: Props) => {
     // setState(null);
     drawerRef!.current!.click();
   };
+  const [requestData, setRequestData] = useState<RequestResponse | null>(null);
+
+  useEffect(() => {
+    getRequestNoOffice(id)
+      .then(d => {
+        setRequestData(d);
+      })
+      .catch(err => {
+        console.log('error getting request data:', err);
+      });
+  }, [id]);
 
   const handleDeleteRequest = async () => {
     await removeRequest(id).catch(err => {
@@ -70,10 +91,7 @@ const ActionDropdown = ({ position, id }: Props) => {
     //   targetUserId: id,
     // });
 
-    toast.success(
-      `Request approved`,
-      toastSettings
-    );
+    toast.success(`Request approved`, toastSettings);
     setShouldUpdateTable(true);
   };
 
@@ -112,15 +130,17 @@ const ActionDropdown = ({ position, id }: Props) => {
             <img src={fullscreenIcon} />
           </label>
         </li> */}
-        <li>
-          <label
-            onClick={() => void handleManageClick()}
-            className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px] "
-          >
-            <div className="h-[13px]">Approve</div>
-            <img src={editIcon} />
-          </label>
-        </li>
+        {requestData?.status === RequestStatusOptions.PENDING && (
+          <li>
+            <label
+              onClick={() => void handleManageClick()}
+              className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px] "
+            >
+              <div className="h-[13px]">Approve</div>
+              <img src={editIcon} />
+            </label>
+          </li>
+        )}
         <li>
           <label
             onClick={() => void handleDeleteRequest()}

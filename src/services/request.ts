@@ -63,6 +63,15 @@ export const getRequest = async (id: string) => {
   return { ...res, officeData };
 };
 
+export const getRequestNoOffice = async (id: string) => {
+  const res = await pb
+    .collection(Collections.Request)
+    .getOne<RequestResponse>(id);
+  const officeData = await getAccount(res.office);
+
+  return { ...res, officeData };
+};
+
 // export const addItemImages = async (id: string, data: FormData) => {
 //   const res = await pb.collection(Collections.Item).update(id, data);
 
