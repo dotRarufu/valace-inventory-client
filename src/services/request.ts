@@ -76,11 +76,19 @@ export const removeRequest = async (id: string) => {
   await pb.collection(Collections.Request).delete(id);
 };
 
-export const judgeRequest = async (id: string, isApproved: boolean) => {
+export const judgeRequest = async (id: string) => {
   const data: Partial<RequestRecord> = {
-    status: isApproved
-      ? RequestStatusOptions.APPROVED
-      : RequestStatusOptions.DECLINED,
+    status: RequestStatusOptions.APPROVED,
+  };
+  await pb.collection(Collections.Request).update(id, data);
+};
+
+export const updateRequestStatus = async (
+  id: string,
+  status: RequestStatusOptions
+) => {
+  const data: Partial<RequestRecord> = {
+    status,
   };
   await pb.collection(Collections.Request).update(id, data);
 };

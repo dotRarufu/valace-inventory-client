@@ -52,8 +52,8 @@ const ActionDropdown = ({ position, id }: Props) => {
     setShouldUpdateTable(true);
   };
 
-  const handleManageClick = async (isApproved: boolean) => {
-    await judgeRequest(id, isApproved).catch(err => {
+  const handleManageClick = async () => {
+    await judgeRequest(id).catch(err => {
       const error = err as PocketbaseError;
       const errorFields = Object.keys(error.data.data);
       const field =
@@ -71,7 +71,7 @@ const ActionDropdown = ({ position, id }: Props) => {
     // });
 
     toast.success(
-      `Request ${isApproved ? 'approved' : 'declined'}`,
+      `Request approved`,
       toastSettings
     );
     setShouldUpdateTable(true);
@@ -103,7 +103,7 @@ const ActionDropdown = ({ position, id }: Props) => {
             <img src={fullscreenIcon} />
           </label>
         </li>
-        <li>
+        {/* <li>
           <label
             onClick={() => void handleManageClick(false)}
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px]"
@@ -111,10 +111,10 @@ const ActionDropdown = ({ position, id }: Props) => {
             <div className="h-[13px]">Decline</div>
             <img src={fullscreenIcon} />
           </label>
-        </li>
+        </li> */}
         <li>
           <label
-            onClick={() => void handleManageClick(true)}
+            onClick={() => void handleManageClick()}
             className="btn-ghost btn drawer-overlay justify-between rounded-[5px] font-khula text-[20px] "
           >
             <div className="h-[13px]">Approve</div>

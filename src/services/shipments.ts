@@ -134,6 +134,7 @@ export const createShipmentItems = async (
     unit: r.unit,
     shipment: shipmentId,
     type: ShipmentItemTypeOptions.REQUEST,
+    request: r.id,
   }));
 
   const dataRestocks: ShipmentItemRecord[] = restocksData.map(r => {

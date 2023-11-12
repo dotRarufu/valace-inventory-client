@@ -9,9 +9,13 @@ import RestockItem from './RestockItem';
 
 import { generateSupplyForm } from './utils/generateSupplyForm';
 import getCurrentMonthYear from './utils/getCurrentMonthYear';
-import { getApprovedRequests, removeRequest } from '../../services/request';
+import {
+  getApprovedRequests,
+  updateRequestStatus,
+} from '../../services/request';
 import { createShipment, createShipmentItems } from '../../services/shipments';
 import useUser from '../../hooks/useUser';
+import { RequestStatusOptions } from '../../../pocketbase-types';
 
 export type RestockItemRequest = {
   id: string;
@@ -83,8 +87,15 @@ const SupplyFormSidebar = () => {
       });
 
       await createShipmentItems(restocks, requests, shipment.id);
+      // todo: update request item status
+      // await Promise.all(
+      //   requestedItems.map(async i => await removeRequest(i.id))
+      // );
       await Promise.all(
-        requestedItems.map(async i => await removeRequest(i.id))
+        requestedItems.map(
+          async i =>
+            await updateRequestStatus(i.id, RequestStatusOptions.REQUESTED)
+        )
       );
       anchorDownloadRef.current!.href = res;
       anchorDownloadRef.current!.download = 'supply-form.xlsx';

@@ -13,6 +13,7 @@ import {
 import {
   ItemRecord,
   ItemTypeOptions,
+  RequestStatusOptions,
   ShipmentItemResponse,
   ShipmentItemTypeOptions,
   UserResponse,
@@ -21,6 +22,7 @@ import generateSerialNumber from '../../items/utils/generateSerialNumber';
 import { increaseRowCount } from '../../items/utils/increaseRowCount';
 import { qrCode } from '../../../services/qrCodeStyling';
 import { getBaseUrl } from '../../../utils/getBaseUrl';
+import { getRequest, updateRequestStatus } from '../../../services/request';
 
 const ShipmentItemInfo = () => {
   const { id } = useParams();
@@ -29,6 +31,7 @@ const ShipmentItemInfo = () => {
     (ShipmentItemResponse & { officeData: UserResponse }) | null
   >(null);
   const [receivedAmount, setReceivedAmount] = useState(0);
+  const [supplier, setSupplier] = useState('');
 
   useEffect(() => {
     if (!id) return;
@@ -55,9 +58,19 @@ const ShipmentItemInfo = () => {
         quantity: receivedAmount,
         type: itemData.tag as unknown as ItemTypeOptions,
         unit: itemData.unit,
+        supplier,
       };
+
+      if (
+        itemData.type === ShipmentItemTypeOptions.REQUEST &&
+        itemData.request
+      ) {
+        const requestData = await getRequest(itemData.request);
+        newStock.remarks = requestData.description;
+      }
+
       console.log('serail number:', newStock.serial_number);
-      await createItem(newStock);
+      const createdItem = await createItem(newStock);
       await increaseRowCount('m940ztp5mzi2wlq');
       await deleteShipmentItem(itemData.id);
       const newFormData = new FormData();
@@ -74,7 +87,12 @@ const ShipmentItemInfo = () => {
         throw new Error('could not convert qrcoderaw data to blob');
 
       newFormData.append('qr', file);
-      await updateItem(id, newFormData);
+      console.log('recieveD:', id, itemData.id, itemData.restock_item_id);
+      await updateItem(createdItem.id, newFormData);
+      await updateRequestStatus(
+        itemData.request,
+        RequestStatusOptions.COMPLETED
+      );
     } else {
       const requests = [
         updateItem(itemData.restock_item_id, {
@@ -173,6 +191,18 @@ const ShipmentItemInfo = () => {
             type="number"
             value={receivedAmount}
             onChange={e => setReceivedAmount(Number(e.target.value))}
+            className="input-bordered input input-md w-full max-w-[96px] rounded-[5px] bg-primary/10 pt-[2px] text-primary [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
+          />
+        </div>
+        <div className=" flex max-h-[53px] items-center justify-between py-[4px] ">
+          <span className="h-[16px] text-lg leading-none text-base-content">
+            Supplier:
+          </span>
+
+          <input
+            type="text"
+            value={supplier}
+            onChange={e => setSupplier(e.target.value)}
             className="input-bordered input input-md w-full max-w-[96px] rounded-[5px] bg-primary/10 pt-[2px] text-primary [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
           />
         </div>

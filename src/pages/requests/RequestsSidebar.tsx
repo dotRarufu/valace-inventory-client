@@ -23,7 +23,7 @@ const emptyRequest: RequestRecord = {
   office: '',
   tag: RequestTagOptions.IT,
   unit: '',
-  status: RequestStatusOptions['ANO PA'],
+  status: RequestStatusOptions.PENDING,
 };
 
 const RequestsSidebar = () => {
@@ -67,8 +67,8 @@ const RequestsSidebar = () => {
     setFields(emptyRequest);
   }, []);
 
-  const handleJudgeRequest = async (isApproved: boolean) => {
-    await judgeRequest(activeRowId, isApproved).catch(err => {
+  const handleJudgeRequest = async () => {
+    await judgeRequest(activeRowId).catch(err => {
       const error = err as PocketbaseError;
       const errorFields = Object.keys(error.data.data);
       const field =
@@ -86,7 +86,7 @@ const RequestsSidebar = () => {
     // });
 
     toast.success(
-      `Request ${isApproved ? 'approved' : 'declined'}`,
+      `Request approved`,
       toastSettings
     );
     setShouldUpdateTable(true);
@@ -154,17 +154,17 @@ const RequestsSidebar = () => {
 
         <div className="flex items-center justify-end gap-[16px] py-[32px]">
           <button
-            onClick={() => void handleJudgeRequest(true)}
+            onClick={() => void handleJudgeRequest()}
             className="btn-primary btn px-[16px] text-[20px]  font-semibold"
           >
             <span className="h-[13px] ">Approve</span>
           </button>
-          <button
+          {/* <button
             onClick={() => void handleJudgeRequest(false)}
             className="btn-outline btn px-[16px] text-[20px] font-semibold  hover:btn-error"
           >
             <span className="h-[13px] ">Decline</span>
-          </button>
+          </button> */}
           <button
             onClick={() => void handleDeleteRequest()}
             className="btn-outline btn px-[16px] text-[20px] font-semibold  hover:btn-error"

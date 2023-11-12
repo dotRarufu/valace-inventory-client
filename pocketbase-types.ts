@@ -115,8 +115,8 @@ export enum RequestTagOptions {
 export enum RequestStatusOptions {
 	"PENDING" = "PENDING",
 	"APPROVED" = "APPROVED",
-	"ANO PA" = "ANO PA",
-	"DECLINED" = "DECLINED",
+	"REQUESTED" = "REQUESTED",
+	"COMPLETED" = "COMPLETED",
 }
 export type RequestRecord = {
 	office: RecordIdString
@@ -158,6 +158,7 @@ export type ShipmentItemRecord = {
 	shipment: RecordIdString
 	type: ShipmentItemTypeOptions
 	restock_item_id?: RecordIdString
+	request?: RecordIdString
 }
 
 export enum UserTypeOptions {

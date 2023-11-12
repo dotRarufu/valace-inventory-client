@@ -41,7 +41,7 @@ const sampleRequests: RequestDataRow[] = [
     id: '123dsf',
     itemName: 'Penble Mouse',
     officeName: 'IT Office',
-    status: RequestStatusOptions['ANO PA'],
+    status: RequestStatusOptions.PENDING,
     tag: 'IT',
     unit: 'pcs',
   },
