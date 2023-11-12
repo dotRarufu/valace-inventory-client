@@ -128,7 +128,7 @@ const OfficeRequests = () => {
             </div>
           </div>
 
-          <ul className="flex flex-col overflow-clip rounded-[5px] ">
+          <ul className="flex flex-col overflow-clip rounded-[5px]">
             {items.map(item => (
               <li
                 key={item.id}
@@ -136,9 +136,14 @@ const OfficeRequests = () => {
                 onClick={navigateTo(item.id.toString())}
               >
                 {item.name}
-                <span className="badge badge-success pt-[3px]">
-                  {toTitleCase(item.status) || ''}
-                </span>
+                <div className="flex gap-2">
+                  <span className="badge badge-success pt-[3px]">
+                    {item.expectedAmount}
+                  </span>
+                  <span className="badge badge-success pt-[3px]">
+                    {toTitleCase(item.status) || ''}
+                  </span>
+                </div>
               </li>
             ))}
           </ul>

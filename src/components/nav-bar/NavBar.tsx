@@ -40,12 +40,12 @@ const NavBar = ({ role }: Props) => {
       <Logo />
 
       <ul className="flex h-full flex-col gap-[8px] ">
-        <Item
+        {/* <Item
           path={role.toLowerCase()}
           label="Reports"
           icon={<FiMonitor className="h-[28px] w-[28px] text-primary" />}
           id="reports"
-        />
+        /> */}
         <Item
           path={role.toLowerCase()}
           label="Items"

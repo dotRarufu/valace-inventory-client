@@ -80,6 +80,8 @@ const UtilizeRequest = () => {
       quantity: utilizationRequest.itemData.quantity - amountGiven,
     });
 
+    toast.success('Success', toastSettings);
+
     navigate('..');
   };
 
