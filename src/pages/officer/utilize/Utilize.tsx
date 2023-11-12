@@ -1,7 +1,4 @@
 import { useNavigate, useOutlet } from 'react-router-dom';
-import MobileAppWrapper from '../../../components/ui/MobileAppWrapper';
-import BottomNavBar from '../BottomNavBar';
-import TopAppBar from '../TopAppBar';
 import { useState } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
 

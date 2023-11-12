@@ -341,7 +341,7 @@ const ItemsSidebar = () => {
         throw new Error('could not convert qrcoderaw data to blob');
 
       newFormData.append('qr', file);
-
+      await updateItem(res.id, newFormData);
       await recordActivity(ActivityActionOptions['ADD ITEM'], {
         userId: user!.id,
         itemId: res.id,

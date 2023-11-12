@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import pb from '../../../lib/pocketbase';
 import useUser from '../../../hooks/useUser';
 

@@ -1,7 +1,7 @@
-type Base = {
-  code: number;
-  message: string;
-};
+// type Base = {
+//   code: number;
+//   message: string;
+// };
 
 // export type PocketbaseError = Base & {
 //   data: { [key: string]: Base };

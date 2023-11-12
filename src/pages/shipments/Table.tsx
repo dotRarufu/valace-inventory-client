@@ -11,11 +11,7 @@ import {
 import Pagination, { PaginationProps } from '../../components/ui/Pagination';
 import { useState } from 'react';
 import ActionDropdown from './ActionDropdown';
-import {
-  RequestStatusOptions,
-  ShipmentResponse,
-  ShipmentStatusOptions,
-} from '../../../pocketbase-types';
+import { ShipmentResponse } from '../../../pocketbase-types';
 
 const columnHelper = createColumnHelper<ShipmentResponse>();
 

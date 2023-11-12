@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { getUtilizeeData } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
-import { UserRecord, UserResponse, UtilizeeResponse, UtilizerRecord } from '../../../../pocketbase-types';
+import { UserResponse, UtilizeeResponse } from '../../../../pocketbase-types';
 import { beautifyDate } from '../../../utils/beautifyDate';
 
 const StockItemHistory = () => {

@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
-import { FiArrowRight } from 'react-icons/fi';
-import {
-  ItemTypeOptions,
-  ShipmentItemRecord,
-  ShipmentRecord,
-  ShipmentResponse,
-} from '../../../../pocketbase-types';
-import { useNavigate, useOutlet } from 'react-router-dom';
+import { ItemTypeOptions } from '../../../../pocketbase-types';
+import { useNavigate } from 'react-router-dom';
 import { getAllShipmentsAndItems } from '../../../services/shipments';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
@@ -19,7 +13,6 @@ export type ShipmentItem = {
   description: string;
   expectedAmount: number;
 };
-
 
 const Shipment = () => {
   const navigate = useNavigate();
@@ -40,6 +33,7 @@ const Shipment = () => {
       })
       .catch(err => {
         toast.error('Failed to get shipments', toastSettings);
+        console.log(err);
       });
   }, []);
 

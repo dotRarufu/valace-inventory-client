@@ -1,12 +1,11 @@
 import { FiArrowLeft } from 'react-icons/fi';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { createItem, getItem, updateItem } from '../../../services/item';
+import { createItem, updateItem } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
 import {
   checkAndMarkShipmentAsComplete,
-  deleteShipment,
   deleteShipmentItem,
   getShipmentItem,
   updateShipmentItem,
@@ -28,7 +27,6 @@ const ShipmentItemInfo = () => {
     (ShipmentItemResponse & { officeData: UserResponse }) | null
   >(null);
   const [receivedAmount, setReceivedAmount] = useState(0);
-  const [propertyNumber, setPropertyNumber] = useState('');
 
   useEffect(() => {
     if (!id) return;
@@ -39,6 +37,7 @@ const ShipmentItemInfo = () => {
       })
       .catch(err => {
         toast.error('Failed to get shipment item data', toastSettings);
+        console.log(err)
       });
   }, [id]);
 

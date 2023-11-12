@@ -9,7 +9,6 @@ import Items from './pages/items';
 import { Toaster } from 'react-hot-toast';
 import UserDataDisplay from './pages/user-data-display/UserDataDisplay';
 import SidebarWrapper from './components/ui/SidebarWrapper';
-import Landing from './pages/landing/Landing';
 import Reports from './pages/reports/Reports';
 import Unauthorized from './pages/unauthorized/unauthorized';
 import Shipment from './pages/officer/shipment/Shipment';

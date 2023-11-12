@@ -149,11 +149,11 @@ const UserDataDisplay = () => {
             {data !== null && data.quantity > 0 ? 'AVAILABLE' : 'UNAVAILABLE'}
           </a>
 
-          <span className=" h-[16px] text-primary/50 ">Location:</span>
+          {/* <span className=" h-[16px] text-primary/50 ">Location:</span>
 
           <div className="h-[16px] w-full max-w-[345px] font-semibold text-primary ">
             {data?.location}
-          </div>
+          </div> */}
           <span className=" h-[16px] text-primary/50 ">Supplier:</span>
 
           <div className="h-[16px] w-full max-w-[345px] font-semibold text-primary ">

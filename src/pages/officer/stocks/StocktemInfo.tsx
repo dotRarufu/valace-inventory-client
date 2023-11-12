@@ -2,9 +2,6 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { NavLink, useNavigate, useOutlet, useParams } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
-import { StockItem } from './Stocks';
-import { dummyStockItems } from '../../../data/dummyStockItems';
-import { dummyHistoryItems } from '../../../data/dummyHistoryItems';
 import { getItem, getUtilizees } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
@@ -56,7 +53,7 @@ const StockItemInfo = () => {
       .catch(() => {
         toast.error("Failed to get item's utilzees", toastSettings);
       });
-  }, []);
+  }, [id]);
 
   if (outlet) return outlet;
 

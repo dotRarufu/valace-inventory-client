@@ -1,22 +1,12 @@
 import { ReactNode, useEffect, useState } from 'react';
-import Add from '../../components/icons/Add';
-import {
-  RequestStatusOptions,
-  ShipmentResponse,
-  UserResponse,
-} from '../../../pocketbase-types';
+import { ShipmentResponse, UserResponse } from '../../../pocketbase-types';
 
 import { useDrawer } from '../../hooks/useDrawer';
-import { getAccounts } from '../../services/accounts';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
 import { PocketbaseError } from '../../types/PocketbaseError';
 import Table from './Table';
-import { getAllRequests, getRequest } from '../../services/request';
-import {
-  getAllShipments,
-  getAllShipmentsAndItems,
-} from '../../services/shipments';
+import { getAllShipments } from '../../services/shipments';
 
 export interface AccountDataRow extends UserResponse {
   actions?: ReactNode;
@@ -67,7 +57,7 @@ const Shipments = () => {
 
   useEffect(() => {
     setActiveTable('shipments');
-  }, []);
+  }, [setActiveTable]);
 
   return (
     <div className="flex h-full flex-col gap-[16px] px-[36px] pb-[28px]  ">

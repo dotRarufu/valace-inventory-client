@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { FiBox, FiClipboard, FiSend, FiTruck, FiUser } from 'react-icons/fi';
+import { FiClipboard, FiSend, FiUser } from 'react-icons/fi';
 
 const OfficeBottomNavBar = () => {
   return (

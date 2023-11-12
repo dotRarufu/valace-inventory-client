@@ -3,13 +3,8 @@ import fullscreenIcon from '../../assets/fullscreen.svg';
 import editIcon from '../../assets/edit.svg';
 import trashIcon from '../../assets/trash.svg';
 import { useDrawer } from '../../hooks/useDrawer';
-import { useContext } from 'react';
-import { ActivityActionOptions } from '../../../pocketbase-types';
-import { UserContext } from '../../contexts/UserContext';
 import { toast } from 'react-hot-toast';
-import { removeAccount } from '../../services/accounts';
 import { toastSettings } from '../../data/toastSettings';
-import { recordActivity } from '../../services/logger';
 import { PocketbaseError } from '../../types/PocketbaseError';
 import { judgeRequest, removeRequest } from '../../services/request';
 
@@ -19,7 +14,7 @@ type Props = {
 };
 
 const ActionDropdown = ({ position, id }: Props) => {
-  const { user } = useContext(UserContext)!;
+  // const { user } = useContext(UserContext)!;
   const {
     setActiveTable,
     // setState,

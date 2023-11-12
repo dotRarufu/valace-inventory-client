@@ -1,16 +1,8 @@
-import { FiArrowRight, FiSearch } from 'react-icons/fi';
-import MobileAppWrapper from '../../../components/ui/MobileAppWrapper';
-import BottomNavBar from '../BottomNavBar';
-import TopAppBar from '../TopAppBar';
+import { FiSearch } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
-import {
-  ItemResponse,
-  ItemTypeOptions,
-  RequestTagOptions,
-} from '../../../../pocketbase-types';
-import SearchBar from '../../../components/ui/SearchBar';
+import { ItemResponse, ItemTypeOptions } from '../../../../pocketbase-types';
 import { useNavigate, useOutlet } from 'react-router-dom';
-import { getAllItems, getOnStockItems } from '../../../services/item';
+import { getOnStockItems } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';
 import { useFuzzy } from 'react-use-fuzzy';

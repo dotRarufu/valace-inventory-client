@@ -27,7 +27,7 @@ const emptyRequest: RequestRecord = {
 };
 
 const RequestsSidebar = () => {
-  const { state, activeRowId, drawerRef, setShouldUpdateTable } = useDrawer()!;
+  const { activeRowId, drawerRef, setShouldUpdateTable } = useDrawer()!;
   const [fields, setFields] = useState(emptyRequest);
   const { amount, description, item_name, office, tag, unit, status } = fields;
 

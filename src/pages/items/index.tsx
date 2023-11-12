@@ -15,7 +15,7 @@ import { getAllItems, removeItem } from '../../services/item';
 import { toastSettings } from '../../data/toastSettings';
 import { recordActivity } from '../../services/logger';
 import { PocketbaseError } from '../../types/PocketbaseError';
-import { FiFile, FiPrinter, FiTablet } from 'react-icons/fi';
+import { FiFile, FiPrinter } from 'react-icons/fi';
 
 export interface ItemDataRow extends ItemResponse {
   selected: boolean;

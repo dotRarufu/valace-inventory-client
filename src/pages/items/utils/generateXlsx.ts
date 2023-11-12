@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { GenerateCutoutRequest } from '../../../types/GenerateCutoutRequest';
 
 export const generateXlsx = async (ids: string[]) => {
   try {

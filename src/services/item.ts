@@ -4,7 +4,6 @@ import {
   Collections,
   ItemRecord,
   ItemResponse,
-  UserRecord,
   UserResponse,
   UtilizeeRecord,
   UtilizeeResponse,
@@ -82,7 +81,7 @@ export const createItem = async (data: ItemRecord) => {
 
 export type ItemUpdate = Partial<ItemRecord>;
 
-export const updateItem = async (id: string, data: ItemUpdate) => {
+export const updateItem = async (id: string, data: ItemUpdate | FormData) => {
   await pb.collection(Collections.Item).update(id, data);
 };
 

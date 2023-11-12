@@ -1,5 +1,5 @@
 import { FiArrowLeft } from 'react-icons/fi';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { RequestedItem } from './Requests';
 import { createRequest } from '../../../services/request';
@@ -26,10 +26,10 @@ const emptyForm: Form = {
 };
 
 const CreateRequest = () => {
-  const { id } = useParams();
+  // const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useUser()!;
-  const [itemData, setItemData] = useState<RequestedItem | null>(null);
+  const [itemData] = useState<RequestedItem | null>(null);
   const [form, setForm] = useState<Form>(emptyForm);
 
   const dropdown: RequestTagOptions[] = [

@@ -14,7 +14,7 @@ type Props = {
 };
 
 const ExportDropdown = ({ data }: Props) => {
-  const [csvFileName, setCsvFileName] = useState('csv_test');
+  // const [csvFileName, setCsvFileName] = useState('csv_test');
   const csvAnchor = useRef<HTMLAnchorElement>(null);
   const pdfAnchor = useRef<HTMLAnchorElement>(null);
   const downloadAnchor = useRef<HTMLAnchorElement>(null);
@@ -108,8 +108,9 @@ const toCsvFormat = (data: ItemDataRow) => {
   const {
     name,
     quantity,
-    location,
     supplier,
+    total,
+    unit,
     remarks,
     type,
     images,
@@ -120,8 +121,9 @@ const toCsvFormat = (data: ItemDataRow) => {
   const res: ItemRecord = {
     name,
     quantity,
-    location,
     supplier,
+    total,
+    unit,
     remarks,
     type,
     images,

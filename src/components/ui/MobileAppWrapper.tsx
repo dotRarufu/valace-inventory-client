@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 
-import BottomNavBar from '../../pages/officer/BottomNavBar';
 import { Outlet } from 'react-router-dom';
 import TopAppBar from '../../pages/officer/TopAppBar';
 

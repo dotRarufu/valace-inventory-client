@@ -1,9 +1,7 @@
 import { FiArrowLeft } from 'react-icons/fi';
-import { NavLink, useNavigate, useOutlet, useParams } from 'react-router-dom';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 
 import { useEffect, useState } from 'react';
-import { StockItem } from '../../officer/stocks/Stocks';
-import { dummyStockItems } from '../../../data/dummyStockItems';
 import { borrowItem, getItem } from '../../../services/item';
 import { toast } from 'react-hot-toast';
 import { toastSettings } from '../../../data/toastSettings';

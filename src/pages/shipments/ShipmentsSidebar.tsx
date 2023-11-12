@@ -1,9 +1,6 @@
 import TextInputField from '../../components/field/TextInputField';
 import { useCallback, useEffect, useState } from 'react';
 import {
-  RequestRecord,
-  RequestStatusOptions,
-  RequestTagOptions,
   ShipmentResponse,
   ShipmentStatusOptions,
 } from '../../../pocketbase-types';
@@ -11,12 +8,6 @@ import { useDrawer } from '../../hooks/useDrawer';
 import toast from 'react-hot-toast';
 import { toastSettings } from '../../data/toastSettings';
 import { PocketbaseError } from '../../types/PocketbaseError';
-import TextAreaField from '../../components/field/TextAreaField';
-import {
-  getRequest,
-  judgeRequest,
-  removeRequest,
-} from '../../services/request';
 import { deleteShipment, getShipment } from '../../services/shipments';
 
 const emptyRequest: Omit<
@@ -30,7 +21,7 @@ const emptyRequest: Omit<
 };
 
 const ShipmentsSidebar = () => {
-  const { state, activeRowId, drawerRef, setShouldUpdateTable } = useDrawer()!;
+  const { activeRowId, drawerRef, setShouldUpdateTable } = useDrawer()!;
   const [fields, setFields] = useState(emptyRequest);
   const { month, created_by, status } = fields;
 

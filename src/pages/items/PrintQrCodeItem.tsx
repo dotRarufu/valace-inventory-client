@@ -70,7 +70,7 @@ const PrintQrCodeItem = ({ row, setPrintItems }: Props) => {
         <span>{row.property_number}</span>
         <div className="flex gap-2">
           <span className="badge">{row.type}</span>
-          <span className="badge">{row.location}</span>
+          <span className="badge">{row.supplier}</span>
 
           <span
             className={`badge ${
