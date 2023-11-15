@@ -22,7 +22,7 @@ const getRoleColor = (role: UserTypeOptions) => {
     case UserTypeOptions.ADMIN:
       return 'badge-accent';
     case UserTypeOptions.OFFICE:
-      return 'badge-info';
+      return '';
     case UserTypeOptions.OFFICER:
       return 'badge-success';
 
