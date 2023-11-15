@@ -107,7 +107,7 @@ const ShipmentItemInfo = () => {
     }
 
     await checkAndMarkShipmentAsComplete(itemData.shipment);
-
+    toast.success('Item received', toastSettings);
     navigate('..');
   };
 
@@ -137,6 +137,15 @@ const ShipmentItemInfo = () => {
 
             <div className="h-[16px] text-lg font-semibold text-primary ">
               {itemData?.expected_amount}
+            </div>
+          </div>
+        </li>
+        <li className="flex flex-col leading-none">
+          <div className=" flex max-h-[53px] items-center justify-between py-[4px]">
+            <span className=" h-[16px] text-lg text-primary/50">Unit:</span>
+
+            <div className="h-[16px] text-lg font-semibold text-primary ">
+              {itemData?.unit}
             </div>
           </div>
         </li>
@@ -194,18 +203,20 @@ const ShipmentItemInfo = () => {
             className="input-bordered input input-md w-full max-w-[96px] rounded-[5px] bg-primary/10 pt-[2px] text-primary [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
           />
         </div>
-        <div className=" flex max-h-[53px] items-center justify-between py-[4px] ">
-          <span className="h-[16px] text-lg leading-none text-base-content">
-            Supplier:
-          </span>
+        {itemData.type === ShipmentItemTypeOptions.REQUEST && (
+          <div className=" flex max-h-[53px] items-center justify-between py-[4px] ">
+            <span className="h-[16px] text-lg leading-none text-base-content">
+              Supplier:
+            </span>
 
-          <input
-            type="text"
-            value={supplier}
-            onChange={e => setSupplier(e.target.value)}
-            className="input-bordered input input-md w-full max-w-[96px] rounded-[5px] bg-primary/10 pt-[2px] text-primary [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
-          />
-        </div>
+            <input
+              type="text"
+              value={supplier}
+              onChange={e => setSupplier(e.target.value)}
+              className="input-bordered input input-md w-full max-w-[96px] rounded-[5px] bg-primary/10 pt-[2px] text-primary [box-shadow:0px_0px_0px_0px_rgba(0,16,74,0.05)_inset,_0px_2px_4px_0px_rgba(0,16,74,0.05)_inset,_0px_7px_7px_0px_rgba(0,16,74,0.04)_inset,_0px_15px_9px_0px_rgba(0,_16,_74,_0.03)_inset,_0px_27px_11px_0px_rgba(0,_16,_74,_0.01)_inset,_0px_42px_12px_0px_rgba(0,_16,_74,_0.00)_inset]"
+            />
+          </div>
+        )}
       </div>
       <button
         className="btn-primary btn w-full rounded-[5px]"

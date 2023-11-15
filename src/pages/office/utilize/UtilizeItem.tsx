@@ -60,6 +60,17 @@ const UtilizeItem = () => {
         <li className="flex flex-col leading-none">
           <div className=" flex max-h-[53px] items-center justify-between py-[4px]">
             <span className=" h-[16px] text-lg text-primary/50">
+              Unit:
+            </span>
+
+            <div className="h-[16px] text-lg font-semibold text-primary ">
+              {itemData?.unit}
+            </div>
+          </div>
+        </li>
+        <li className="flex flex-col leading-none">
+          <div className=" flex max-h-[53px] items-center justify-between py-[4px]">
+            <span className=" h-[16px] text-lg text-primary/50">
               Total amount:
             </span>
 

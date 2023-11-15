@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { RequestStatusOptions, UserResponse } from '../../../pocketbase-types';
+import { UserResponse } from '../../../pocketbase-types';
 
 import { useDrawer } from '../../hooks/useDrawer';
 import { toast } from 'react-hot-toast';
@@ -11,44 +11,9 @@ import { getAllRequests } from '../../services/request';
 export interface AccountDataRow extends UserResponse {
   actions?: ReactNode;
 }
-const sampleRequests: RequestDataRow[] = [
-  {
-    amount: 1,
-    created: 'now',
-    description: 'goofy mouse',
-    id: '123dsf',
-    itemName: 'Penble Mouse',
-    officeName: 'IT Office',
-    status: RequestStatusOptions.PENDING,
-    tag: 'IT',
-    unit: 'pcs',
-  },
-  {
-    amount: 1,
-    created: 'now',
-    description: 'goofy mouse',
-    id: '123dsf',
-    itemName: 'Penble Mouse',
-    officeName: 'IT Office',
-    status: RequestStatusOptions.APPROVED,
-    tag: 'IT',
-    unit: 'pcs',
-  },
-  {
-    amount: 1,
-    created: 'now',
-    description: 'goofy mouse',
-    id: '123dsf',
-    itemName: 'Penble Mouse',
-    officeName: 'IT Office',
-    status: RequestStatusOptions.PENDING,
-    tag: 'IT',
-    unit: 'pcs',
-  },
-];
 
 const Requests = () => {
-  const [rowData, setRowData] = useState<RequestDataRow[]>(sampleRequests);
+  const [rowData, setRowData] = useState<RequestDataRow[]>([]);
   const { setActiveTable, shouldUpdateTable, setShouldUpdateTable } =
     useDrawer()!;
 
@@ -73,7 +38,7 @@ const Requests = () => {
         setRowData(newValue);
       })
       .catch(err => {
-        console.log("err:", err)
+        console.log('err:', err);
         const error = err as PocketbaseError;
         const errorFields = Object.keys(error.data.data);
         const field =

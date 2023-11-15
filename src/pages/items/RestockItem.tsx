@@ -68,6 +68,7 @@ const RestockItem = ({ row, setPrintItems }: Props) => {
       />
       <div className="flex flex-1 flex-col justify-between">
         <span className="font-bold">{row.name}</span>
+        <span>Unit: {row.unit}</span>
         <span>Stock: {row.quantity}</span>
       
       </div>
