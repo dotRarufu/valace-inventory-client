@@ -7,7 +7,7 @@
 <p>Install packages</p>
 
 ```
-npm install
+npm install --force
 ```
 
 <h2>⚙️ Setup</h2>
